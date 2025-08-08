@@ -11,11 +11,11 @@ local function ShowWelcomeMessage()
     local locale = addon.locale
 
     if not locale then
-        print(addon.errorMessage(string.format("%s: Locale not loaded yet!", addonName)))
+        addon.chatError("Locale not loaded yet!")
         return
     end
 
-    print(addon.coloredMessage(string.format(locale["WELCOME_MESSAGE"], title, version, author), addon.colors.ARTIFACT))
+    addon.chatMessage(string.format(locale["WELCOME_MESSAGE"], title, version, author), addon.colors.ARTIFACT)
 end
 
 local frame = CreateFrame("Frame")
