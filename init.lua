@@ -1,0 +1,3 @@
+local addonName, addon = ...
+_G["MPT"] = addon
+addon.locale = {}

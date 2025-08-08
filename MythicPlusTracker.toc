@@ -1,10 +1,12 @@
 ## Interface: 110200
-## Title: Mythic Plus Tracker
+## Title: |cFFA335EEMythic|r |cFFFF8000Plus Tracker|r
 ## Author: SanSebastiano
 ## Version: 1.0.0
 ## Notes: Tracks your Mythic+ dungeon runs, group members, deaths, and completion status
 ## Notes-deDE: Verfolgt die Mythic+-Dungeon-Runs, Gruppenmitglieder, Todesfälle und den Abschlussstatus
 ## SavedVariables: MythicPlusTrackerDB
 
-locales.xml
+init.lua
+locales\locales.xml
 MythicPlusTracker.lua
+modules\modules.xml
