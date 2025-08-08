@@ -23,8 +23,8 @@ addon.colors = {
     RARE = "|cFF0070dd",        -- Blue
     EPIC = "|cFFa335ee",        -- Purple
     LEGENDARY = "|cFFff8000",   -- Orange
-    ARTIFACT = "|cFFe6cc80",    -- Golden
-    HEIRLOOM = "|cFFe6cc80",    -- Golden
+    ARTIFACT = "|cFFe6cc80",    -- Light Gold
+    HEIRLOOM = "|cFF00ccff",    -- Blizzard Blue
 
     -- UI-specific colors
     ERROR = "|cFFFF0000",       -- Red for error messages
