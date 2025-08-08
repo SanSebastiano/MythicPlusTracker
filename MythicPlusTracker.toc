@@ -13,3 +13,4 @@ Utils\utils.xml
 
 MythicPlusTracker.lua
 modules\modules.xml
+Command\comands.xml

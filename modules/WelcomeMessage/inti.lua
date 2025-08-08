@@ -16,6 +16,9 @@ local function ShowWelcomeMessage()
     end
 
     addon.chatMessage(string.format(locale["WELCOME_MESSAGE"], title, version, author), addon.colors.ARTIFACT)
+    if addon.isDebugMode() then
+        addon.chatMessage(string.format(locale["WELCOME_MESSAGE_DEBUG"]), addon.colors.ARTIFACT)
+    end
 end
 
 local frame = CreateFrame("Frame")

@@ -4,6 +4,7 @@ addon.locale = addon.locale or {}
 
 local L = {
     ["WELCOME_MESSAGE"] = "%s v%s by %s loaded successfully!",
+    ["WELCOME_MESSAGE_DEBUG"] = "Debug mode is enabled. Some features may be limited.",
     -- Mythic Plus specific messages
     ["KEYSTONE_UPGRADED"] = "Keystone upgraded to level %d!",
     ["KEYSTONE_DEPLETED"] = "Keystone depleted.",

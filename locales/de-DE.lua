@@ -7,6 +7,7 @@ addon.locale = addon.locale or {}
 
 local L = {
     ["WELCOME_MESSAGE"] = "%s v%s von %s erfolgreich geladen!",
+    ["WELCOME_MESSAGE_DEBUG"] = "Debug-Modus ist aktiviert. Einige Funktionen sind möglicherweise eingeschränkt.",
     -- Mythic Plus specific messages
     ["KEYSTONE_UPGRADED"] = "Schlüsselstein auf Level %d aufgewertet!",
     ["KEYSTONE_DEPLETED"] = "Schlüsselstein erschöpft.",

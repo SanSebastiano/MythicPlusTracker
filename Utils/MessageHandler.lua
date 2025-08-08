@@ -73,11 +73,3 @@ addon.infoMessage = function(text)
     addon.addonMessage(text, addon.colors.INFO)
 end
 
----Sends a debug message with white color and addon prefix, only if debug mode is enabled
----@param text string The debug message text
----@return void
-addon.debugMessage = function(text)
-    if addon.debugMode then
-        addon.addonMessage("[DEBUG] " .. text, addon.colors.WHITE, 'SYSTEM')
-    end
-end
