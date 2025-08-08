@@ -8,9 +8,9 @@
 
 init.lua
 
-locales\locales.xml
+Locales\locales.xml
 Utils\utils.xml
 
 MythicPlusTracker.lua
-modules\modules.xml
+Modules\modules.xml
 Command\comands.xml
