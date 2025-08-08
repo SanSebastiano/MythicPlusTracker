@@ -7,6 +7,9 @@
 ## SavedVariables: MythicPlusTrackerDB
 
 init.lua
+
 locales\locales.xml
+Utils\utils.xml
+
 MythicPlusTracker.lua
 modules\modules.xml

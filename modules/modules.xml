@@ -1,4 +1,4 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 
-    <Script file='loadMessage\inti.lua'/>
+    <Script file='WelcomeMessage\inti.lua'/>
 </Ui>

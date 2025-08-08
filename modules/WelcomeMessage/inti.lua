@@ -8,14 +8,14 @@ end
 
 local function ShowWelcomeMessage()
     local title, version, author = getAddonMetadata()
-    local L = addon.locale
+    local locale = addon.locale
 
-    if not L then
-        print(string.format("|cFFFF0000 %s: Locale not loaded yet!|r"), addonName)
+    if not locale then
+        print(addon.errorMessage(string.format("%s: Locale not loaded yet!", addonName)))
         return
     end
 
-    print("|cFFE6CC80" .. string.format(L["WELCOME_MESSAGE"], title, version, author) .. "|r")
+    print(addon.coloredMessage(string.format(locale["WELCOME_MESSAGE"], title, version, author), addon.colors.ARTIFACT))
 end
 
 local frame = CreateFrame("Frame")
