@@ -1,13 +1,18 @@
 if not ((GAME_LOCALE or GetLocale()) == "deDE") then
     return
 end
+
 local addonName, addon = ...
 
 addon.locale = addon.locale or {}
 
-local L = {
+local locale = {
     ["WELCOME_MESSAGE"] = "%s v%s von %s erfolgreich geladen!",
     ["WELCOME_MESSAGE_DEBUG"] = "Debug-Modus ist aktiviert. Einige Funktionen sind möglicherweise eingeschränkt.",
+    -- Minimap Button
+    ["MINIMAP_BUTTON_NAME"] = "Mythic Plus Tracker",
+    ["MINIMAP_BUTTON_CLICK_LEFT"] = "Linksklick: Dashboard umschalten",
+    ["MINIMAP_BUTTON_CLICK_RIGHT"] = "Rechtsklick: Große Schatzkammer  öffnen",
     -- Mythic Plus specific messages
     ["KEYSTONE_UPGRADED"] = "Schlüsselstein auf Level %d aufgewertet!",
     ["KEYSTONE_DEPLETED"] = "Schlüsselstein erschöpft.",
@@ -23,6 +28,6 @@ local L = {
     ["KEYSTONE_LEVEL"] = "Schlüsselstein Level: %d"
 }
 
-for key, value in pairs(L) do
+for key, value in pairs(locale) do
     addon.locale[key] = value
 end

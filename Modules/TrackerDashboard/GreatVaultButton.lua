@@ -11,7 +11,7 @@ local function create(frame)
     button:SetHighlightAtlas("gficon-chest-evergreen-greatvault-collect")
     button:SetPushedAtlas("gficon-chest-evergreen-greatvault-collect")
 
-    return
+    return button
 end
 
 function MPT_GreatVaultButton:load(frame)

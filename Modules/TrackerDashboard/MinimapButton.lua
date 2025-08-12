@@ -27,13 +27,24 @@ function MPT_MinimapButton:load()
     button:SetScript("OnClick", function(self, clickedButton)
         if clickedButton == "LeftButton" then
             addon.trackerDashboard.frame:Show()
+
+        elseif clickedButton == "RightButton" then
+            print('test')
+            if WeeklyRewardsFrame then
+                WeeklyRewardsFrame:Show()
+            else
+                if PVEFrame then
+                    PVEFrame_ToggleFrame("ChallengesFrame")
+                end
+            end
         end
     end)
 
     button:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        GameTooltip:SetText("Mythic Plus Tracker Dashboard")
-        GameTooltip:AddLine("Click to toggle the dashboard.", 1, 1, 1)
+        GameTooltip:SetText(addon.locale['MINIMAP_BUTTON_NAME'])
+        GameTooltip:AddLine(addon.locale['MINIMAP_BUTTON_CLICK_LEFT'], 1, 1, 1)
+        GameTooltip:AddLine(addon.locale['MINIMAP_BUTTON_CLICK_RIGHT'], 1, 1, 1)
         GameTooltip:Show()
     end)
 
