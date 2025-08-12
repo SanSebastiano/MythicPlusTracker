@@ -7,6 +7,24 @@ local function handleSlashCommand(msg)
     if command == "debug" then
         addon.setDebugMode()
 
+    elseif command == "test" then
+        C_MythicPlus.RequestMapInfo()
+        print('C_MythicPlus.GetCurrentSeason(): ' .. C_MythicPlus.GetCurrentSeason())
+        print('C_MythicPlus.IsMythicPlusActive(): ' .. tostring(C_MythicPlus.IsMythicPlusActive()))
+        print('C_MythicPlus.GetRunHistory():')
+        for i, run in ipairs(C_MythicPlus.GetRunHistory()) do
+            print(string.format("Run %d: %s, %s, %s, %s", i, run.mapChallengeModeID, run.completed, run.bestRunTime, run.bestRunLevel))
+        end
+        print('C_ChallengeMode.GetMapScoreInfo()')
+        for key, value in pairs(C_ChallengeMode.GetMapScoreInfo()) do
+            print(key)
+            for subKey, subValue in pairs(value) do
+                if subKey == "mapChallengeModeID" then
+                    print(C_ChallengeMode.GetMapUIInfo(subValue))
+                end
+            end
+        end
+
     elseif command == "debug on" then
         addon.setDebugMode(true)
 
