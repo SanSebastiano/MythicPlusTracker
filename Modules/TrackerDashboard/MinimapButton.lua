@@ -24,12 +24,17 @@ end
 function MPT_MinimapButton:load()
     local button = create()
 
-    button:SetScript("OnClick", function(self, clickedButton)
+    button:RegisterForClicks("AnyDown", "AnyUp")
+
+    button:SetScript("OnClick", function(self, clickedButton, down)
+        if addon.isDebugMode then
+            addon.debugMessage("Pressed " ..  clickedButton .. (down and " down" or " up"))
+        end
+
         if clickedButton == "LeftButton" then
             addon.trackerDashboard.frame:Show()
 
         elseif clickedButton == "RightButton" then
-            print('test')
             if WeeklyRewardsFrame then
                 WeeklyRewardsFrame:Show()
             else

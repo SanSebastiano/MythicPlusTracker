@@ -12,7 +12,7 @@ local locale = {
     -- Minimap Button
     ["MINIMAP_BUTTON_NAME"] = "Mythic Plus Tracker",
     ["MINIMAP_BUTTON_CLICK_LEFT"] = "Linksklick: Dashboard umschalten",
-    ["MINIMAP_BUTTON_CLICK_RIGHT"] = "Rechtsklick: Große Schatzkammer  öffnen",
+    ["MINIMAP_BUTTON_CLICK_RIGHT"] = "Rechtsklick: Große Schatzkammer öffnen",
     -- Mythic Plus specific messages
     ["KEYSTONE_UPGRADED"] = "Schlüsselstein auf Level %d aufgewertet!",
     ["KEYSTONE_DEPLETED"] = "Schlüsselstein erschöpft.",

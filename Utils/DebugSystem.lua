@@ -41,7 +41,7 @@ end
 ---@return void
 addon.debugMessage = function(text, color)
     if addon.debugMode then
-        local debugColor = color or addon.colors.PURPLE
+        local debugColor = color or addon.colors.WHITE
         addon.addonMessage("[DEBUG] " .. text, debugColor)
     end
 end
