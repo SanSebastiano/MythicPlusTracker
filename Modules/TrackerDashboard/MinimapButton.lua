@@ -2,7 +2,7 @@ local addonName, addon = ...
 
 MPT_MinimapButton = {}
 
-local function createMinimapButton()
+local function create()
     local button = CreateFrame("Button", "MPTMinimapButton", Minimap)
     button:SetSize(64, 64)
     button:SetFrameStrata("MEDIUM")
@@ -22,12 +22,9 @@ local function createMinimapButton()
 end
 
 function MPT_MinimapButton:load()
-    local button = createMinimapButton()
+    local button = create()
 
     button:SetScript("OnClick", function(self, clickedButton)
-        if addon.isDebugMode then
-            print("MPT_MinimapButton clicked (" .. tostring(clickedButton) .. ")")
-        end
         if clickedButton == "LeftButton" then
             addon.trackerDashboard.frame:Show()
         end
@@ -46,4 +43,3 @@ function MPT_MinimapButton:load()
 
     return button
 end
-
