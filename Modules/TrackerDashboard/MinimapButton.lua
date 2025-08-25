@@ -24,7 +24,7 @@ end
 function MPT_MinimapButton:load()
     local button = create()
 
-    button:RegisterForClicks("AnyDown", "AnyUp")
+    button:RegisterForClicks("AnyUp")
 
     button:SetScript("OnClick", function(self, clickedButton, down)
         if addon.isDebugMode then
@@ -33,6 +33,12 @@ function MPT_MinimapButton:load()
 
         if clickedButton == "LeftButton" then
             addon.trackerDashboard.frame:Show()
+
+        elseif clickedButton == "MiddleButton" then
+            GenericTraitUI_LoadUI()
+            GenericTraitFrame:SetSystemID(29)
+            GenericTraitFrame:SetTreeID(1115)
+            ToggleFrame(GenericTraitFrame)
 
         elseif clickedButton == "RightButton" then
             if WeeklyRewardsFrame then
