@@ -1,7 +1,15 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 
-    <Include file='Tracker\GreatVaultButton.lua'/>
+    <Include file='Tracker\MainFrame.lua'/>
+
+    <Include file='Tracker\Dashboard\init.lua'/>
+    <Include file='Tracker\Dashboard\Frame.lua'/>
+
+    <Include file='Tracker\Sidebar\init.lua'/>
+    <Include file='Tracker\Sidebar\Frame.lua'/>
+
     <Include file='Tracker\MinimapButton.lua'/>
+
     <Include file='Tracker\init.lua'/>
 
     <Script file='WelcomeMessage\inti.lua'/>
