@@ -1,3 +1,1 @@
 local addonName, addon = ...
-
-MPT_MinimapButton:load()

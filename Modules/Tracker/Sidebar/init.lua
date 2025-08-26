@@ -1,3 +1,3 @@
 local addonName, addon = ...
 
-MPT_MinimapButton:load()
+MPT_Sidebar = {}

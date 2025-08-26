@@ -32,7 +32,22 @@ function MPT_MinimapButton:load()
         end
 
         if clickedButton == "LeftButton" then
-            addon.trackerDashboard.frame:Show()
+            if addon.showTracker == false or addon.showTracker == nil then
+                local mainFrame = MPT_MAIN:getFrame()
+                local dashboard = MPT_Dashboard:getFrame(mainFrame)
+                local sidebar = MPT_Sidebar:getFrame(mainFrame)
+
+                mainFrame:Show()
+                dashboard:Show()
+                sidebar:Show()
+                addon.showTracker = true
+
+                mainFrame:SetScript("OnHide", function()
+                    addon.showTracker = false
+                    dashboard:Hide()
+                    sidebar:Hide()
+                end)
+            end
 
         elseif clickedButton == "MiddleButton" then
             GenericTraitUI_LoadUI()
@@ -62,6 +77,4 @@ function MPT_MinimapButton:load()
     button:SetScript("OnLeave", function()
         GameTooltip:Hide()
     end)
-
-    return button
 end
