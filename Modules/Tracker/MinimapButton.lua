@@ -34,18 +34,15 @@ function MPT_MinimapButton:load()
         if clickedButton == "LeftButton" then
             if addon.showTracker == false or addon.showTracker == nil then
                 local mainFrame = MPT_MAIN:getFrame()
-                local dashboard = MPT_Dashboard:getFrame(mainFrame)
-                local sidebar = MPT_Sidebar:getFrame(mainFrame)
+                MPT_Dashboard:getFrame(mainFrame)
+                MPT_Sidebar:getFrame(mainFrame)
 
                 mainFrame:Show()
-                dashboard:Show()
-                sidebar:Show()
                 addon.showTracker = true
 
                 mainFrame:SetScript("OnHide", function()
                     addon.showTracker = false
-                    dashboard:Hide()
-                    sidebar:Hide()
+
                 end)
             end
 

@@ -2,10 +2,10 @@ local addonName, addon = ...
 
 local function create(mainFrame)
     local frame = CreateFrame(
-            "Frame",
-            nil,
-            UIParent,
-            "BackdropTemplate"
+        "Frame",
+        nil,
+        mainFrame,
+        "BackdropTemplate"
     )
 
     frame:SetSize(800, 550)
@@ -19,7 +19,6 @@ local function create(mainFrame)
         edgeSize = 20,
         insets = { left = 5, right = 5, top = 5, bottom = 5 }
     })
-    frame:Hide()
 
     local scrollFrame = CreateFrame("ScrollFrame", nil, frame, "UIPanelScrollFrameTemplate")
     scrollFrame:SetPoint("TOPLEFT", frame, "TOPLEFT", 20, -30)
