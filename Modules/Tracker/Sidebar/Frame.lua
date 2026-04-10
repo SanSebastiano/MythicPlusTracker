@@ -23,6 +23,7 @@ local function create(mainFrame)
 
     frame:SetScript("OnShow", function()
         MPT_Sidebar.getScore(frame)
+        MPT_Sidebar.getCurrencies(frame)
     end)
 
     return frame

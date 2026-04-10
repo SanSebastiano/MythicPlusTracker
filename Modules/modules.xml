@@ -6,6 +6,7 @@
     <Include file='Tracker\Dashboard\Frame.lua'/>
 
     <Include file='Tracker\Sidebar\init.lua'/>
+    <Include file='Tracker\Sidebar\Content\Currency.lua'/>
     <Include file='Tracker\Sidebar\Content\Score.lua'/>
     <Include file='Tracker\Sidebar\Frame.lua'/>
 

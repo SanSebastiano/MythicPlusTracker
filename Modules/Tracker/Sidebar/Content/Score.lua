@@ -1,11 +1,13 @@
 local addonName, addon = ...
 
 local function loadScore(sidebar)
+    addon.debugMessage("Loading sidebar: score...")
+
     local frame = CreateFrame(
-            "Frame",
-            nil,
-            sidebar,
-            "BackdropTemplate"
+        "Frame",
+        nil,
+        sidebar,
+        "BackdropTemplate"
     )
 
     frame:SetSize(254, 80)
