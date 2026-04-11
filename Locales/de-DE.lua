@@ -27,7 +27,13 @@ local locale = {
     ["DEATHS"] = "Tode: %d",
     ["KEYSTONE_LEVEL"] = "Schlüsselstein Level: %d",
     ["SIDEBAR_NO_KEYSTONE"] = "Kein Schlüsselstein im Inventar",
-    ["SIDEBAR_KEYSTONE_LEVEL"] = "Key Level"
+    ["SIDEBAR_KEYSTONE_LEVEL"] = "Key Level",
+    -- Dashboard
+    ["DASHBOARD_OVERALL"] = "Gesamt",
+    ["DASHBOARD_WEEKLY"] = "Wöchentlich",
+    ["DASHBOARD_BEST"] = "Bestes",
+    ["DASHBOARD_RUNS"] = "Läufe",
+    ["DASHBOARD_SUCCESS"] = "Erfolgreich",
 }
 
 for key, value in pairs(locale) do
