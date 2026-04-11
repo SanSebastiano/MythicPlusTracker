@@ -2,16 +2,24 @@ local addonName, addon = ...
 
 MPT_MAIN = {}
 
+local frame
+
 local function create()
+    if frame then return frame end
+
     frame = CreateFrame(
             "Frame",
-            nil,
+            "MPTMainFrame",
             UIParent,
             "BackdropTemplate"
     )
     frame:SetSize(1100, 550)
     frame:SetPoint("CENTER")
+    frame:SetFrameStrata("DIALOG")
+    frame:SetClampedToScreen(true)
     frame:Hide()
+
+    tinsert(UISpecialFrames, "MPTMainFrame")
 
     local closeButton = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
     closeButton:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -5, -5)
