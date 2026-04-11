@@ -7,8 +7,6 @@ local PADDING_X = 20
 local PADDING_Y = 30
 local COLS = 4
 
-local INFO_LABELS = {"Best", "Weekly", "Runs", "Success"}
-
 local function buildScoreLookup()
     local lookup = {}
     for _, info in ipairs(C_ChallengeMode.GetMapScoreInfo() or {}) do
@@ -22,15 +20,15 @@ local function buildRunLookup()
     for _, run in ipairs(C_MythicPlus.GetRunHistory(true, false, true) or {}) do
         local id = run.mapChallengeModeID
         if not lookup[id] then
-            lookup[id] = { weeklyBest = 0, runs = 0, success = 0 }
+            lookup[id] = { weeklyBest = 0, runs = 0, success = 0, weeklyRuns = 0, weeklySuccess = 0 }
         end
         local entry = lookup[id]
         entry.runs = entry.runs + 1
-        if run.completed then
-            entry.success = entry.success + 1
-        end
-        if run.thisWeek and run.level > entry.weeklyBest then
-            entry.weeklyBest = run.level
+        if run.completed then entry.success = entry.success + 1 end
+        if run.thisWeek then
+            entry.weeklyRuns = entry.weeklyRuns + 1
+            if run.completed then entry.weeklySuccess = entry.weeklySuccess + 1 end
+            if run.level > entry.weeklyBest then entry.weeklyBest = run.level end
         end
     end
     return lookup
@@ -43,17 +41,32 @@ local function formatLevel(level)
     return "–"
 end
 
+local function formatCount(n)
+    return (n and n > 0) and tostring(n) or "–"
+end
+
+local function addInfoRow(card, label, value, yOff, rowH)
+    local lbl = card:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    lbl:SetPoint("TOPLEFT", card, "TOPLEFT", 8, yOff)
+    lbl:SetSize(CARD_WIDTH / 2 - 12, rowH)
+    lbl:SetJustifyH("LEFT")
+    lbl:SetJustifyV("MIDDLE")
+    lbl:SetText(label)
+
+    local val = card:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    val:SetPoint("TOPRIGHT", card, "TOPRIGHT", -8, yOff)
+    val:SetSize(CARD_WIDTH / 2 - 12, rowH)
+    val:SetJustifyH("RIGHT")
+    val:SetJustifyV("MIDDLE")
+    val:SetText(value)
+end
+
 local function createDungeonCard(parent, mapID, col, row, scoreLookup, runLookup)
     local name, _, timeLimit, texture = C_ChallengeMode.GetMapUIInfo(mapID)
     if not name then return end
 
     local scoreInfo = scoreLookup[mapID]
-    local runInfo = runLookup[mapID]
-
-    local bestLevel = formatLevel(scoreInfo and scoreInfo.level)
-    local weeklyBest = formatLevel(runInfo and runInfo.weeklyBest)
-    local runs = runInfo and runInfo.runs > 0 and tostring(runInfo.runs) or "–"
-    local success = runInfo and runInfo.success > 0 and tostring(runInfo.success) or "–"
+    local runInfo   = runLookup[mapID]
 
     local card = CreateFrame("Frame", nil, parent)
     card:SetSize(CARD_WIDTH, CARD_HEIGHT)
@@ -81,29 +94,35 @@ local function createDungeonCard(parent, mapID, col, row, scoreLookup, runLookup
     timeText:SetText(math.floor(timeLimit / 60) .. " Min")
     timeText:SetJustifyH("LEFT")
 
-    local infoStartY = -(8 + 28 + 2 + 12 + 8)
-    local availableHeight = CARD_HEIGHT + infoStartY - 8
-    local rowHeight = math.floor((availableHeight - 3 * 4) / 4)
+    local ROW_H = 15
+    local ROW_GAP = 2
+    local HEADER_H = 13
+    local SECTION_GAP = 6
+    local yOff = -(8 + 28 + 2 + 12 + 10)
 
-    local infoValues = {bestLevel, weeklyBest, runs, success}
+    -- Overall section
+    local overallHeader = card:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    overallHeader:SetPoint("TOPLEFT", card, "TOPLEFT", 8, yOff)
+    overallHeader:SetSize(CARD_WIDTH - 16, HEADER_H)
+    overallHeader:SetJustifyH("LEFT")
+    overallHeader:SetText(addon.colors.INFO .. addon.locale["DASHBOARD_OVERALL"] .. addon.colors.RESET)
+    yOff = yOff - HEADER_H - ROW_GAP
 
-    for j, label in ipairs(INFO_LABELS) do
-        local y = infoStartY - (j - 1) * (rowHeight + 4)
+    addInfoRow(card, addon.locale["DASHBOARD_BEST"],    formatLevel(scoreInfo and scoreInfo.level),        yOff, ROW_H) yOff = yOff - ROW_H - ROW_GAP
+    addInfoRow(card, addon.locale["DASHBOARD_RUNS"],    formatCount(runInfo and runInfo.runs),             yOff, ROW_H) yOff = yOff - ROW_H - ROW_GAP
+    addInfoRow(card, addon.locale["DASHBOARD_SUCCESS"], formatCount(runInfo and runInfo.success),          yOff, ROW_H) yOff = yOff - ROW_H - SECTION_GAP
 
-        local labelText = card:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-        labelText:SetPoint("TOPLEFT", card, "TOPLEFT", 8, y)
-        labelText:SetSize(CARD_WIDTH / 2 - 12, rowHeight)
-        labelText:SetJustifyH("LEFT")
-        labelText:SetJustifyV("MIDDLE")
-        labelText:SetText(label)
+    -- Weekly section
+    local weeklyHeader = card:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    weeklyHeader:SetPoint("TOPLEFT", card, "TOPLEFT", 8, yOff)
+    weeklyHeader:SetSize(CARD_WIDTH - 16, HEADER_H)
+    weeklyHeader:SetJustifyH("LEFT")
+    weeklyHeader:SetText(addon.colors.INFO .. addon.locale["DASHBOARD_WEEKLY"] .. addon.colors.RESET)
+    yOff = yOff - HEADER_H - ROW_GAP
 
-        local valueText = card:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-        valueText:SetPoint("TOPRIGHT", card, "TOPRIGHT", -8, y)
-        valueText:SetSize(CARD_WIDTH / 2 - 12, rowHeight)
-        valueText:SetJustifyH("RIGHT")
-        valueText:SetJustifyV("MIDDLE")
-        valueText:SetText(infoValues[j])
-    end
+    addInfoRow(card, addon.locale["DASHBOARD_BEST"],    formatLevel(runInfo and runInfo.weeklyBest),       yOff, ROW_H) yOff = yOff - ROW_H - ROW_GAP
+    addInfoRow(card, addon.locale["DASHBOARD_RUNS"],    formatCount(runInfo and runInfo.weeklyRuns),       yOff, ROW_H) yOff = yOff - ROW_H - ROW_GAP
+    addInfoRow(card, addon.locale["DASHBOARD_SUCCESS"], formatCount(runInfo and runInfo.weeklySuccess),    yOff, ROW_H)
 end
 
 function MPT_Dashboard:loadDungeons(frame)
