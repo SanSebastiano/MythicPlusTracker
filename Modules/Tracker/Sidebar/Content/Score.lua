@@ -6,8 +6,7 @@ local function loadScore(sidebar)
     local frame = CreateFrame(
         "Frame",
         nil,
-        sidebar,
-        "BackdropTemplate"
+        sidebar
     )
 
     frame:SetSize(254, 80)
@@ -15,7 +14,7 @@ local function loadScore(sidebar)
 
     local background = frame:CreateTexture(nil, "OVERLAY")
     background:SetAllPoints()
-    background:SetAtlas("thewarwithin-landingpage-renownbutton-locked")
+    background:SetAtlas("ui-frame-midnight-border-title-bg", false)
 
     local score = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     score:SetPoint("CENTER", background, "CENTER", 0, 0)

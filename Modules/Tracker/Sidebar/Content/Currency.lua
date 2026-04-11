@@ -32,8 +32,6 @@ local function loadCurrency(frame, currencyId, index)
     amount:SetJustifyH("RIGHT")
     amount:SetText(currency.quantity)
 
-    addon.debugMessage("Loaded currency: " .. currency.name .. " (ID: " .. currencyId .. ") - Quantity: " .. currency.quantity)
-    addon.debugMessage("  Weekly Cap: " .. (currency.maxWeeklyQuantity or "N/A") .. ", Earned This Week: " .. (currency.quantityEarnedThisWeek or "N/A"))
     local weeklyCapReached = currency.maxWeeklyQuantity and currency.maxWeeklyQuantity > 0
         and currency.quantityEarnedThisWeek and currency.quantityEarnedThisWeek >= currency.maxWeeklyQuantity
     if weeklyCapReached then
@@ -58,27 +56,24 @@ end
 local function loadBar(sidebar)
     addon.debugMessage("Loading sidebar: currencies...")
 
+    local dividerFrame = sidebar:CreateTexture(nil, "ARTWORK")
+    dividerFrame:SetSize(254, 20)
+    dividerFrame:SetPoint("TOPLEFT", sidebar, "TOPLEFT", 23, -175)
+    dividerFrame:SetAtlas("midnight-scenario-bar-frame", false)
+
+    local dividerFill = sidebar:CreateTexture(nil, "BACKGROUND")
+    dividerFill:SetSize(220, 12)
+    dividerFill:SetPoint("CENTER", sidebar, "TOPLEFT", 23 + 127, -175 - 10)
+    dividerFill:SetAtlas("midnight-scenario-barfill", false)
+
     local frame = CreateFrame(
         "Frame",
         nil,
-        sidebar,
-        "BackdropTemplate"
+        sidebar
     )
 
     frame:SetSize(254, 20 + (#CURRENCY_IDS * 30))
-    frame:SetPoint("TOPLEFT", sidebar, "TOPLEFT", 23, -180)
-
-    --frame:SetBackdrop({
-    --    bgFile = "Interface\\Buttons\\WHITE8X8",
-    --    edgeFile = "Interface\\Buttons\\WHITE8X8",
-    --    tile = false,
-    --    tileSize = 0,
-    --    edgeSize = 1,
-    --    insets = { left = 0, right = 0, top = 0, bottom = 0 }
-    --})
-    --
-    --frame:SetBackdropColor(0.1, 0.1, 0.1, 0.8)
-    --frame:SetBackdropBorderColor(0.3, 0.3, 0.3, 1)
+    frame:SetPoint("TOPLEFT", sidebar, "TOPLEFT", 23, -200)
 
     for index, currencyId in ipairs(CURRENCY_IDS) do
         loadCurrency(frame, currencyId, index)
