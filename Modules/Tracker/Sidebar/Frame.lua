@@ -1,28 +1,32 @@
 local addonName, addon = ...
 
+local frame
+
 local function create(mainFrame)
-    local frame = CreateFrame(
-        "Frame",
-        nil,
-        mainFrame,
-        "BackdropTemplate"
-    )
+    if frame then return frame end
+
+    frame = CreateFrame("Frame", nil, mainFrame)
 
     frame:SetSize(300, 550)
     frame:SetPoint("TOPLEFT", mainFrame)
 
-    frame:SetBackdrop({
-        bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background-Dark",
-        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-        tile = true,
-        tileEdge = true,
-        tileSize = 32,
-        edgeSize = 20,
-        insets = { left = 5, right = 5, top = 5, bottom = 5 }
-    })
+    local bg = frame:CreateTexture(nil, "BACKGROUND")
+    bg:SetAllPoints(frame)
+    bg:SetAtlas("ui-frame-midnight-cardparchmentwider", false)
+
+    local borderFrame = CreateFrame("Frame", nil, frame)
+    borderFrame:SetAllPoints(frame)
+    borderFrame:SetScale(0.75)
+
+    local border = borderFrame:CreateTexture(nil, "OVERLAY")
+    border:SetAllPoints(borderFrame)
+    border:SetAtlas("ui-frame-midnight-border", false)
 
     frame:SetScript("OnShow", function()
+        if frame.contentLoaded then return end
+        frame.contentLoaded = true
         MPT_Sidebar.getScore(frame)
+        MPT_Sidebar.getKeystone(frame)
         MPT_Sidebar.getCurrencies(frame)
     end)
 

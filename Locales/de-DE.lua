@@ -25,7 +25,9 @@ local locale = {
     ["DUNGEON_COMPLETED"] = "Dungeon abgeschlossen!",
     ["TIMER_EXPIRED"] = "Zeit abgelaufen",
     ["DEATHS"] = "Tode: %d",
-    ["KEYSTONE_LEVEL"] = "Schlüsselstein Level: %d"
+    ["KEYSTONE_LEVEL"] = "Schlüsselstein Level: %d",
+    ["SIDEBAR_NO_KEYSTONE"] = "Kein Schlüsselstein im Inventar",
+    ["SIDEBAR_KEYSTONE_LEVEL"] = "Key Level"
 }
 
 for key, value in pairs(locale) do

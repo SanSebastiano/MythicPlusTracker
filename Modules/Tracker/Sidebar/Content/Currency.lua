@@ -66,7 +66,7 @@ local function loadBar(sidebar)
     )
 
     frame:SetSize(254, 20 + (#CURRENCY_IDS * 30))
-    frame:SetPoint("TOPLEFT", sidebar, "TOPLEFT", 23, -120)
+    frame:SetPoint("TOPLEFT", sidebar, "TOPLEFT", 23, -180)
 
     --frame:SetBackdrop({
     --    bgFile = "Interface\\Buttons\\WHITE8X8",

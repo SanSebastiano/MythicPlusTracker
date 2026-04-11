@@ -21,7 +21,9 @@ local locale = {
     ["DUNGEON_COMPLETED"] = "Dungeon completed!",
     ["TIMER_EXPIRED"] = "Timer expired",
     ["DEATHS"] = "Deaths: %d",
-    ["KEYSTONE_LEVEL"] = "Keystone Level: %d"
+    ["KEYSTONE_LEVEL"] = "Keystone Level: %d",
+    ["SIDEBAR_NO_KEYSTONE"] = "No keystone in bag",
+    ["SIDEBAR_KEYSTONE_LEVEL"] = "Key Level"
 }
 
 for key, value in pairs(locale) do
