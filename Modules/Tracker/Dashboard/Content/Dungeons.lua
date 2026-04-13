@@ -17,7 +17,7 @@ end
 
 local function buildRunLookup()
     local lookup = {}
-    for _, run in ipairs(C_MythicPlus.GetRunHistory(true, false, true) or {}) do
+    for _, run in ipairs(C_MythicPlus.GetRunHistory(true, true, true) or {}) do
         local id = run.mapChallengeModeID
         if not lookup[id] then
             lookup[id] = { weeklyBest = 0, runs = 0, success = 0, weeklyRuns = 0, weeklySuccess = 0 }
@@ -126,6 +126,19 @@ local function createDungeonCard(parent, mapID, col, row, scoreLookup, runLookup
 end
 
 function MPT_Dashboard:loadDungeons(frame)
+    if UnitLevel("player") < GetMaxPlayerLevel() then
+        local icon = frame:CreateTexture(nil, "ARTWORK")
+        icon:SetSize(63, 76)
+        icon:SetPoint("CENTER", frame, "CENTER", 0, 36)
+        icon:SetAtlas("Bags-padlock-authenticator", false)
+
+        local msg = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+        msg:SetPoint("TOP", icon, "BOTTOM", 0, -12)
+        msg:SetJustifyH("CENTER")
+        msg:SetText(addon.locale["DASHBOARD_NOT_MAX_LEVEL"])
+        return
+    end
+
     local dungeons = C_ChallengeMode.GetMapTable()
     if not dungeons then return end
 

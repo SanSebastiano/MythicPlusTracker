@@ -24,6 +24,7 @@ local locale = {
     ["KEYSTONE_LEVEL"] = "Keystone Level: %d",
     ["SIDEBAR_NO_KEYSTONE"] = "No keystone in bag",
     ["SIDEBAR_KEYSTONE_LEVEL"] = "Key Level",
+    ["DASHBOARD_NOT_MAX_LEVEL"] = "You have not reached max level yet.",
     -- Dashboard
     ["DASHBOARD_OVERALL"] = "Overall",
     ["DASHBOARD_WEEKLY"] = "Weekly",

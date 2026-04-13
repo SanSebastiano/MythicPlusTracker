@@ -24,7 +24,9 @@ local function loadKeystone(sidebar)
 
     if not mapID or not level then
         local noKeyText = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-        noKeyText:SetPoint("LEFT", frame, "LEFT", 0, 0)
+        noKeyText:SetAllPoints(frame)
+        noKeyText:SetJustifyH("CENTER")
+        noKeyText:SetJustifyV("MIDDLE")
         noKeyText:SetText(addon.colors.POOR .. addon.locale["SIDEBAR_NO_KEYSTONE"] .. addon.colors.RESET)
         return
     end

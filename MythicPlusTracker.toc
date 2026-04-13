@@ -4,6 +4,9 @@
 ## Version: 1.0.0
 ## Notes: Tracks your Mythic+ dungeon runs, group members, deaths, and completion status
 ## Notes-deDE: Verfolgt die Mythic+-Dungeon-Runs, Gruppenmitglieder, Todesfälle und den Abschlussstatus
+## IconTexture: Interface\Icons\Inv_relics_hourglass
+## Category-enUS: Dungeons & Raids
+## Category-deDE: Dungeons & Schlachtzüge
 ## SavedVariables: MythicPlusTrackerDB
 
 init.lua

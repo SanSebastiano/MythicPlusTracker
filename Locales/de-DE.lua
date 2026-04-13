@@ -28,6 +28,7 @@ local locale = {
     ["KEYSTONE_LEVEL"] = "Schlüsselstein Level: %d",
     ["SIDEBAR_NO_KEYSTONE"] = "Kein Schlüsselstein im Inventar",
     ["SIDEBAR_KEYSTONE_LEVEL"] = "Key Level",
+    ["DASHBOARD_NOT_MAX_LEVEL"] = "Du hast noch nicht die Höchststufe erreicht.",
     -- Dashboard
     ["DASHBOARD_OVERALL"] = "Gesamt",
     ["DASHBOARD_WEEKLY"] = "Wöchentlich",
