@@ -126,19 +126,6 @@ local function createDungeonCard(parent, mapID, col, row, scoreLookup, runLookup
 end
 
 function MPT_Dashboard:loadDungeons(frame)
-    if UnitLevel("player") < GetMaxPlayerLevel() then
-        local icon = frame:CreateTexture(nil, "ARTWORK")
-        icon:SetSize(63, 76)
-        icon:SetPoint("CENTER", frame, "CENTER", 0, 36)
-        icon:SetAtlas("Bags-padlock-authenticator", false)
-
-        local msg = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-        msg:SetPoint("TOP", icon, "BOTTOM", 0, -12)
-        msg:SetJustifyH("CENTER")
-        msg:SetText(addon.locale["DASHBOARD_NOT_MAX_LEVEL"])
-        return
-    end
-
     local dungeons = C_ChallengeMode.GetMapTable()
     if not dungeons then return end
 

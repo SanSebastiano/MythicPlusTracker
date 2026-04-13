@@ -4,9 +4,11 @@
 
     <Include file='Tracker\Dashboard\init.lua'/>
     <Include file='Tracker\Dashboard\Frame.lua'/>
+    <Include file='Tracker\Dashboard\Content\NotMaxLevel.lua'/>
     <Include file='Tracker\Dashboard\Content\Dungeons.lua'/>
 
     <Include file='Tracker\Sidebar\init.lua'/>
+    <Include file='Tracker\Sidebar\Content\Divider.lua'/>
     <Include file='Tracker\Sidebar\Content\Currency.lua'/>
     <Include file='Tracker\Sidebar\Content\Keystone.lua'/>
     <Include file='Tracker\Sidebar\Content\Score.lua'/>
