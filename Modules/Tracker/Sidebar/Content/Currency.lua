@@ -56,15 +56,7 @@ end
 local function loadBar(sidebar)
     addon.debugMessage("Loading sidebar: currencies...")
 
-    local dividerFrame = sidebar:CreateTexture(nil, "ARTWORK")
-    dividerFrame:SetSize(254, 20)
-    dividerFrame:SetPoint("TOPLEFT", sidebar, "TOPLEFT", 23, -175)
-    dividerFrame:SetAtlas("midnight-scenario-bar-frame", false)
-
-    local dividerFill = sidebar:CreateTexture(nil, "BACKGROUND")
-    dividerFill:SetSize(220, 12)
-    dividerFill:SetPoint("CENTER", sidebar, "TOPLEFT", 23 + 127, -175 - 10)
-    dividerFill:SetAtlas("midnight-scenario-barfill", false)
+    addon.createDivider(sidebar, 23, -175)
 
     local frame = CreateFrame(
         "Frame",

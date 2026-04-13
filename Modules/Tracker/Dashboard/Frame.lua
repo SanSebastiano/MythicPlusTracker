@@ -26,6 +26,12 @@ local function create(mainFrame)
         if frame.dungeonsLoaded then return end
         frame.dungeonsLoaded = true
         addon.debugMessage("Dashboard Frame OnShow")
+
+        if UnitLevel("player") < GetMaxPlayerLevel() then
+            MPT_Dashboard:loadNotMaxLevel(frame)
+            return
+        end
+
         MPT_Dashboard:loadDungeons(frame)
     end)
 
