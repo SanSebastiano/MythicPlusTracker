@@ -1,12 +1,14 @@
+<div align="center">
+  
 # Mythic Plus Tracker
-
-> A World of Warcraft retail addon that gives you a clear, at-a-glance overview of your Mythic+ progress — dungeons, score, keystone, and Weekly Vault — all in one compact UI.
 
 ![WoW Interface](https://img.shields.io/badge/WoW%20Interface-120001-blueviolet)
 ![Version](https://img.shields.io/badge/Version-1.0.0-blue)
-![License](https://img.shields.io/github/license/SanSebastiano/MythicPlusTracker)
+![License: All rights reserved](https://img.shields.io/badge/License-All%20rights%20reserved-red)
 
----
+</div>
+
+A World of Warcraft retail addon that gives you a clear, at-a-glance overview of your Mythic+ progress — dungeons, score, keystone, and Weekly Vault — all in one compact UI.
 
 ## Features
 
