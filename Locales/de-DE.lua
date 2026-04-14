@@ -28,6 +28,12 @@ local locale = {
     ["KEYSTONE_LEVEL"] = "Schlüsselstein Level: %d",
     ["SIDEBAR_NO_KEYSTONE"] = "Kein Schlüsselstein im Inventar",
     ["SIDEBAR_KEYSTONE_LEVEL"] = "Key Level",
+    ["SIDEBAR_VAULT_TITLE"] = "Wochenkammer",
+    ["SIDEBAR_VAULT_SLOT"] = "Slot %d",
+    ["SIDEBAR_VAULT_UNLOCK_RUNS"] = "Noch %d M+-Runs zum Freischalten",
+    ["SIDEBAR_VAULT_PROGRESS"] = "%d / %d M+-Runs absolviert",
+    ["SIDEBAR_VAULT_REWARD_ILVL"] = "Belohnungs-Itemlevel: %d",
+    ["SIDEBAR_VAULT_KEY_LEVEL"] = "Bester Run: M+%d",
     ["DASHBOARD_NOT_MAX_LEVEL"] = "Du hast noch nicht die Höchststufe erreicht.",
     -- Dashboard
     ["DASHBOARD_OVERALL"] = "Gesamt",

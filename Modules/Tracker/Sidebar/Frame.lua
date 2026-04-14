@@ -10,7 +10,7 @@ local function create(mainFrame)
     frame:SetSize(300, 550)
     frame:SetPoint("TOPLEFT", mainFrame)
 
-    local bg = frame:CreateTexture(nil, "BACKGROUND")
+    local ba = frame:CreateTexture(nil, "BACKGROUND")
     bg:SetAllPoints(frame)
     bg:SetAtlas("ui-frame-midnight-cardparchmentwider", false)
 
@@ -27,6 +27,7 @@ local function create(mainFrame)
         frame.contentLoaded = true
         MPT_Sidebar.getScore(frame)
         MPT_Sidebar.getKeystone(frame)
+        MPT_Sidebar.getWeeklyVault(frame)
         MPT_Sidebar.getCurrencies(frame)
     end)
 

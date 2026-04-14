@@ -56,7 +56,7 @@ end
 local function loadBar(sidebar)
     addon.debugMessage("Loading sidebar: currencies...")
 
-    addon.createDivider(sidebar, 23, -175)
+    addon.createDivider(sidebar, 23, -270)
 
     local frame = CreateFrame(
         "Frame",
@@ -65,7 +65,7 @@ local function loadBar(sidebar)
     )
 
     frame:SetSize(254, 20 + (#CURRENCY_IDS * 30))
-    frame:SetPoint("TOPLEFT", sidebar, "TOPLEFT", 23, -200)
+    frame:SetPoint("TOPLEFT", sidebar, "TOPLEFT", 23, -295)
 
     for index, currencyId in ipairs(CURRENCY_IDS) do
         loadCurrency(frame, currencyId, index)

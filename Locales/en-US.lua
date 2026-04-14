@@ -24,6 +24,12 @@ local locale = {
     ["KEYSTONE_LEVEL"] = "Keystone Level: %d",
     ["SIDEBAR_NO_KEYSTONE"] = "No keystone in bag",
     ["SIDEBAR_KEYSTONE_LEVEL"] = "Key Level",
+    ["SIDEBAR_VAULT_TITLE"] = "Weekly Vault",
+    ["SIDEBAR_VAULT_SLOT"] = "Slot %d",
+    ["SIDEBAR_VAULT_UNLOCK_RUNS"] = "Complete %d more M+ to unlock",
+    ["SIDEBAR_VAULT_PROGRESS"] = "%d / %d M+ runs completed",
+    ["SIDEBAR_VAULT_REWARD_ILVL"] = "Reward Item Level: %d",
+    ["SIDEBAR_VAULT_KEY_LEVEL"] = "Best Run: M+%d",
     ["DASHBOARD_NOT_MAX_LEVEL"] = "You have not reached max level yet.",
     -- Dashboard
     ["DASHBOARD_OVERALL"] = "Overall",
