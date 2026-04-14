@@ -10,9 +10,9 @@ local function create(mainFrame)
     frame:SetSize(300, 550)
     frame:SetPoint("TOPLEFT", mainFrame)
 
-    local ba = frame:CreateTexture(nil, "BACKGROUND")
-    bg:SetAllPoints(frame)
-    bg:SetAtlas("ui-frame-midnight-cardparchmentwider", false)
+    local background = frame:CreateTexture(nil, "BACKGROUND")
+    background:SetAllPoints(frame)
+    background:SetAtlas("ui-frame-midnight-cardparchmentwider", false)
 
     local borderFrame = CreateFrame("Frame", nil, frame)
     borderFrame:SetAllPoints(frame)
