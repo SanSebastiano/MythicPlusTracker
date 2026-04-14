@@ -17,7 +17,7 @@ Thank you for your interest in contributing! This document explains how to repor
 
 ## Pull Requests
 
-1. Fork the repository and create a branch from `main`.
+1. Fork the repository and create a branch from `develop`.
 2. Keep changes focused — one feature or fix per pull request.
 3. Follow the existing code style (see below).
 4. Test your changes in-game before submitting.
