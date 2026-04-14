@@ -46,12 +46,6 @@ function MPT_MinimapButton:load()
                 end)
             end
 
-        elseif clickedButton == "MiddleButton" then
-            GenericTraitUI_LoadUI()
-            GenericTraitFrame:SetSystemID(29)
-            GenericTraitFrame:SetTreeID(1115)
-            ToggleFrame(GenericTraitFrame)
-
         elseif clickedButton == "RightButton" then
             if WeeklyRewardsFrame then
                 WeeklyRewardsFrame:Show()
