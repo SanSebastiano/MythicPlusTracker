@@ -2,8 +2,7 @@ name: Main Validation
 
 on:
   pull_request:
-    branches:
-      - main
+    branches: [ main, develop ]
 
 jobs:
   lua-quality:
