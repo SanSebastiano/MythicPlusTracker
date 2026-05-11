@@ -23,21 +23,23 @@ local function loadCurrency(frame, currencyId, index)
     local name = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     name:SetPoint("LEFT", icon, "RIGHT", 5, 0)
     name:SetWidth(170)
+    name:SetMaxLines(1)
     name:SetJustifyH("LEFT")
-    name:SetText(currency.name)
-    name:SetTextColor(1, 1, 1, 1)
+    name:SetText(addon.colors.ARTIFACT .. currency.name .. addon.colors.RESET)
 
     local amount = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     amount:SetPoint("RIGHT", frame, "TOPRIGHT", -5, yOffset - 10)
     amount:SetJustifyH("RIGHT")
-    amount:SetText(currency.quantity)
 
-    local weeklyCapReached = currency.maxWeeklyQuantity and currency.maxWeeklyQuantity > 0
-        and currency.quantityEarnedThisWeek and currency.quantityEarnedThisWeek >= currency.maxWeeklyQuantity
+    local weeklyCapReached = false
+    if currency.maxWeeklyQuantity and currency.maxWeeklyQuantity > 0 then
+        local earned = currency.quantityEarnedThisWeek or 0
+        weeklyCapReached = earned >= currency.maxWeeklyQuantity
+    end
     if weeklyCapReached then
-        amount:SetTextColor(0, 1, 0, 1)
+        amount:SetText(addon.colors.SUCCESS .. currency.quantity .. addon.colors.RESET)
     else
-        amount:SetTextColor(1, 1, 1, 1)
+        amount:SetText(addon.colors.WHITE .. currency.quantity .. addon.colors.RESET)
     end
 
     local tooltipButton = CreateFrame("Button", nil, frame)
@@ -56,7 +58,7 @@ end
 local function loadBar(sidebar)
     addon.debugMessage("Loading sidebar: currencies...")
 
-    addon.createDivider(sidebar, 23, -270)
+    addon.createDivider(sidebar, 23, -295)
 
     local frame = CreateFrame(
         "Frame",
@@ -65,7 +67,7 @@ local function loadBar(sidebar)
     )
 
     frame:SetSize(254, 20 + (#CURRENCY_IDS * 30))
-    frame:SetPoint("TOPLEFT", sidebar, "TOPLEFT", 23, -295)
+    frame:SetPoint("TOPLEFT", sidebar, "TOPLEFT", 23, -320)
 
     for index, currencyId in ipairs(CURRENCY_IDS) do
         loadCurrency(frame, currencyId, index)

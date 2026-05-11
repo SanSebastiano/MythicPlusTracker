@@ -26,6 +26,7 @@ local function create(mainFrame)
         if frame.contentLoaded then return end
         frame.contentLoaded = true
         MPT_Sidebar.getScore(frame)
+        MPT_Sidebar.getAffixes(frame)
         MPT_Sidebar.getKeystone(frame)
         MPT_Sidebar.getWeeklyVault(frame)
         MPT_Sidebar.getCurrencies(frame)
