@@ -17,20 +17,31 @@ end
 
 local function buildRunLookup()
     local lookup = {}
+    local currentSeason = C_MythicPlus.GetCurrentSeason()
+
     for _, run in ipairs(C_MythicPlus.GetRunHistory(true, true, true) or {}) do
-        local id = run.mapChallengeModeID
-        if not lookup[id] then
-            lookup[id] = { weeklyBest = 0, runs = 0, success = 0, weeklyRuns = 0, weeklySuccess = 0 }
-        end
-        local entry = lookup[id]
-        entry.runs = entry.runs + 1
-        if run.completed then entry.success = entry.success + 1 end
-        if run.thisWeek then
-            entry.weeklyRuns = entry.weeklyRuns + 1
-            if run.completed then entry.weeklySuccess = entry.weeklySuccess + 1 end
-            if run.level > entry.weeklyBest then entry.weeklyBest = run.level end
-        end
+        --if run.seseason  == currentSeason then
+            local id = run.mapChallengeModeID
+
+            if not lookup[id] then
+                lookup[id] = { weeklyBest = 0, runs = 0, success = 0, weeklyRuns = 0, weeklySuccess = 0 }
+            end
+
+            local entry = lookup[id]
+            entry.runs = entry.runs + 1
+
+            if run.completed then
+                entry.success = entry.success + 1
+            end
+
+            if run.thisWeek then
+                entry.weeklyRuns = entry.weeklyRuns + 1
+                if run.completed then entry.weeklySuccess = entry.weeklySuccess + 1 end
+                if run.level > entry.weeklyBest then entry.weeklyBest = run.level end
+            end
+        --end
     end
+
     return lookup
 end
 

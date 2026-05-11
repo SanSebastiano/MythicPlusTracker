@@ -30,6 +30,9 @@ local locale = {
     ["SIDEBAR_VAULT_PROGRESS"] = "%d / %d M+ runs completed",
     ["SIDEBAR_VAULT_REWARD_ILVL"] = "Reward Item Level: %d",
     ["SIDEBAR_VAULT_KEY_LEVEL"] = "Best Run: M+%d",
+    ["SIDEBAR_VAULT_NOT_AVAILABLE"] = "–",
+    ["SIDEBAR_VAULT_UNLOCKED"] = "Unlocked",
+    ["SIDEBAR_VAULT_TOP_RUNS"] = "Top Runs This Week:",
     ["DASHBOARD_NOT_MAX_LEVEL"] = "You have not reached max level yet.",
     -- Dashboard
     ["DASHBOARD_OVERALL"] = "Overall",

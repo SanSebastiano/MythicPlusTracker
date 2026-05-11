@@ -17,7 +17,7 @@ local function loadKeystone(sidebar)
 
     local frame = CreateFrame("Frame", nil, sidebar)
     frame:SetSize(254, 50)
-    frame:SetPoint("TOPLEFT", sidebar, "TOPLEFT", 23, -120)
+    frame:SetPoint("TOPLEFT", sidebar, "TOPLEFT", 23, -155)
 
     local mapID = C_MythicPlus.GetOwnedKeystoneChallengeMapID()
     local level = C_MythicPlus.GetOwnedKeystoneLevel()
@@ -43,7 +43,7 @@ local function loadKeystone(sidebar)
     nameText:SetPoint("LEFT", icon, "RIGHT", 5, 0)
     nameText:SetPoint("RIGHT", frame, "RIGHT", 40, 0)
     nameText:SetJustifyH("LEFT")
-    nameText:SetText(name)
+    nameText:SetText(addon.colors.ARTIFACT .. name .. addon.colors.RESET)
 
     local levelText = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     levelText:SetPoint("RIGHT", frame, "RIGHT", -5, 0)

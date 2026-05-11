@@ -9,21 +9,35 @@ local function handleSlashCommand(msg)
 
     elseif command == "test" then
         C_MythicPlus.RequestMapInfo()
-        print('C_MythicPlus.GetCurrentSeason(): ' .. C_MythicPlus.GetCurrentSeason())
         print('C_MythicPlus.IsMythicPlusActive(): ' .. tostring(C_MythicPlus.IsMythicPlusActive()))
+        print('C_MythicPlus.GetCurrentSeason(): ' .. C_MythicPlus.GetCurrentSeason())
         print('C_MythicPlus.GetRunHistory():')
-        for i, run in ipairs(C_MythicPlus.GetRunHistory()) do
-            print(string.format("Run %d: %s, %s, %s, %s", i, run.mapChallengeModeID, run.completed, run.bestRunTime, run.bestRunLevel))
-        end
-        print('C_ChallengeMode.GetMapScoreInfo()')
-        for key, value in pairs(C_ChallengeMode.GetMapScoreInfo()) do
-            print(key)
-            for subKey, subValue in pairs(value) do
-                if subKey == "mapChallengeModeID" then
-                    print(C_ChallengeMode.GetMapUIInfo(subValue))
+         for i, run in ipairs(C_MythicPlus.GetRunHistory(true, true, true)) do
+                local dateStr = ""
+                if run.completionDate then
+                    dateStr = string.format(" | Date: %04d-%02d-%02d %02d:%02d (Weekday: %d)",
+                        run.completionDate.year,
+                        run.completionDate.month,
+                        run.completionDate.day,
+                        run.completionDate.hour,
+                        run.completionDate.minute,
+                        run.completionDate.weekday
+                    )
                 end
+
+                print(string.format(
+                    "Run %d: MapID=%d, Level=%d, Score=%.1f, Duration=%ds, Completed=%s, ThisWeek=%s, Season=%d%s",
+                    i,
+                    run.mapChallengeModeID,
+                    run.level,
+                    run.runScore or 0,
+                    run.durationSec or 0,
+                    tostring(run.completed),
+                    tostring(run.thisWeek),
+                    run.season or 0,
+                    dateStr
+                ))
             end
-        end
 
     elseif command == "debug on" then
         addon.setDebugMode(true)
