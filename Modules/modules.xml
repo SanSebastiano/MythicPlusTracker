@@ -3,6 +3,7 @@
     <Include file='Tracker\MainFrame.lua'/>
 
     <Include file='Tracker\Dashboard\init.lua'/>
+    <Include file='Tracker\Dashboard\Navigation.lua'/>
     <Include file='Tracker\Dashboard\Frame.lua'/>
     <Include file='Tracker\Dashboard\Content\NotMaxLevel.lua'/>
     <Include file='Tracker\Dashboard\Content\Dungeons.lua'/>

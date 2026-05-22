@@ -1,6 +1,7 @@
 local addonName, addon = ...
 
 local frame
+local navHeight = 0
 
 local function create(mainFrame)
     if frame then return frame end
@@ -22,6 +23,8 @@ local function create(mainFrame)
     border:SetAllPoints(borderFrame)
     border:SetAtlas("ui-frame-midnight-border", false)
 
+    navHeight = MPT_Dashboard:createNavigation(frame)
+
     frame:SetScript("OnShow", function()
         if frame.dungeonsLoaded then return end
         frame.dungeonsLoaded = true
@@ -32,7 +35,7 @@ local function create(mainFrame)
             return
         end
 
-        MPT_Dashboard:loadDungeons(frame)
+        MPT_Dashboard:loadDungeons(frame, navHeight)
     end)
 
     return frame
