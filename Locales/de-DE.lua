@@ -38,12 +38,25 @@ local locale = {
     ["SIDEBAR_VAULT_UNLOCKED"] = "Freigeschaltet",
     ["SIDEBAR_VAULT_TOP_RUNS"] = "Top-Runs diese Woche:",
     ["DASHBOARD_NOT_MAX_LEVEL"] = "Du hast noch nicht die Höchststufe erreicht.",
+    -- Dashboard navigation tabs
+    ["DASHBOARD_TAB_OVERVIEW"]  = "Übersicht",
+    ["DASHBOARD_TAB_RUNS"]      = "Läufe",
+    ["DASHBOARD_TAB_KEYSTONES"] = "Schlüsselsteine",
+    -- Dungeon table column headers
+    ["DUNGEON_COL_DUNGEON"]    = "Dungeon",
+    ["DUNGEON_COL_BEST_LEVEL"] = "Stufe",
+    ["DUNGEON_COL_SCORE"]      = "Wertung",
+    ["DUNGEON_COL_RUNS"]       = "Läufe",
+    ["DUNGEON_COL_SUCCESS"]    = "Erfolge",
+    ["DUNGEON_COL_TIME_LIMIT"] = "Limit",
+    ["DUNGEON_COL_BEST_TIME"]  = "Beste Zeit",
     -- Dashboard
     ["DASHBOARD_OVERALL"] = "Gesamt",
     ["DASHBOARD_WEEKLY"] = "Wöchentlich",
     ["DASHBOARD_BEST"] = "Bestes",
     ["DASHBOARD_RUNS"] = "Läufe",
     ["DASHBOARD_SUCCESS"] = "Erfolgreich",
+    ["DASHBOARD_RUN_TIME"] = "Zeit",
 }
 
 for key, value in pairs(locale) do

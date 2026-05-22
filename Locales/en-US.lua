@@ -34,12 +34,25 @@ local locale = {
     ["SIDEBAR_VAULT_UNLOCKED"] = "Unlocked",
     ["SIDEBAR_VAULT_TOP_RUNS"] = "Top Runs This Week:",
     ["DASHBOARD_NOT_MAX_LEVEL"] = "You have not reached max level yet.",
+    -- Dashboard navigation tabs
+    ["DASHBOARD_TAB_OVERVIEW"]  = "Overview",
+    ["DASHBOARD_TAB_RUNS"]      = "Runs",
+    ["DASHBOARD_TAB_KEYSTONES"] = "Keystones",
+    -- Dungeon table column headers
+    ["DUNGEON_COL_DUNGEON"]    = "Dungeon",
+    ["DUNGEON_COL_BEST_LEVEL"] = "Level",
+    ["DUNGEON_COL_SCORE"]      = "Score",
+    ["DUNGEON_COL_RUNS"]       = "Runs",
+    ["DUNGEON_COL_SUCCESS"]    = "Success",
+    ["DUNGEON_COL_TIME_LIMIT"] = "Limit",
+    ["DUNGEON_COL_BEST_TIME"]  = "Best Time",
     -- Dashboard
     ["DASHBOARD_OVERALL"] = "Overall",
     ["DASHBOARD_WEEKLY"] = "Weekly",
     ["DASHBOARD_BEST"] = "Best",
     ["DASHBOARD_RUNS"] = "Runs",
     ["DASHBOARD_SUCCESS"] = "Success",
+    ["DASHBOARD_RUN_TIME"] = "Time",
 }
 
 for key, value in pairs(locale) do

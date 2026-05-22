@@ -1,3 +1,4 @@
+---@diagnostic disable: unnecessary-if
 local addonName, addon = ...
 
 local SLOT_COUNT   = 3
@@ -13,8 +14,6 @@ local ANCHOR_Y     = -235
 local M_PLUS_TYPE  = Enum.WeeklyRewardChestThresholdType and
                      Enum.WeeklyRewardChestThresholdType.Activities or 3
 
-local GetDetailedItemLevelInfo = C_Item.GetDetailedItemLevelInfo
-
 -- Methods borrowed from WeeklyRewardsActivityMixin for the Blizzard tooltip chain
 local INHERIT_METHODS = {
     "ShowTooltip",
@@ -28,11 +27,11 @@ local INHERIT_METHODS = {
     "AddRaidCompletionInfoToGameTooltip",
 }
 
-local function getActivityIlvl(activity)
+local function getActivityItemLevel(activity)
     if not activity then return nil end
     local itemLink = C_WeeklyRewards.GetExampleRewardItemHyperlinks(activity.id)
     if itemLink and itemLink ~= "" and itemLink ~= "[]" then
-        return GetDetailedItemLevelInfo(itemLink)
+        return C_Item.GetDetailedItemLevelInfo(itemLink)
     end
     return nil
 end
@@ -44,19 +43,19 @@ local function buildSlot(container, activity, slotIndex, BlizzardMixin)
     slot:SetSize(SLOT_WIDTH, SLOT_HEIGHT)
     slot:SetPoint("TOPLEFT", container, "TOPLEFT", xOff, 0)
 
-    local bg = slot:CreateTexture(nil, "BACKGROUND")
-    bg:SetAllPoints(slot)
-    bg:SetAtlas("ui-frame-midnight-portraitdisable", true)
+    local background = slot:CreateTexture(nil, "BACKGROUND")
+    background:SetAllPoints(slot)
+    background:SetAtlas("ui-frame-midnight-portraitdisable", true)
 
     local unlocked = activity and (activity.progress >= activity.threshold)
-    local ilvl     = getActivityIlvl(activity)
+    local itemLevel     = getActivityItemLevel(activity)
 
     local centerText = slot:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     centerText:SetPoint("CENTER", slot, "CENTER", 0, 0)
     centerText:SetJustifyH("CENTER")
     if unlocked then
-        if ilvl then
-            centerText:SetText(addon.colors.ARTIFACT .. ilvl .. addon.colors.RESET)
+        if itemLevel then
+            centerText:SetText(addon.colors.ARTIFACT .. itemLevel .. addon.colors.RESET)
         else
             centerText:SetText(addon.colors.ARTIFACT .. "?" .. addon.colors.RESET)
         end
@@ -66,22 +65,22 @@ local function buildSlot(container, activity, slotIndex, BlizzardMixin)
         centerText:SetText(addon.colors.POOR .. "-" .. addon.colors.RESET)
     end
 
-    local btn = CreateFrame("Button", nil, slot)
-    btn:SetAllPoints(slot)
+    local button = CreateFrame("Button", nil, slot)
+    button:SetAllPoints(slot)
 
     if BlizzardMixin then
         for _, method in ipairs(INHERIT_METHODS) do
             if BlizzardMixin[method] then
-                btn[method] = BlizzardMixin[method]
+                button[method] = BlizzardMixin[method]
             end
         end
-        btn.info          = activity
-        btn.unlocked      = unlocked
-        btn.progressDelta = activity and math.max(0, activity.threshold - activity.progress) or 0
-        btn.CanShowPreviewItemTooltip = function(self) return self.unlocked end
+        button.info          = activity
+        button.unlocked      = unlocked
+        button.progressDelta = activity and math.max(0, activity.threshold - activity.progress) or 0
+        button.CanShowPreviewItemTooltip = function(self) return self.unlocked end
     end
 
-    btn:SetScript("OnEnter", function(self)
+    button:SetScript("OnEnter", function(self)
         if BlizzardMixin and self.info then
             WeeklyRewardsActivityMixin.OnEnter(self)
             local tt = GameTooltip
@@ -92,11 +91,11 @@ local function buildSlot(container, activity, slotIndex, BlizzardMixin)
         end
     end)
 
-    btn:SetScript("OnClick", function()
+    button:SetScript("OnClick", function()
         WeeklyRewards_ShowUI()
     end)
 
-    btn:SetScript("OnLeave", function()
+    button:SetScript("OnLeave", function()
         GameTooltip:Hide()
     end)
 end
