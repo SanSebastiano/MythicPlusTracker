@@ -8,28 +8,26 @@ local CURRENCY_IDS = {
     3383,
 }
 
+local SLOT_W    = 34   -- width per currency slot
+local SLOT_GAP  = 4    -- horizontal gap between slots
+local ICON_SIZE = 22   -- icon dimensions
+local SLOT_H    = ICON_SIZE + 4 + 16  -- icon + gap + amount text
+
 local function loadCurrency(frame, currencyId, index)
     local currency = C_CurrencyInfo.GetCurrencyInfo(currencyId)
-
     if not currency then return end
 
-    local yOffset = -10 - ((index - 1) * 30)
+    local xOffset = (index - 1) * (SLOT_W + SLOT_GAP)
 
     local icon = frame:CreateTexture(nil, "ARTWORK")
-    icon:SetSize(20, 20)
-    icon:SetPoint("TOPLEFT", frame, "TOPLEFT", 5, yOffset)
+    icon:SetSize(ICON_SIZE, ICON_SIZE)
+    icon:SetPoint("TOPLEFT", frame, "TOPLEFT", xOffset + (SLOT_W - ICON_SIZE) / 2, 0)
     icon:SetTexture(currency.iconFileID)
 
-    local name = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    name:SetPoint("LEFT", icon, "RIGHT", 5, 0)
-    name:SetWidth(170)
-    name:SetMaxLines(1)
-    name:SetJustifyH("LEFT")
-    name:SetText(addon.colors.ARTIFACT .. currency.name .. addon.colors.RESET)
-
-    local amount = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    amount:SetPoint("RIGHT", frame, "TOPRIGHT", -5, yOffset - 10)
-    amount:SetJustifyH("RIGHT")
+    local amount = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    amount:SetSize(SLOT_W, 16)
+    amount:SetPoint("TOPLEFT", frame, "TOPLEFT", xOffset, -ICON_SIZE - 4)
+    amount:SetJustifyH("CENTER")
 
     local weeklyCapReached = false
     if currency.maxWeeklyQuantity and currency.maxWeeklyQuantity > 0 then
@@ -43,8 +41,8 @@ local function loadCurrency(frame, currencyId, index)
     end
 
     local tooltipButton = CreateFrame("Button", nil, frame)
-    tooltipButton:SetSize(frame:GetWidth() - 10, 25)
-    tooltipButton:SetPoint("TOPLEFT", frame, "TOPLEFT", 5, yOffset + 2)
+    tooltipButton:SetSize(SLOT_W, SLOT_H)
+    tooltipButton:SetPoint("TOPLEFT", frame, "TOPLEFT", xOffset, 0)
     tooltipButton:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
         GameTooltip:SetCurrencyByID(currencyId)
@@ -58,16 +56,13 @@ end
 local function loadBar(sidebar)
     addon.debugMessage("Loading sidebar: currencies...")
 
-    addon.createDivider(sidebar, 23, -295)
+    addon.createDivider(sidebar, 23, -385)
 
-    local frame = CreateFrame(
-        "Frame",
-        nil,
-        sidebar
-    )
+    local totalW = #CURRENCY_IDS * SLOT_W + (#CURRENCY_IDS - 1) * SLOT_GAP
 
-    frame:SetSize(254, 20 + (#CURRENCY_IDS * 30))
-    frame:SetPoint("TOPLEFT", sidebar, "TOPLEFT", 23, -320)
+    local frame = CreateFrame("Frame", nil, sidebar)
+    frame:SetSize(totalW, SLOT_H)
+    frame:SetPoint("TOP", sidebar, "TOP", 0, -410)
 
     for index, currencyId in ipairs(CURRENCY_IDS) do
         loadCurrency(frame, currencyId, index)

@@ -92,7 +92,7 @@ local function buildRunLookup(runHistory)
 
         if run.level > e.bestLevel then
             e.bestLevel = run.level
-            e.bestTime  = run.completionMilliseconds or 0
+            e.bestTime  = run.durationSec or 0
         end
 
         if run.score and run.score > e.bestScore then
@@ -163,9 +163,9 @@ local function formatTimeMMSS(sec)
     return string.format("%d:%02d", math.floor(sec / 60), sec % 60)
 end
 
-local function formatBestTime(ms, timeLimitSec)
-    if not ms or ms <= 0 then return "–" end
-    local s = math.floor(ms / 1000)
+local function formatBestTime(sec, timeLimitSec)
+    if not sec or sec <= 0 then return "–" end
+    local s = sec
     local str = string.format("%d:%02d", math.floor(s / 60), s % 60)
     local color = s <= timeLimitSec and addon.colors.WHITE or addon.colors.POOR
     return color .. str .. addon.colors.RESET
@@ -283,7 +283,7 @@ local function addCell(parent, x, y, w, h, text, font, justifyH)
     return fs
 end
 
-local function createTableRow(child, mapID, colX, rowY, nameW, runLookup)
+local function createTableRow(child, mapID, colX, rowY, nameW, runLookup, isLast)
     local name, _, timeLimit, texture = C_ChallengeMode.GetMapUIInfo(mapID)
     if not name then return end
 
@@ -322,12 +322,42 @@ local function createTableRow(child, mapID, colX, rowY, nameW, runLookup)
     addCell(child, colX["bestTime"], rowY, COL_W.bestTime, ROW_H,
         formatBestTime(ri and ri.bestTime, timeLimit), "GameFontHighlight", "RIGHT")
 
-    -- 1px horizontal divider at the bottom of this row
-    local rowDiv = child:CreateTexture(nil, "ARTWORK")
-    rowDiv:SetPoint("TOPLEFT",  child, "TOPLEFT",  0, rowY - ROW_H)
-    rowDiv:SetPoint("TOPRIGHT", child, "TOPRIGHT", 0, rowY - ROW_H)
-    rowDiv:SetHeight(1)
-    rowDiv:SetColorTexture(0.45, 0.45, 0.65, 0.3)
+    -- Tooltip on best time cell: title "Zeitlimit" + empty line + signed delta
+    if ri and ri.bestTime and ri.bestTime > 0 then
+        local hitFrame = CreateFrame("Frame", nil, child)
+        hitFrame:SetSize(COL_W.bestTime, ROW_H)
+        hitFrame:SetPoint("TOPLEFT", child, "TOPLEFT", colX["bestTime"], rowY)
+        hitFrame:EnableMouse(true)
+        local capturedBestTime  = ri.bestTime
+        local capturedTimeLimit = timeLimit
+        hitFrame:SetScript("OnEnter", function(self)
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            GameTooltip:SetText(
+                addon.locale["DUNGEON_TOOLTIP_TIME_LIMIT"] or "Time Limit",
+                ARTIFACT_R, ARTIFACT_G, ARTIFACT_B, 1, true)
+            local delta    = capturedTimeLimit - capturedBestTime
+            local absDelta = math.abs(delta)
+            local deltaStr = string.format("%d:%02d", math.floor(absDelta / 60), absDelta % 60)
+            if delta >= 0 then
+                GameTooltip:AddLine("+" .. deltaStr, 0, 0.8, 0, 1)
+            else
+                GameTooltip:AddLine("-" .. deltaStr, 1, 0.2, 0.2, 1)
+            end
+            GameTooltip:Show()
+        end)
+        hitFrame:SetScript("OnLeave", function()
+            GameTooltip:Hide()
+        end)
+    end
+
+    -- 1px horizontal divider at the bottom of this row (skip for the last row)
+    if not isLast then
+        local rowDiv = child:CreateTexture(nil, "ARTWORK")
+        rowDiv:SetPoint("TOPLEFT",  child, "TOPLEFT",  0, rowY - ROW_H)
+        rowDiv:SetPoint("TOPRIGHT", child, "TOPRIGHT", 0, rowY - ROW_H)
+        rowDiv:SetHeight(1)
+        rowDiv:SetColorTexture(0.45, 0.45, 0.65, 0.3)
+    end
 end
 
 -- ---------------------------------------------------------------------------
@@ -376,7 +406,7 @@ local function updateHeaderIndicators()
     for colKey, fs in pairs(headerCells) do
         local localeKey = HEADER_LOCALE[colKey]
         local label     = addon.locale[localeKey] or localeKey
-        local indicator = (colKey == sortCol) and (sortDir == "asc" and " \226\150\178" or " \226\150\188") or ""
+        local indicator = (colKey == sortCol) and (sortDir == "asc" and " ^" or " v") or ""
         fs:SetText(label .. indicator)
         fs:SetTextColor(ARTIFACT_R, ARTIFACT_G, ARTIFACT_B, 1)
     end
@@ -452,8 +482,9 @@ local function renderRows(tableFrame, dungeons, colX, nameW, runLookup)
     rowsContainer:Show()
 
     for i, entry in ipairs(entries) do
-        local rowY = -((i - 1) * ROW_H)
-        createTableRow(rowsContainer, entry.mapID, colX, rowY, nameW, runLookup)
+        local rowY   = -((i - 1) * ROW_H)
+        local isLast = (i == #entries)
+        createTableRow(rowsContainer, entry.mapID, colX, rowY, nameW, runLookup, isLast)
     end
 end
 

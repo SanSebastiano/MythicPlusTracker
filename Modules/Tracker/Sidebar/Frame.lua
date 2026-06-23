@@ -33,6 +33,7 @@ local function create(mainFrame)
         MPT_Sidebar.getAffixes(contentWrapper)
         MPT_Sidebar.getKeystone(contentWrapper)
         MPT_Sidebar.getWeeklyVault(contentWrapper)
+        MPT_Sidebar.getTraitNodes(contentWrapper)
         MPT_Sidebar.getCurrencies(contentWrapper)
     end)
 

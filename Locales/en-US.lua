@@ -46,6 +46,7 @@ local locale = {
     ["DUNGEON_COL_SUCCESS"]    = "Success",
     ["DUNGEON_COL_TIME_LIMIT"] = "Limit",
     ["DUNGEON_COL_BEST_TIME"]  = "Best Time",
+    ["DUNGEON_TOOLTIP_TIME_LIMIT"] = "Time Limit",
     -- Overview summary boxes
     ["DASHBOARD_SUMMARY_HIGHEST_KEY"]   = "Highest Keystone",
     ["DASHBOARD_SUMMARY_TOTAL_RUNS"]    = "Total Runs",
