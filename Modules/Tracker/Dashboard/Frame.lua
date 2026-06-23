@@ -1,6 +1,7 @@
 local addonName, addon = ...
 
 local frame
+local contentWrapper
 local navHeight = 0
 
 local function create(mainFrame)
@@ -26,16 +27,19 @@ local function create(mainFrame)
     navHeight = MPT_Dashboard:createNavigation(frame)
 
     frame:SetScript("OnShow", function()
-        if frame.dungeonsLoaded then return end
-        frame.dungeonsLoaded = true
+        if contentWrapper then contentWrapper:Hide() end
+
+        contentWrapper = CreateFrame("Frame", nil, frame)
+        contentWrapper:SetAllPoints(frame)
+
         addon.debugMessage("Dashboard Frame OnShow")
 
         if UnitLevel("player") < GetMaxPlayerLevel() then
-            MPT_Dashboard:loadNotMaxLevel(frame)
+            MPT_Dashboard:loadNotMaxLevel(contentWrapper)
             return
         end
 
-        MPT_Dashboard:loadDungeons(frame, navHeight)
+        MPT_Dashboard:loadDungeons(contentWrapper, navHeight)
     end)
 
     return frame

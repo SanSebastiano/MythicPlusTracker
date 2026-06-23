@@ -1,44 +1,89 @@
 local addonName, addon = ...
 
 -- Layout constants
-local PADDING_X  = 8    -- left/right padding inside the scroll child
-local ROW_H      = 38   -- height of each data row
-local HEADER_H   = 24   -- height of the header row
-local COL_GAP    = 6    -- horizontal gap between columns
-local ICON_SIZE  = 28   -- dungeon icon dimensions
+local PADDING_X  = 8    -- left/right padding inside the table frame
+local ROW_H      = 50   -- height of each data row (increased for full-height table)
+local HEADER_H   = 30   -- height of the header row
+local COL_GAP    = 8    -- horizontal gap between columns
+local ICON_SIZE  = 36   -- dungeon icon dimensions
+
+-- Summary box layout  (matches Weekly Vault slot dimensions)
+local SUMMARY_BOX_W  = 70   -- same as WeeklyVault SLOT_WIDTH
+local SUMMARY_BOX_H  = 45   -- same as WeeklyVault SLOT_HEIGHT
+local SUMMARY_GAP    = 8    -- same as WeeklyVault SLOT_GAP
+local SUMMARY_MARGIN = 8    -- vertical gap below navFrame
+local DASHBOARD_W    = 800  -- dashboard frame width (fixed in Frame.lua)
+local CONTENT_INSET  = 20   -- aligns with the divider bar left/right caps
+
+-- Key level tier definitions for the second summary row
+local TIERS = {
+    { min =  2, max =  3, label = "+2-3"  },
+    { min =  4, max =  6, label = "+4-6"  },
+    { min =  7, max =  9, label = "+7-9"  },
+    { min = 10, max = 11, label = "+10-11" },
+    { min = 12, max = 14, label = "+12-14" },
+    { min = 15, max = math.huge, label = "+15+" },
+}
 
 -- Fixed column widths (name column is computed dynamically)
 local COL_W = {
-    icon      = 36,
+    icon      = 40,
     bestLevel = 60,
-    score     = 72,
-    runs      = 48,
+    score     = 70,
+    runs      = 50,
     success   = 60,
     timeLimit = 65,
     bestTime  = 70,
 }
 
--- Row / header background colours
-local ROW_BG_ODD  = { 0.04, 0.06, 0.14, 0.75 }
-local ROW_BG_EVEN = { 0.07, 0.09, 0.18, 0.70 }
-local HDR_BG      = { 0.0,  0.0,  0.04, 0.90 }
+-- ---------------------------------------------------------------------------
+-- Sort state
+-- ---------------------------------------------------------------------------
+
+local sortCol = "name"
+local sortDir = "asc"
+local headerCells    = {}   -- [colKey] = FontString, updated when sort changes
+local rowsContainer  = nil  -- recreated on each sort change
+
+-- Locale key for each sortable column
+local HEADER_LOCALE = {
+    name      = "DUNGEON_COL_DUNGEON",
+    bestLevel = "DUNGEON_COL_BEST_LEVEL",
+    score     = "DUNGEON_COL_SCORE",
+    runs      = "DUNGEON_COL_RUNS",
+    success   = "DUNGEON_COL_SUCCESS",
+    timeLimit = "DUNGEON_COL_TIME_LIMIT",
+    bestTime  = "DUNGEON_COL_BEST_TIME",
+}
+
+-- Default sort direction when a column is first clicked
+local DEFAULT_SORT_DIR = {
+    name      = "asc",
+    bestLevel = "desc",
+    score     = "desc",
+    runs      = "desc",
+    success   = "desc",
+    timeLimit = "asc",
+    bestTime  = "asc",
+}
+
+-- Parsed RGB for header text color (from addon.colors.ARTIFACT |cFFe6cc80)
+local ARTIFACT_R = 0xe6 / 255
+local ARTIFACT_G = 0xcc / 255
+local ARTIFACT_B = 0x80 / 255
 
 -- ---------------------------------------------------------------------------
 -- Data helpers
 -- ---------------------------------------------------------------------------
 
-local function buildRunLookup()
+local function buildRunLookup(runHistory)
     local lookup = {}
 
-    for _, run in ipairs(C_MythicPlus.GetRunHistory(true, true, true) or {}) do
+    for _, run in ipairs(runHistory) do
         local id = run.mapChallengeModeID
 
         if not lookup[id] then
-            lookup[id] = {
-                bestLevel = 0, bestTime = 0,
-                bestScore = 0,
-                runs = 0,     success = 0,
-            }
+            lookup[id] = { bestLevel = 0, bestTime = 0, bestScore = 0, runs = 0, success = 0 }
         end
 
         local e = lookup[id]
@@ -56,6 +101,39 @@ local function buildRunLookup()
     end
 
     return lookup
+end
+
+local function buildTierCounts(runHistory)
+    local counts = {}
+    for i = 1, #TIERS do counts[i] = 0 end
+
+    for _, run in ipairs(runHistory) do
+        for i, tier in ipairs(TIERS) do
+            if run.level >= tier.min and run.level <= tier.max then
+                counts[i] = counts[i] + 1
+                break
+            end
+        end
+    end
+
+    return counts
+end
+
+local function buildSummaryData(runLookup, dungeons)
+    local highestKey  = 0
+    local totalRuns   = 0
+    local totalSuccess = 0
+
+    for _, mapID in ipairs(dungeons) do
+        local ri = runLookup[mapID]
+        if ri then
+            if ri.bestLevel > highestKey then highestKey = ri.bestLevel end
+            totalRuns    = totalRuns    + ri.runs
+            totalSuccess = totalSuccess + ri.success
+        end
+    end
+
+    return { highestKey = highestKey, totalRuns = totalRuns, totalSuccess = totalSuccess }
 end
 
 local function getDungeonScore(mapID, ri)
@@ -98,11 +176,105 @@ local function formatCount(n)
 end
 
 -- ---------------------------------------------------------------------------
--- Row builder
+-- Summary boxes
 -- ---------------------------------------------------------------------------
 
+local function createSummaryBox(container, xOffset, boxW, labelKey, valueText, subText, rawLabel)
+    local box = CreateFrame("Frame", nil, container)
+    box:SetSize(boxW, SUMMARY_BOX_H)
+    box:SetPoint("TOPLEFT", container, "TOPLEFT", xOffset, 0)
+
+    local bg = box:CreateTexture(nil, "BACKGROUND")
+    bg:SetAllPoints(box)
+    bg:SetAtlas("ui-frame-midnight-portraitdisable", true)
+
+    local value = box:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    value:SetPoint("CENTER", box, "CENTER", 0, subText and 5 or 0)
+    value:SetJustifyH("CENTER")
+    value:SetText(valueText)
+
+    if subText then
+        local sub = box:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+        sub:SetPoint("TOP", value, "BOTTOM", 0, -2)
+        sub:SetJustifyH("CENTER")
+        sub:SetTextColor(0.65, 0.65, 0.65, 1)
+        sub:SetText(subText)
+    end
+
+    -- Tooltip on hover: rawLabel takes priority over locale lookup
+    local tooltipText = rawLabel or (labelKey and (addon.locale[labelKey] or labelKey))
+    if tooltipText then
+        box:EnableMouse(true)
+        box:SetScript("OnEnter", function(self)
+            GameTooltip:SetOwner(self, "ANCHOR_TOP")
+            GameTooltip:SetText(tooltipText, 1, 1, 1, 1, true)
+            GameTooltip:Show()
+        end)
+        box:SetScript("OnLeave", function()
+            GameTooltip:Hide()
+        end)
+    end
+end
+
+local function createSummaryBoxes(parent, summaryData)
+    local totalBoxW = SUMMARY_BOX_W * 3 + SUMMARY_GAP * 2
+
+    local container = CreateFrame("Frame", nil, parent)
+    container:SetSize(totalBoxW, SUMMARY_BOX_H)
+
+    if MPT_Dashboard.navFrame then
+        container:SetPoint("TOPLEFT", MPT_Dashboard.navFrame, "BOTTOMLEFT", CONTENT_INSET, -SUMMARY_MARGIN)
+    else
+        container:SetPoint("TOPLEFT", parent, "TOPLEFT", CONTENT_INSET, -SUMMARY_MARGIN)
+    end
+
+    -- Box 1: Highest Keystone
+    local highestKeyText = summaryData.highestKey > 0
+        and (addon.colorKeystoneLevel(summaryData.highestKey) .. "+" .. summaryData.highestKey .. addon.colors.RESET)
+        or addon.colors.POOR .. "–" .. addon.colors.RESET
+    createSummaryBox(container, 0, SUMMARY_BOX_W, "DASHBOARD_SUMMARY_HIGHEST_KEY", highestKeyText, nil)
+
+    -- Box 2: Total Runs
+    local totalRunsText = summaryData.totalRuns > 0
+        and (addon.colors.WHITE .. summaryData.totalRuns .. addon.colors.RESET)
+        or addon.colors.POOR .. "–" .. addon.colors.RESET
+    createSummaryBox(container, SUMMARY_BOX_W + SUMMARY_GAP, SUMMARY_BOX_W, "DASHBOARD_SUMMARY_TOTAL_RUNS", totalRunsText, nil)
+
+    -- Box 3: Successful Runs (with percentage below)
+    local successText = summaryData.totalSuccess > 0
+        and (addon.colors.SUCCESS .. summaryData.totalSuccess .. addon.colors.RESET)
+        or addon.colors.POOR .. "–" .. addon.colors.RESET
+    local pctText = nil
+    if summaryData.totalRuns > 0 then
+        local pct = math.floor(summaryData.totalSuccess / summaryData.totalRuns * 100 + 0.5)
+        pctText = addon.colors.POOR .. pct .. "%" .. addon.colors.RESET
+    end
+    createSummaryBox(container, (SUMMARY_BOX_W + SUMMARY_GAP) * 2, SUMMARY_BOX_W, "DASHBOARD_SUMMARY_SUCCESS_RUNS", successText, pctText)
+
+    return container
+end
+
+local function createTierBoxes(parent, tierCounts, anchorBelow)
+    local totalW = SUMMARY_BOX_W * #TIERS + SUMMARY_GAP * (#TIERS - 1)
+
+    local container = CreateFrame("Frame", nil, parent)
+    container:SetSize(totalW, SUMMARY_BOX_H)
+    container:SetPoint("TOPLEFT", anchorBelow, "BOTTOMLEFT", 0, -SUMMARY_MARGIN)
+
+    for i, tier in ipairs(TIERS) do
+        local xOffset = (i - 1) * (SUMMARY_BOX_W + SUMMARY_GAP)
+        local count   = tierCounts[i] or 0
+        local countText = count > 0
+            and (addon.colorKeystoneLevel(tier.min) .. count .. addon.colors.RESET)
+            or  (addon.colors.POOR .. "–" .. addon.colors.RESET)
+        createSummaryBox(container, xOffset, SUMMARY_BOX_W, nil, countText, nil, tier.label)
+    end
+
+    return container
+end
+
 local function addCell(parent, x, y, w, h, text, font, justifyH)
-    local fs = parent:CreateFontString(nil, "OVERLAY", font or "GameFontHighlightSmall")
+    local fs = parent:CreateFontString(nil, "OVERLAY", font or "GameFontHighlight")
     fs:SetSize(w, h)
     fs:SetPoint("TOPLEFT", parent, "TOPLEFT", x, y)
     fs:SetJustifyH(justifyH or "LEFT")
@@ -111,88 +283,178 @@ local function addCell(parent, x, y, w, h, text, font, justifyH)
     return fs
 end
 
-local function createTableRow(child, mapID, colX, rowY, nameW, runLookup, isEven)
+local function createTableRow(child, mapID, colX, rowY, nameW, runLookup)
     local name, _, timeLimit, texture = C_ChallengeMode.GetMapUIInfo(mapID)
     if not name then return end
 
     local ri = runLookup[mapID]
-    local bg = isEven and ROW_BG_EVEN or ROW_BG_ODD
 
-    -- Row background
-    local rowBg = child:CreateTexture(nil, "BACKGROUND")
-    rowBg:SetPoint("TOPLEFT",     child, "TOPLEFT",     0, rowY)
-    rowBg:SetPoint("TOPRIGHT",    child, "TOPRIGHT",    0, rowY)
-    rowBg:SetHeight(ROW_H)
-    rowBg:SetColorTexture(bg[1], bg[2], bg[3], bg[4])
-
-    -- 1) Icon
+    -- 1) Icon (centred vertically)
     local icon = child:CreateTexture(nil, "ARTWORK")
     icon:SetSize(ICON_SIZE, ICON_SIZE)
-    icon:SetPoint("TOPLEFT", child, "TOPLEFT", colX["icon"] + 4, rowY - (ROW_H - ICON_SIZE) / 2)
+    icon:SetPoint("TOPLEFT", child, "TOPLEFT", colX["icon"] + 2, rowY - (ROW_H - ICON_SIZE) / 2)
     icon:SetTexture(texture)
 
     -- 2) Name
-    addCell(child, colX["name"], rowY, nameW, ROW_H, name, "GameFontHighlightSmall", "LEFT")
+    addCell(child, colX["name"], rowY, nameW, ROW_H, name, "GameFontHighlight", "LEFT")
 
     -- 3) Best level
     addCell(child, colX["bestLevel"], rowY, COL_W.bestLevel, ROW_H,
-        formatLevel(ri and ri.bestLevel), "GameFontHighlightSmall", "RIGHT")
+        formatLevel(ri and ri.bestLevel), "GameFontHighlight", "RIGHT")
 
     -- 4) Score
     addCell(child, colX["score"], rowY, COL_W.score, ROW_H,
-        formatScore(getDungeonScore(mapID, ri)), "GameFontHighlightSmall", "RIGHT")
+        formatScore(getDungeonScore(mapID, ri)), "GameFontHighlight", "RIGHT")
 
     -- 5) Runs
     addCell(child, colX["runs"], rowY, COL_W.runs, ROW_H,
-        formatCount(ri and ri.runs), "GameFontHighlightSmall", "RIGHT")
+        formatCount(ri and ri.runs), "GameFontHighlight", "RIGHT")
 
     -- 6) Success
     addCell(child, colX["success"], rowY, COL_W.success, ROW_H,
-        formatCount(ri and ri.success), "GameFontHighlightSmall", "RIGHT")
+        formatCount(ri and ri.success), "GameFontHighlight", "RIGHT")
 
     -- 7) Time limit
     addCell(child, colX["timeLimit"], rowY, COL_W.timeLimit, ROW_H,
-        formatTimeMMSS(timeLimit), "GameFontHighlightSmall", "RIGHT")
+        formatTimeMMSS(timeLimit), "GameFontHighlight", "RIGHT")
 
     -- 8) Best time
     addCell(child, colX["bestTime"], rowY, COL_W.bestTime, ROW_H,
-        formatBestTime(ri and ri.bestTime, timeLimit), "GameFontHighlightSmall", "RIGHT")
+        formatBestTime(ri and ri.bestTime, timeLimit), "GameFontHighlight", "RIGHT")
+
+    -- 1px horizontal divider at the bottom of this row
+    local rowDiv = child:CreateTexture(nil, "ARTWORK")
+    rowDiv:SetPoint("TOPLEFT",  child, "TOPLEFT",  0, rowY - ROW_H)
+    rowDiv:SetPoint("TOPRIGHT", child, "TOPRIGHT", 0, rowY - ROW_H)
+    rowDiv:SetHeight(1)
+    rowDiv:SetColorTexture(0.45, 0.45, 0.65, 0.3)
 end
 
 -- ---------------------------------------------------------------------------
--- Header row
+-- Sorting helpers
 -- ---------------------------------------------------------------------------
 
-local function createTableHeader(child, colX, nameW)
-    local hdrBg = child:CreateTexture(nil, "BACKGROUND")
-    hdrBg:SetPoint("TOPLEFT",  child, "TOPLEFT",  0, 0)
-    hdrBg:SetPoint("TOPRIGHT", child, "TOPRIGHT", 0, 0)
-    hdrBg:SetHeight(HEADER_H)
-    hdrBg:SetColorTexture(HDR_BG[1], HDR_BG[2], HDR_BG[3], HDR_BG[4])
-
-    local function hdrCell(x, w, localeKey, justifyH)
-        local fs = child:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-        fs:SetSize(w, HEADER_H)
-        fs:SetPoint("TOPLEFT", child, "TOPLEFT", x, 0)
-        fs:SetJustifyH(justifyH or "LEFT")
-        fs:SetJustifyV("MIDDLE")
-        fs:SetText(addon.colors.ARTIFACT .. (addon.locale[localeKey] or localeKey) .. addon.colors.RESET)
+local function computeSortedEntries(dungeons, runLookup)
+    local entries = {}
+    for _, mapID in ipairs(dungeons) do
+        local name, _, timeLimit = C_ChallengeMode.GetMapUIInfo(mapID)
+        local ri = runLookup[mapID] or {}
+        table.insert(entries, {
+            mapID     = mapID,
+            name      = name or "",
+            bestLevel = ri.bestLevel or 0,
+            score     = getDungeonScore(mapID, ri),
+            runs      = ri.runs or 0,
+            success   = ri.success or 0,
+            bestTime  = ri.bestTime or 0,
+            timeLimit = timeLimit or 0,
+        })
     end
 
-    hdrCell(colX["name"],      nameW,            "DUNGEON_COL_DUNGEON",    "LEFT")
-    hdrCell(colX["bestLevel"], COL_W.bestLevel,  "DUNGEON_COL_BEST_LEVEL", "RIGHT")
-    hdrCell(colX["score"],     COL_W.score,      "DUNGEON_COL_SCORE",      "RIGHT")
-    hdrCell(colX["runs"],      COL_W.runs,       "DUNGEON_COL_RUNS",       "RIGHT")
-    hdrCell(colX["success"],   COL_W.success,    "DUNGEON_COL_SUCCESS",    "RIGHT")
-    hdrCell(colX["timeLimit"], COL_W.timeLimit,  "DUNGEON_COL_TIME_LIMIT", "RIGHT")
-    hdrCell(colX["bestTime"],  COL_W.bestTime,   "DUNGEON_COL_BEST_TIME",  "RIGHT")
+    table.sort(entries, function(a, b)
+        if sortCol == "name" then
+            if sortDir == "asc" then return a.name < b.name
+            else                     return a.name > b.name end
+        else
+            local va = a[sortCol] or 0
+            local vb = b[sortCol] or 0
+            -- Push zero/no-data entries to the bottom regardless of direction
+            if (va == 0) ~= (vb == 0) then return va ~= 0 end
+            if sortDir == "desc" then return va > vb
+            else                      return va < vb end
+        end
+    end)
 
-    -- 1px divider below header
+    return entries
+end
+
+-- ---------------------------------------------------------------------------
+-- Header row (sortable)
+-- ---------------------------------------------------------------------------
+
+local function updateHeaderIndicators()
+    for colKey, fs in pairs(headerCells) do
+        local localeKey = HEADER_LOCALE[colKey]
+        local label     = addon.locale[localeKey] or localeKey
+        local indicator = (colKey == sortCol) and (sortDir == "asc" and " \226\150\178" or " \226\150\188") or ""
+        fs:SetText(label .. indicator)
+        fs:SetTextColor(ARTIFACT_R, ARTIFACT_G, ARTIFACT_B, 1)
+    end
+end
+
+local function createTableHeader(child, colX, nameW, onSort)
+    wipe(headerCells)
+
+    local function hdrBtn(x, w, colKey, justifyH)
+        local btn = CreateFrame("Button", nil, child)
+        btn:SetSize(w, HEADER_H)
+        btn:SetPoint("TOPLEFT", child, "TOPLEFT", x, 0)
+
+        local fs = btn:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        fs:SetSize(w, HEADER_H)
+        fs:SetPoint("TOPLEFT", btn, "TOPLEFT", 0, 0)
+        fs:SetJustifyH(justifyH or "LEFT")
+        fs:SetJustifyV("MIDDLE")
+
+        headerCells[colKey] = fs
+
+        btn:SetScript("OnClick", function()
+            if sortCol == colKey then
+                sortDir = sortDir == "asc" and "desc" or "asc"
+            else
+                sortCol = colKey
+                sortDir = DEFAULT_SORT_DIR[colKey] or "asc"
+            end
+            updateHeaderIndicators()
+            onSort()
+        end)
+
+        -- Highlight on hover
+        btn:SetScript("OnEnter", function()
+            fs:SetTextColor(1, 1, 1, 1)
+        end)
+        btn:SetScript("OnLeave", function()
+            fs:SetTextColor(ARTIFACT_R, ARTIFACT_G, ARTIFACT_B, 1)
+        end)
+    end
+
+    -- Sortable column buttons
+    hdrBtn(colX["name"],      nameW,           "name",      "LEFT")
+    hdrBtn(colX["bestLevel"], COL_W.bestLevel, "bestLevel", "RIGHT")
+    hdrBtn(colX["score"],     COL_W.score,     "score",     "RIGHT")
+    hdrBtn(colX["runs"],      COL_W.runs,      "runs",      "RIGHT")
+    hdrBtn(colX["success"],   COL_W.success,   "success",   "RIGHT")
+    hdrBtn(colX["timeLimit"], COL_W.timeLimit, "timeLimit", "RIGHT")
+    hdrBtn(colX["bestTime"],  COL_W.bestTime,  "bestTime",  "RIGHT")
+
+    -- Set initial text with indicators
+    updateHeaderIndicators()
+
+    -- 1px horizontal divider below header
     local div = child:CreateTexture(nil, "ARTWORK")
     div:SetPoint("TOPLEFT",  child, "TOPLEFT",  0, -HEADER_H)
     div:SetPoint("TOPRIGHT", child, "TOPRIGHT", 0, -HEADER_H)
     div:SetHeight(1)
-    div:SetColorTexture(0.45, 0.45, 0.65, 0.8)
+    div:SetColorTexture(0.45, 0.45, 0.65, 0.5)
+end
+
+local function renderRows(tableFrame, dungeons, colX, nameW, runLookup)
+    if rowsContainer then
+        rowsContainer:Hide()
+    end
+
+    local entries = computeSortedEntries(dungeons, runLookup)
+
+    rowsContainer = CreateFrame("Frame", nil, tableFrame)
+    rowsContainer:SetPoint("TOPLEFT",  tableFrame, "TOPLEFT",  0, -(HEADER_H + 1))
+    rowsContainer:SetPoint("TOPRIGHT", tableFrame, "TOPRIGHT", 0, -(HEADER_H + 1))
+    rowsContainer:SetHeight(#entries * ROW_H)
+    rowsContainer:Show()
+
+    for i, entry in ipairs(entries) do
+        local rowY = -((i - 1) * ROW_H)
+        createTableRow(rowsContainer, entry.mapID, colX, rowY, nameW, runLookup)
+    end
 end
 
 -- ---------------------------------------------------------------------------
@@ -204,9 +466,16 @@ function MPT_Dashboard:loadDungeons(frame, topOffset)
     local dungeons = C_ChallengeMode.GetMapTable()
     if not dungeons then return end
 
-    local runLookup = buildRunLookup()
+    local runHistory = C_MythicPlus.GetRunHistory(true, true, true) or {}
+    local runLookup  = buildRunLookup(runHistory)
 
-    local tableW = frame:GetWidth() - 20  -- 10px outer padding each side
+    -- Stats boxes are intentionally disabled here — kept for future use elsewhere:
+    -- local tierCounts      = buildTierCounts(runHistory)
+    -- local summaryData     = buildSummaryData(runLookup, dungeons)
+    -- local summaryContainer = createSummaryBoxes(frame, summaryData)
+    -- local tierContainer   = createTierBoxes(frame, tierCounts, summaryContainer)
+
+    local tableW = DASHBOARD_W - CONTENT_INSET * 2  -- align with divider caps
 
     -- Compute column x-positions dynamically; name column takes remaining space
     local fixedW = COL_W.icon + COL_W.bestLevel + COL_W.score
@@ -224,19 +493,19 @@ function MPT_Dashboard:loadDungeons(frame, topOffset)
 
     local childHeight = HEADER_H + 1 + #dungeons * ROW_H + PADDING_X
 
+    -- Reset sort state so the table starts fresh each time the panel opens
+    rowsContainer = nil
+    wipe(headerCells)
+
     local tableFrame = CreateFrame("Frame", nil, frame)
     tableFrame:SetSize(tableW, childHeight)
+    -- Anchor directly below the nav bar — table fills the full remaining height
+    tableFrame:SetPoint("TOP",  MPT_Dashboard.navFrame, "BOTTOM", 0, -SUMMARY_MARGIN)
+    tableFrame:SetPoint("LEFT", frame,                  "LEFT",   CONTENT_INSET, 0)
 
-    if MPT_Dashboard.navFrame then
-        tableFrame:SetPoint("TOPLEFT", MPT_Dashboard.navFrame, "BOTTOMLEFT", 10, -34)
-    else
-        tableFrame:SetPoint("TOPLEFT", frame, "TOPLEFT", 10, -(topOffset + 10))
-    end
+    createTableHeader(tableFrame, colX, nameW, function()
+        renderRows(tableFrame, dungeons, colX, nameW, runLookup)
+    end)
 
-    createTableHeader(tableFrame, colX, nameW)
-
-    for i, mapID in ipairs(dungeons) do
-        local rowY = -(HEADER_H + 1 + (i - 1) * ROW_H)
-        createTableRow(tableFrame, mapID, colX, rowY, nameW, runLookup, (i % 2 == 0))
-    end
+    renderRows(tableFrame, dungeons, colX, nameW, runLookup)
 end

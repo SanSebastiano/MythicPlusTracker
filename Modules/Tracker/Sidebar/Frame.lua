@@ -1,6 +1,7 @@
 local addonName, addon = ...
 
 local frame
+local contentWrapper
 
 local function create(mainFrame)
     if frame then return frame end
@@ -23,13 +24,16 @@ local function create(mainFrame)
     border:SetAtlas("ui-frame-midnight-border", false)
 
     frame:SetScript("OnShow", function()
-        if frame.contentLoaded then return end
-        frame.contentLoaded = true
-        MPT_Sidebar.getScore(frame)
-        MPT_Sidebar.getAffixes(frame)
-        MPT_Sidebar.getKeystone(frame)
-        MPT_Sidebar.getWeeklyVault(frame)
-        MPT_Sidebar.getCurrencies(frame)
+        if contentWrapper then contentWrapper:Hide() end
+
+        contentWrapper = CreateFrame("Frame", nil, frame)
+        contentWrapper:SetAllPoints(frame)
+
+        MPT_Sidebar.getScore(contentWrapper)
+        MPT_Sidebar.getAffixes(contentWrapper)
+        MPT_Sidebar.getKeystone(contentWrapper)
+        MPT_Sidebar.getWeeklyVault(contentWrapper)
+        MPT_Sidebar.getCurrencies(contentWrapper)
     end)
 
     return frame

@@ -45,7 +45,18 @@ Toggle with `/mpt debug [on|off]`. State persists via `MythicPlusTrackerDB.debug
 
 ## UI Architecture
 
-Three frames anchored together: **MainFrame** (root, draggable), **Dashboard** (`TOPRIGHT`; dungeon grid), **Sidebar** (`TOPLEFT`; M+ score and currencies). Frames use `BackdropTemplate` with WoW's dark dialog background texture. See the source files for exact dimensions and atlas names.
+The tracker UI is composed of three frames:
+
+- **Sidebar** (`MPT_Sidebar`, anchored `TOPLEFT` of MainFrame, 300×550): Always visible and always shows the same content — M+ score, affixes, keystone, weekly vault, currencies. Its contents do **not** change when the user switches between main content views.
+
+- **MainFrame** (`MPT_MAIN`, root, 1100×550, draggable): The outer container for the entire tracker. It carries a **border texture** (`ui-frame-midnight-border`) that overlaps slightly inward at the edges and more at the corners. All child content must respect this inset (shift content inward), as is currently implemented.
+
+- **Dashboard / Main Content Area** (`MPT_Dashboard`, anchored `TOPRIGHT` of MainFrame, 800×550): The right-hand content region. On the three main pages it always shows:
+  1. **Header Navigation** — a tab row at the top with the three page tabs.
+  2. **Divider** — a decorative bar directly below the tab row.
+  3. **Content** — positioned below the header + divider, inset from the border.
+
+  > **Future — Detail Pages** (Key detail, Run detail): These views will be displayed inside the MainFrame area *without* the header navigation bar. The tab row and divider are hidden/absent for detail views.
 
 ## Localization
 

@@ -4,7 +4,7 @@ local TAB_ROW_H   = 30   -- height reserved for the tab button row
 local TAB_HEIGHT  = 26   -- individual button height
 local TAB_PADDING = 20   -- horizontal padding inside each tab button
 local TAB_SPACING = 8    -- gap between consecutive tabs
-local NAV_HEIGHT  = 52   -- TAB_ROW_H (30) + bar (~18) + small buffer (4)
+local NAV_HEIGHT  = 85   -- TAB_ROW_H (30) + bar offset (30) + bar height (~18) + buffer (7)
 
 -- Parsed RGB for SetTextColor (from addon.colors escape codes)
 local ARTIFACT_R, ARTIFACT_G, ARTIFACT_B = 0xe6 / 255, 0xcc / 255, 0x80 / 255  -- |cFFe6cc80
@@ -62,9 +62,9 @@ function MPT_Dashboard:createNavigation(parent)
         btn:SetWidth(textW + TAB_PADDING)
 
         if prevBtn == nil then
-            btn:SetPoint("LEFT", navFrame, "LEFT", 48, tabY - 10)
+            btn:SetPoint("TOPLEFT", navFrame, "TOPLEFT", 48, -25)
         else
-            btn:SetPoint("LEFT", prevBtn,  "RIGHT", TAB_SPACING, 0)
+            btn:SetPoint("TOPLEFT", prevBtn,  "TOPRIGHT", TAB_SPACING, 0)
         end
 
         tabFontStrings[i] = fs
