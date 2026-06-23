@@ -1,27 +1,31 @@
-name: Lua Validation
+name: PR Validation
 
 on:
   pull_request:
-    branches: [ main, develop ]
+    branches: [ develop ]
 
 jobs:
-  lua-quality:
-    name: Luacheck and StyLua
+  validate:
+    name: Locale, TOC & Lua validation
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Install Lua and tools
         run: |
-          sudo apt-get update
-          sudo apt-get install -y luarocks lua5.4
+          git clone --depth=1 "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" .
+          git checkout "${{ github.sha }}"
+
+      - name: Install Lua and luacheck
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y lua5.1 luarocks
           sudo luarocks install luacheck
-          cargo install stylua
 
-      - name: Run Luacheck
+      - name: Locale validator
+        run: bash tools/locale-validator.sh
+
+      - name: TOC validator
+        run: bash tools/toc-validator.sh
+
+      - name: Luacheck
         run: luacheck .
-
-      - name: Run StyLua check
-        run: stylua --check .

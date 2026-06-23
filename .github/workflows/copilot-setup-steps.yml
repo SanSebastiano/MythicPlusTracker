@@ -18,9 +18,6 @@ jobs:
             contents: read
 
         steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
-
             - name: Install Lua and luacheck
               run: |
                   sudo apt-get update -qq
@@ -29,6 +26,3 @@ jobs:
 
             - name: Verify luacheck works
               run: luacheck --version
-
-            - name: Make tool scripts executable
-              run: chmod +x tools/*.sh
