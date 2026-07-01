@@ -4,6 +4,22 @@ local frame
 local contentWrapper
 local navHeight = 0
 
+-- Tracks the active content panel so we can hide it before showing a new one
+local activeContent = nil
+
+local function showContent(loader, ...)
+    if activeContent then
+        activeContent:Hide()
+        activeContent = nil
+    end
+
+    local panel = CreateFrame("Frame", nil, contentWrapper)
+    panel:SetAllPoints(contentWrapper)
+    activeContent = panel
+
+    loader(MPT_Dashboard, panel, navHeight, ...)
+end
+
 local function create(mainFrame)
     if frame then return frame end
 
@@ -24,10 +40,17 @@ local function create(mainFrame)
     border:SetAllPoints(borderFrame)
     border:SetAtlas("ui-frame-midnight-border", false)
 
-    navHeight = MPT_Dashboard:createNavigation(frame)
+    local tabCallbacks = {
+        [1] = function() showContent(MPT_Dashboard.loadDungeons); MPT_Sidebar:showForTab(1) end,
+        [2] = function() showContent(MPT_Dashboard.loadRuns);     MPT_Sidebar:showForTab(2) end,
+        [3] = function() MPT_Sidebar:showForTab(3) end,   -- Keystones: stub
+    }
+
+    navHeight = MPT_Dashboard:createNavigation(frame, tabCallbacks)
 
     frame:SetScript("OnShow", function()
         if contentWrapper then contentWrapper:Hide() end
+        activeContent = nil
 
         contentWrapper = CreateFrame("Frame", nil, frame)
         contentWrapper:SetAllPoints(frame)
@@ -39,7 +62,8 @@ local function create(mainFrame)
             return
         end
 
-        MPT_Dashboard:loadDungeons(contentWrapper, navHeight)
+        -- Default to tab 1 (Dungeons)
+        showContent(MPT_Dashboard.loadDungeons)
     end)
 
     return frame
