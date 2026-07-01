@@ -51,6 +51,17 @@ local locale = {
     ["DASHBOARD_SUMMARY_HIGHEST_KEY"]   = "Highest Keystone",
     ["DASHBOARD_SUMMARY_TOTAL_RUNS"]    = "Total Runs",
     ["DASHBOARD_SUMMARY_SUCCESS_RUNS"]  = "Successful Runs",
+    -- Runs table column headers
+    ["RUN_COL_DUNGEON"]   = "Dungeon",
+    ["RUN_COL_LEVEL"]     = "Level",
+    ["RUN_COL_COMPLETED"] = "Completed",
+    ["RUN_COL_SCORE"]     = "Score",
+    ["RUN_COL_DURATION"]  = "Time",
+    ["RUN_COL_DATE"]      = "Date",
+    ["RUN_COL_SEASON"]    = "Season",
+    -- Runs table tooltips
+    ["RUN_TOOLTIP_TIME_LIMIT"]    = "Time Limit",
+    ["RUN_TOOLTIP_DUNGEON_SCORE"] = "Dungeon Score",
     -- Dashboard
     ["DASHBOARD_OVERALL"] = "Overall",
     ["DASHBOARD_WEEKLY"] = "Weekly",
@@ -58,6 +69,10 @@ local locale = {
     ["DASHBOARD_RUNS"] = "Runs",
     ["DASHBOARD_SUCCESS"] = "Success",
     ["DASHBOARD_RUN_TIME"] = "Time",
+    -- Sidebar: Runs tab
+    ["SIDEBAR_RUNS_BEST_RUN"]    = "Best Run",
+    ["SIDEBAR_RUNS_NO_RUNS"]     = "No successful Mythic Plus run completed yet.",
+    ["SIDEBAR_RUNS_TIER_HEADER"] = "Timed Runs",
 }
 
 for key, value in pairs(locale) do

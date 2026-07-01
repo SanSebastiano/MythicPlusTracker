@@ -3,6 +3,27 @@ local addonName, addon = ...
 local frame
 local contentWrapper
 
+local function renderDefaultContent(wrapper)
+    MPT_Sidebar.getScore(wrapper)
+    MPT_Sidebar.getAffixes(wrapper)
+    MPT_Sidebar.getKeystone(wrapper)
+    MPT_Sidebar.getWeeklyVault(wrapper)
+    MPT_Sidebar.getTraitNodes(wrapper)
+    MPT_Sidebar.getCurrencies(wrapper)
+end
+
+local function renderRunsContent(wrapper)
+    MPT_Sidebar.getScore(wrapper)
+    MPT_Sidebar.loadRunsStats(wrapper)
+end
+
+local function rebuildContent(renderFn)
+    if contentWrapper then contentWrapper:Hide() end
+    contentWrapper = CreateFrame("Frame", nil, frame)
+    contentWrapper:SetAllPoints(frame)
+    renderFn(contentWrapper)
+end
+
 local function create(mainFrame)
     if frame then return frame end
 
@@ -24,17 +45,7 @@ local function create(mainFrame)
     border:SetAtlas("ui-frame-midnight-border", false)
 
     frame:SetScript("OnShow", function()
-        if contentWrapper then contentWrapper:Hide() end
-
-        contentWrapper = CreateFrame("Frame", nil, frame)
-        contentWrapper:SetAllPoints(frame)
-
-        MPT_Sidebar.getScore(contentWrapper)
-        MPT_Sidebar.getAffixes(contentWrapper)
-        MPT_Sidebar.getKeystone(contentWrapper)
-        MPT_Sidebar.getWeeklyVault(contentWrapper)
-        MPT_Sidebar.getTraitNodes(contentWrapper)
-        MPT_Sidebar.getCurrencies(contentWrapper)
+        rebuildContent(renderDefaultContent)
     end)
 
     return frame
@@ -43,5 +54,14 @@ end
 if MPT_Sidebar then
     function MPT_Sidebar:getFrame(mainFrame)
         return create(mainFrame)
+    end
+
+    function MPT_Sidebar:showForTab(tabIndex)
+        if not frame then return end
+        if tabIndex == 2 then
+            rebuildContent(renderRunsContent)
+        else
+            rebuildContent(renderDefaultContent)
+        end
     end
 end
