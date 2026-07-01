@@ -26,8 +26,9 @@ local function setActiveTab(idx)
 end
 
 -- Creates the navigation bar and returns NAV_HEIGHT so the caller can
--- offset the content below it.
-function MPT_Dashboard:createNavigation(parent)
+-- offset the content below it.  The optional `callbacks` table maps tab
+-- index → function; each function is called when that tab is clicked.
+function MPT_Dashboard:createNavigation(parent, callbacks)
     wipe(tabFontStrings)
     activeTabIndex = 1
 
@@ -72,6 +73,9 @@ function MPT_Dashboard:createNavigation(parent)
         local capturedIdx = i
         btn:SetScript("OnClick", function()
             setActiveTab(capturedIdx)
+            if callbacks and callbacks[capturedIdx] then
+                callbacks[capturedIdx]()
+            end
         end)
 
         prevBtn = btn
