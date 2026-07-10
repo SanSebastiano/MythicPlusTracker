@@ -1,17 +1,11 @@
 local addonName, addon = ...
 
--- Saved Variables for persistent debug state
 MythicPlusTrackerDB = MythicPlusTrackerDB or {}
 
----Initialize debug system with saved variables
----@return void
 local function initializeDebugSystem()
-    -- Load debug state from saved variables
     addon.debugMode = MythicPlusTrackerDB.debugMode or false
 end
 
----Save debug state to saved variables
----@return void
 local function saveDebugState()
     MythicPlusTrackerDB.debugMode = addon.debugMode
 end
@@ -35,10 +29,6 @@ addon.setDebugMode = function(enabled)
     end
 end
 
----Send a debug message if debug mode is enabled
----@param text string The debug message text
----@param color string|nil Optional color for the debug message
----@return void
 addon.debugMessage = function(text, color)
     if addon.debugMode then
         local debugColor = color or addon.colors.WHITE
@@ -46,13 +36,10 @@ addon.debugMessage = function(text, color)
     end
 end
 
----Get current debug mode status
----@return boolean Current debug mode state
 addon.isDebugMode = function()
     return addon.debugMode or false
 end
 
--- Initialize debug system when addon loads
 local debugFrame = CreateFrame("Frame")
 debugFrame:RegisterEvent("ADDON_LOADED")
 debugFrame:RegisterEvent("PLAYER_LOGIN")
@@ -60,7 +47,6 @@ debugFrame:SetScript("OnEvent", function(self, event, loadedAddonName)
     if event == "ADDON_LOADED" and loadedAddonName == addonName then
         initializeDebugSystem()
     elseif event == "PLAYER_LOGIN" then
-        -- Ensure debug state is properly loaded after all addons are loaded
         initializeDebugSystem()
         debugFrame:UnregisterAllEvents()
     end

@@ -13,14 +13,9 @@ local POPUP_ROW_H  = 28
 local POPUP_PAD    = 6
 local POPUP_ICON   = 22
 
--- Parsed ARTIFACT color
 local ARTIFACT_R = 0xe6 / 255
 local ARTIFACT_G = 0xcc / 255
 local ARTIFACT_B = 0x80 / 255
-
--- ---------------------------------------------------------------------------
--- C_Traits helpers
--- ---------------------------------------------------------------------------
 
 local function getConfigAndTree()
     if not (C_Traits and C_Traits.GetConfigIDBySystemID) then return nil, nil end
@@ -80,10 +75,6 @@ local function getActiveEntryID(nodeInfo)
     return nil
 end
 
--- ---------------------------------------------------------------------------
--- Visual state
--- ---------------------------------------------------------------------------
-
 local function getVisualState(configID, nodeID)
     local nodeInfo = C_Traits.GetNodeInfo(configID, nodeID)
     if not nodeInfo then return 0 end
@@ -117,10 +108,6 @@ local function applyVisualState(btn, state, currentRank)
     end
 end
 
--- ---------------------------------------------------------------------------
--- Selection popup (shared, lazy-created)
--- ---------------------------------------------------------------------------
-
 local popup      = nil
 local hideTimer  = nil
 
@@ -144,12 +131,10 @@ local function createPopupIfNeeded()
     popup:SetFrameLevel(200)
     popup:Hide()
 
-    -- Dark background
     local bg = popup:CreateTexture(nil, "BACKGROUND")
     bg:SetAllPoints(popup)
     bg:SetColorTexture(0.05, 0.05, 0.08, 0.92)
 
-    -- Border
     local border = popup:CreateTexture(nil, "BORDER")
     border:SetAllPoints(popup)
     border:SetAtlas("ui-frame-midnight-portraitdisable", false)
@@ -176,7 +161,6 @@ local function showSelectionPopup(ownerBtn, configID, nodeID)
 
     popup:SetSize(POPUP_W, popupH)
 
-    -- Recycle or create entry-only row buttons (refund row is separate)
     for i = #popup._rows + 1, numEntries do
         local row = CreateFrame("Button", nil, popup)
         row:SetSize(POPUP_W - POPUP_PAD * 2, POPUP_ROW_H)
@@ -221,7 +205,6 @@ local function showSelectionPopup(ownerBtn, configID, nodeID)
         table.insert(popup._rows, row)
     end
 
-    -- Populate entry rows
     for i, entryID in ipairs(nodeInfo.entryIDs) do
         local row = popup._rows[i]
         local spellID, icon, name = getEntrySpellInfo(configID, entryID)
@@ -230,16 +213,13 @@ local function showSelectionPopup(ownerBtn, configID, nodeID)
         row._ico:SetTexture(icon or "Interface\\Icons\\INV_Misc_QuestionMark")
         local isActive = (entryID == activeEntryID)
 
-        -- Apply visual state to icon and label
         if nodeState == 0 then
-            -- Locked: everything greyed out
             row._ico:SetDesaturated(true)
             row._ico:SetAlpha(0.4)
             row._ico:SetVertexColor(1, 1, 1)
             row._lbl:SetTextColor(0.5, 0.5, 0.5)
             row._lbl:SetText(name or "?")
         elseif nodeState == 1 then
-            -- Active: highlight chosen entry, dim others
             if isActive then
                 row._ico:SetDesaturated(false)
                 row._ico:SetAlpha(1.0)
@@ -254,7 +234,6 @@ local function showSelectionPopup(ownerBtn, configID, nodeID)
                 row._lbl:SetText(name or "?")
             end
         else
-            -- Purchasable: all full color
             row._ico:SetDesaturated(false)
             row._ico:SetAlpha(1.0)
             row._ico:SetVertexColor(0.5, 1.0, 0.5)
@@ -274,20 +253,14 @@ local function showSelectionPopup(ownerBtn, configID, nodeID)
         end)
     end
 
-    -- Hide excess entry rows
     for i = numEntries + 1, #popup._rows do
         popup._rows[i]:Hide()
     end
 
-    -- Anchor above the owner button
     popup:ClearAllPoints()
     popup:SetPoint("BOTTOM", ownerBtn, "TOP", 0, 4)
     popup:Show()
 end
-
--- ---------------------------------------------------------------------------
--- Node button creation
--- ---------------------------------------------------------------------------
 
 local function createNodeButton(parent, configID, nodeID, xOffset)
     local nodeInfo = C_Traits.GetNodeInfo(configID, nodeID)
@@ -337,7 +310,6 @@ local function createNodeButton(parent, configID, nodeID, xOffset)
     btn._isChoice = isChoice
 
     if isChoice then
-        -- Selection node: hover shows popup, right-click refunds
         btn:SetScript("OnEnter", function(self)
             cancelHideTimer()
             showSelectionPopup(self, self._configID, self._nodeID)
@@ -354,7 +326,6 @@ local function createNodeButton(parent, configID, nodeID, xOffset)
             end
         end)
     else
-        -- Simple / ranked node
         btn:SetScript("OnEnter", function(self)
             if spellID then
                 GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
@@ -380,10 +351,6 @@ local function createNodeButton(parent, configID, nodeID, xOffset)
     return btn
 end
 
--- ---------------------------------------------------------------------------
--- Refresh all buttons
--- ---------------------------------------------------------------------------
-
 local nodeButtons = {}
 
 local function refreshButtons()
@@ -394,7 +361,6 @@ local function refreshButtons()
             local currentRank = nodeInfo.currentRank or 0
             applyVisualState(btn, state, currentRank)
 
-            -- For choice nodes, update the icon to reflect the active entry
             if btn._isChoice then
                 local activeEntryID = getActiveEntryID(nodeInfo)
                 local entryID = activeEntryID or (nodeInfo.entryIDs and nodeInfo.entryIDs[1])
@@ -405,15 +371,10 @@ local function refreshButtons()
             end
         end
     end
-    -- Refresh popup if visible
     if popup and popup:IsShown() then
         popup:Hide()
     end
 end
-
--- ---------------------------------------------------------------------------
--- Entry point
--- ---------------------------------------------------------------------------
 
 local function loadTraitNodes(sidebar)
     addon.debugMessage("Loading sidebar: trait nodes...")

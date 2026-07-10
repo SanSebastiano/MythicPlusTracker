@@ -62,6 +62,8 @@ globals = {
     "C_Map",
     "C_Texture",
     "C_UI",
+    "C_ChatInfo",
+    "C_AddOns",
 
     -- -----------------------------------------------------------------------
     -- WoW UI frame factory & parenting
@@ -98,6 +100,12 @@ globals = {
     "IsInRaid",
     "GetNumGroupMembers",
     "GetRaidRosterInfo",
+    "UnitFullName",
+    "UnitGroupRolesAssigned",
+    "GetNormalizedRealmName",
+    "SetPortraitTexture",
+    "GetSpecialization",
+    "GetSpecializationRole",
 
     -- -----------------------------------------------------------------------
     -- WoW item / currency functions
@@ -198,4 +206,6 @@ globals = {
     "FONT_COLOR_CODE_CLOSE",
     "NORMAL_FONT_COLOR_CODE",
     "HIGHLIGHT_FONT_COLOR_CODE",
+    "CLASS_ICON_TCOORDS",
+    "RAID_CLASS_COLORS",
 }

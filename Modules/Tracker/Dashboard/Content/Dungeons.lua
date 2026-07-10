@@ -1,13 +1,11 @@
 local addonName, addon = ...
 
--- Layout constants
 local PADDING_X  = 8    -- left/right padding inside the table frame
 local ROW_H      = 50   -- height of each data row (increased for full-height table)
 local HEADER_H   = 30   -- height of the header row
 local COL_GAP    = 8    -- horizontal gap between columns
 local ICON_SIZE  = 36   -- dungeon icon dimensions
 
--- Summary box layout  (matches Weekly Vault slot dimensions)
 local SUMMARY_BOX_W  = 70   -- same as WeeklyVault SLOT_WIDTH
 local SUMMARY_BOX_H  = 45   -- same as WeeklyVault SLOT_HEIGHT
 local SUMMARY_GAP    = 8    -- same as WeeklyVault SLOT_GAP
@@ -15,7 +13,6 @@ local SUMMARY_MARGIN = 8    -- vertical gap below navFrame
 local DASHBOARD_W    = 800  -- dashboard frame width (fixed in Frame.lua)
 local CONTENT_INSET  = 20   -- aligns with the divider bar left/right caps
 
--- Key level tier definitions for the second summary row
 local TIERS = {
     { min =  2, max =  3, label = "+2-3"  },
     { min =  4, max =  6, label = "+4-6"  },
@@ -36,16 +33,11 @@ local COL_W = {
     bestTime  = 70,
 }
 
--- ---------------------------------------------------------------------------
--- Sort state
--- ---------------------------------------------------------------------------
-
 local sortCol = "name"
 local sortDir = "asc"
 local headerCells    = {}   -- [colKey] = FontString, updated when sort changes
 local rowsContainer  = nil  -- recreated on each sort change
 
--- Locale key for each sortable column
 local HEADER_LOCALE = {
     name      = "DUNGEON_COL_DUNGEON",
     bestLevel = "DUNGEON_COL_BEST_LEVEL",
@@ -56,7 +48,6 @@ local HEADER_LOCALE = {
     bestTime  = "DUNGEON_COL_BEST_TIME",
 }
 
--- Default sort direction when a column is first clicked
 local DEFAULT_SORT_DIR = {
     name      = "asc",
     bestLevel = "desc",
@@ -71,10 +62,6 @@ local DEFAULT_SORT_DIR = {
 local ARTIFACT_R = 0xe6 / 255
 local ARTIFACT_G = 0xcc / 255
 local ARTIFACT_B = 0x80 / 255
-
--- ---------------------------------------------------------------------------
--- Data helpers
--- ---------------------------------------------------------------------------
 
 local function buildRunLookup(runHistory)
     local lookup = {}
@@ -175,10 +162,6 @@ local function formatCount(n)
     return (n and n > 0) and tostring(n) or "–"
 end
 
--- ---------------------------------------------------------------------------
--- Summary boxes
--- ---------------------------------------------------------------------------
-
 local function createSummaryBox(container, xOffset, boxW, labelKey, valueText, subText, rawLabel)
     local box = CreateFrame("Frame", nil, container)
     box:SetSize(boxW, SUMMARY_BOX_H)
@@ -228,19 +211,16 @@ local function createSummaryBoxes(parent, summaryData)
         container:SetPoint("TOPLEFT", parent, "TOPLEFT", CONTENT_INSET, -SUMMARY_MARGIN)
     end
 
-    -- Box 1: Highest Keystone
     local highestKeyText = summaryData.highestKey > 0
         and (addon.colorKeystoneLevel(summaryData.highestKey) .. "+" .. summaryData.highestKey .. addon.colors.RESET)
         or addon.colors.POOR .. "–" .. addon.colors.RESET
     createSummaryBox(container, 0, SUMMARY_BOX_W, "DASHBOARD_SUMMARY_HIGHEST_KEY", highestKeyText, nil)
 
-    -- Box 2: Total Runs
     local totalRunsText = summaryData.totalRuns > 0
         and (addon.colors.WHITE .. summaryData.totalRuns .. addon.colors.RESET)
         or addon.colors.POOR .. "–" .. addon.colors.RESET
     createSummaryBox(container, SUMMARY_BOX_W + SUMMARY_GAP, SUMMARY_BOX_W, "DASHBOARD_SUMMARY_TOTAL_RUNS", totalRunsText, nil)
 
-    -- Box 3: Successful Runs (with percentage below)
     local successText = summaryData.totalSuccess > 0
         and (addon.colors.SUCCESS .. summaryData.totalSuccess .. addon.colors.RESET)
         or addon.colors.POOR .. "–" .. addon.colors.RESET
@@ -289,36 +269,28 @@ local function createTableRow(child, mapID, colX, rowY, nameW, runLookup, isLast
 
     local ri = runLookup[mapID]
 
-    -- 1) Icon (centred vertically)
     local icon = child:CreateTexture(nil, "ARTWORK")
     icon:SetSize(ICON_SIZE, ICON_SIZE)
     icon:SetPoint("TOPLEFT", child, "TOPLEFT", colX["icon"] + 2, rowY - (ROW_H - ICON_SIZE) / 2)
     icon:SetTexture(texture)
 
-    -- 2) Name
     addCell(child, colX["name"], rowY, nameW, ROW_H, name, "GameFontHighlight", "LEFT")
 
-    -- 3) Best level
     addCell(child, colX["bestLevel"], rowY, COL_W.bestLevel, ROW_H,
         formatLevel(ri and ri.bestLevel), "GameFontHighlight", "RIGHT")
 
-    -- 4) Score
     addCell(child, colX["score"], rowY, COL_W.score, ROW_H,
         formatScore(getDungeonScore(mapID, ri)), "GameFontHighlight", "RIGHT")
 
-    -- 5) Runs
     addCell(child, colX["runs"], rowY, COL_W.runs, ROW_H,
         formatCount(ri and ri.runs), "GameFontHighlight", "RIGHT")
 
-    -- 6) Success
     addCell(child, colX["success"], rowY, COL_W.success, ROW_H,
         formatCount(ri and ri.success), "GameFontHighlight", "RIGHT")
 
-    -- 7) Time limit
     addCell(child, colX["timeLimit"], rowY, COL_W.timeLimit, ROW_H,
         formatTimeMMSS(timeLimit), "GameFontHighlight", "RIGHT")
 
-    -- 8) Best time
     addCell(child, colX["bestTime"], rowY, COL_W.bestTime, ROW_H,
         formatBestTime(ri and ri.bestTime, timeLimit), "GameFontHighlight", "RIGHT")
 
@@ -350,7 +322,6 @@ local function createTableRow(child, mapID, colX, rowY, nameW, runLookup, isLast
         end)
     end
 
-    -- 1px horizontal divider at the bottom of this row (skip for the last row)
     if not isLast then
         local rowDiv = child:CreateTexture(nil, "ARTWORK")
         rowDiv:SetPoint("TOPLEFT",  child, "TOPLEFT",  0, rowY - ROW_H)
@@ -359,10 +330,6 @@ local function createTableRow(child, mapID, colX, rowY, nameW, runLookup, isLast
         rowDiv:SetColorTexture(0.45, 0.45, 0.65, 0.3)
     end
 end
-
--- ---------------------------------------------------------------------------
--- Sorting helpers
--- ---------------------------------------------------------------------------
 
 local function computeSortedEntries(dungeons, runLookup)
     local entries = {}
@@ -397,10 +364,6 @@ local function computeSortedEntries(dungeons, runLookup)
 
     return entries
 end
-
--- ---------------------------------------------------------------------------
--- Header row (sortable)
--- ---------------------------------------------------------------------------
 
 local function updateHeaderIndicators()
     for colKey, fs in pairs(headerCells) do
@@ -439,7 +402,6 @@ local function createTableHeader(child, colX, nameW, onSort)
             onSort()
         end)
 
-        -- Highlight on hover
         btn:SetScript("OnEnter", function()
             fs:SetTextColor(1, 1, 1, 1)
         end)
@@ -448,7 +410,6 @@ local function createTableHeader(child, colX, nameW, onSort)
         end)
     end
 
-    -- Sortable column buttons
     hdrBtn(colX["name"],      nameW,           "name",      "LEFT")
     hdrBtn(colX["bestLevel"], COL_W.bestLevel, "bestLevel", "RIGHT")
     hdrBtn(colX["score"],     COL_W.score,     "score",     "RIGHT")
@@ -457,10 +418,8 @@ local function createTableHeader(child, colX, nameW, onSort)
     hdrBtn(colX["timeLimit"], COL_W.timeLimit, "timeLimit", "RIGHT")
     hdrBtn(colX["bestTime"],  COL_W.bestTime,  "bestTime",  "RIGHT")
 
-    -- Set initial text with indicators
     updateHeaderIndicators()
 
-    -- 1px horizontal divider below header
     local div = child:CreateTexture(nil, "ARTWORK")
     div:SetPoint("TOPLEFT",  child, "TOPLEFT",  0, -HEADER_H)
     div:SetPoint("TOPRIGHT", child, "TOPRIGHT", 0, -HEADER_H)
@@ -488,10 +447,6 @@ local function renderRows(tableFrame, dungeons, colX, nameW, runLookup)
     end
 end
 
--- ---------------------------------------------------------------------------
--- Entry point
--- ---------------------------------------------------------------------------
-
 function MPT_Dashboard:loadDungeons(frame, topOffset)
     topOffset = topOffset or 0
     local dungeons = C_ChallengeMode.GetMapTable()
@@ -499,12 +454,6 @@ function MPT_Dashboard:loadDungeons(frame, topOffset)
 
     local runHistory = C_MythicPlus.GetRunHistory(true, true, true) or {}
     local runLookup  = buildRunLookup(runHistory)
-
-    -- Stats boxes are intentionally disabled here — kept for future use elsewhere:
-    -- local tierCounts      = buildTierCounts(runHistory)
-    -- local summaryData     = buildSummaryData(runLookup, dungeons)
-    -- local summaryContainer = createSummaryBoxes(frame, summaryData)
-    -- local tierContainer   = createTierBoxes(frame, tierCounts, summaryContainer)
 
     local tableW = DASHBOARD_W - CONTENT_INSET * 2  -- align with divider caps
 

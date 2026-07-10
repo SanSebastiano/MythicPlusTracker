@@ -44,7 +44,6 @@ function MPT_Dashboard:createNavigation(parent, callbacks)
         addon.locale["DASHBOARD_TAB_KEYSTONES"],
     }
 
-    -- Vertically centre the buttons within the tab row
     local tabY = -(TAB_ROW_H - TAB_HEIGHT) / 2
 
     local prevBtn = nil
@@ -57,7 +56,6 @@ function MPT_Dashboard:createNavigation(parent, callbacks)
         fs:SetPoint("CENTER", btn, "CENTER")
         btn:SetFontString(fs)
 
-        -- Width based on text content
         local textW = fs:GetStringWidth()
         if textW <= 0 then textW = 80 end
         btn:SetWidth(textW + TAB_PADDING)
@@ -72,21 +70,18 @@ function MPT_Dashboard:createNavigation(parent, callbacks)
 
         local capturedIdx = i
         btn:SetScript("OnClick", function()
-            setActiveTab(capturedIdx)
             if callbacks and callbacks[capturedIdx] then
-                callbacks[capturedIdx]()
+                local allowed = callbacks[capturedIdx]()
+                if allowed == false then return end
             end
+            setActiveTab(capturedIdx)
         end)
 
         prevBtn = btn
     end
 
-    -- Apply initial colours
     setActiveTab(1)
 
-    -- 3-part decorative bar placed directly below the tab row.
-    -- Left / right caps use their atlas-native size so they are not distorted.
-    -- The center piece stretches horizontally to fill the space between them.
     local barLeft = navFrame:CreateTexture(nil, "ARTWORK")
     barLeft:SetAtlas("midnight-scenario-barframe-borderleft", true)
     barLeft:SetPoint("TOPLEFT", navFrame, "TOPLEFT", 20, -(TAB_ROW_H + 30))
