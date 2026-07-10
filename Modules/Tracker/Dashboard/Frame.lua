@@ -40,10 +40,14 @@ local function create(mainFrame)
     border:SetAllPoints(borderFrame)
     border:SetAtlas("ui-frame-midnight-border", false)
 
+    local function isMaxLevel()
+        return UnitLevel("player") >= GetMaxPlayerLevel()
+    end
+
     local tabCallbacks = {
-        [1] = function() showContent(MPT_Dashboard.loadDungeons); MPT_Sidebar:showForTab(1) end,
-        [2] = function() showContent(MPT_Dashboard.loadRuns);     MPT_Sidebar:showForTab(2) end,
-        [3] = function() showContent(MPT_Dashboard.loadKeystones); MPT_Sidebar:showForTab(3) end,
+        [1] = function() if not isMaxLevel() then return false end showContent(MPT_Dashboard.loadDungeons); MPT_Sidebar:showForTab(1) end,
+        [2] = function() if not isMaxLevel() then return false end showContent(MPT_Dashboard.loadRuns);     MPT_Sidebar:showForTab(2) end,
+        [3] = function() if not isMaxLevel() then return false end showContent(MPT_Dashboard.loadKeystones); MPT_Sidebar:showForTab(3) end,
     }
 
     navHeight = MPT_Dashboard:createNavigation(frame, tabCallbacks)
@@ -57,7 +61,7 @@ local function create(mainFrame)
 
         addon.debugMessage("Dashboard Frame OnShow")
 
-        if UnitLevel("player") < GetMaxPlayerLevel() then
+        if not isMaxLevel() then
             MPT_Dashboard:loadNotMaxLevel(contentWrapper)
             return
         end

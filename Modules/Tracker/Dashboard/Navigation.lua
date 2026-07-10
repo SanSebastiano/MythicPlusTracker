@@ -70,10 +70,11 @@ function MPT_Dashboard:createNavigation(parent, callbacks)
 
         local capturedIdx = i
         btn:SetScript("OnClick", function()
-            setActiveTab(capturedIdx)
             if callbacks and callbacks[capturedIdx] then
-                callbacks[capturedIdx]()
+                local allowed = callbacks[capturedIdx]()
+                if allowed == false then return end
             end
+            setActiveTab(capturedIdx)
         end)
 
         prevBtn = btn
