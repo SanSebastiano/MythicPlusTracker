@@ -2,7 +2,7 @@
 
 All notable changes to MythicPlusTracker are documented here.
 
-## [1.0.0] - xxxx-xx-xx
+## [1.0.0] - 2026-07-10
 
 ### Added
 - Initial release of MythicPlusTracker for World of Warcraft: Midnight
