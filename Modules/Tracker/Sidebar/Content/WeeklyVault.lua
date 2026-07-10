@@ -1,76 +1,100 @@
 local addonName, addon = ...
 
 local SLOT_COUNT   = 3
-local SLOT_WIDTH   = 79
-local SLOT_HEIGHT  = 55
+local SLOT_WIDTH   = 70
+local SLOT_HEIGHT  = 45
 local SLOT_GAP     = 8
-local CONTAINER_W  = SLOT_COUNT * SLOT_WIDTH + (SLOT_COUNT - 1) * SLOT_GAP  -- 253
+local CONTAINER_W  = SLOT_COUNT * SLOT_WIDTH + (SLOT_COUNT - 1) * SLOT_GAP  -- 226
 local CONTAINER_H  = SLOT_HEIGHT
 local ANCHOR_X     = 23
-local ANCHOR_Y     = -200
+local CONTAINER_X  = ANCHOR_X + math.floor((254 - CONTAINER_W) / 2)  -- centres slots (=37)
+local ANCHOR_Y     = -235
 
 local M_PLUS_TYPE  = Enum.WeeklyRewardChestThresholdType and
                      Enum.WeeklyRewardChestThresholdType.Activities or 3
 
-local function getActivityIlvl(activity)
-    -- Rewards table is populated when the vault is open (after weekly reset)
-    if activity.rewards and #activity.rewards > 0 then
-        local reward = activity.rewards[1]
-        if reward and reward.id and reward.id > 0 then
-            local ilvl = select(4, GetItemInfo(reward.id))
-            if ilvl and ilvl > 0 then return ilvl end
-        end
+-- Methods borrowed from WeeklyRewardsActivityMixin for the Blizzard tooltip chain
+local INHERIT_METHODS = {
+    "ShowTooltip",
+    "ShowPreviewItemTooltip",
+    "ShowIncompleteTooltip",
+    "IsCompletedAtHeroicLevel",
+    "AddTopRunsToTooltip",
+    "HandlePreviewMythicRewardTooltip",
+    "HandlePreviewPvPRewardTooltip",
+    "GetRaidName",
+    "AddRaidCompletionInfoToGameTooltip",
+}
+
+local function getActivityItemLevel(activity)
+    if not activity then return nil end
+    local itemLink = C_WeeklyRewards.GetExampleRewardItemHyperlinks(activity.id)
+    if itemLink and itemLink ~= "" and itemLink ~= "[]" then
+        return C_Item.GetDetailedItemLevelInfo(itemLink)
     end
     return nil
 end
 
-local function buildSlot(container, activity, slotIndex)
+local function buildSlot(container, activity, slotIndex, BlizzardMixin)
     local xOff = (slotIndex - 1) * (SLOT_WIDTH + SLOT_GAP)
 
     local slot = CreateFrame("Frame", nil, container)
     slot:SetSize(SLOT_WIDTH, SLOT_HEIGHT)
     slot:SetPoint("TOPLEFT", container, "TOPLEFT", xOff, 0)
 
-    local bg = slot:CreateTexture(nil, "BACKGROUND")
-    bg:SetAllPoints(slot)
-    bg:SetColorTexture(0, 0, 0, 0.25)
+    local background = slot:CreateTexture(nil, "BACKGROUND")
+    background:SetAllPoints(slot)
+    background:SetAtlas("ui-frame-midnight-portraitdisable", true)
 
-    local unlocked = activity and activity.progress >= activity.threshold
-    local ilvl     = activity and getActivityIlvl(activity)
+    local unlocked = activity and (activity.progress >= activity.threshold)
+    local itemLevel     = getActivityItemLevel(activity)
 
     local centerText = slot:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     centerText:SetPoint("CENTER", slot, "CENTER", 0, 0)
     centerText:SetJustifyH("CENTER")
-    if unlocked and ilvl then
-        centerText:SetText(addon.colors.SUCCESS .. ilvl .. addon.colors.RESET)
+    if unlocked then
+        if itemLevel then
+            centerText:SetText(addon.colors.ARTIFACT .. itemLevel .. addon.colors.RESET)
+        else
+            centerText:SetText(addon.colors.ARTIFACT .. "?" .. addon.colors.RESET)
+        end
     elseif activity then
-        centerText:SetText(addon.colors.WARNING .. activity.progress .. " / " .. activity.threshold .. addon.colors.RESET)
+        centerText:SetText(addon.colors.POOR .. activity.progress .. " / " .. activity.threshold .. addon.colors.RESET)
     else
-        centerText:SetText(addon.colors.POOR .. "–" .. addon.colors.RESET)
+        centerText:SetText(addon.colors.POOR .. "-" .. addon.colors.RESET)
     end
 
-    local btn = CreateFrame("Button", nil, slot)
-    btn:SetAllPoints(slot)
-    btn:SetScript("OnEnter", function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        GameTooltip:AddLine(string.format(addon.locale["SIDEBAR_VAULT_SLOT"], slotIndex), 1, 1, 1)
+    local button = CreateFrame("Button", nil, slot)
+    button:SetAllPoints(slot)
 
-        if not activity then
-            GameTooltip:AddLine(addon.colors.POOR .. "–" .. addon.colors.RESET)
-        elseif unlocked then
-            if ilvl then
-                GameTooltip:AddLine(string.format(addon.locale["SIDEBAR_VAULT_REWARD_ILVL"], ilvl), 0, 1, 0)
+    if BlizzardMixin then
+        for _, method in ipairs(INHERIT_METHODS) do
+            if BlizzardMixin[method] then
+                button[method] = BlizzardMixin[method]
             end
-        else
-            GameTooltip:AddLine(
-                string.format(addon.locale["SIDEBAR_VAULT_PROGRESS"], activity.progress, activity.threshold),
-                1, 0.5, 0
-            )
         end
+        button.info          = activity
+        button.unlocked      = unlocked
+        button.progressDelta = activity and math.max(0, activity.threshold - activity.progress) or 0
+        button.CanShowPreviewItemTooltip = function(self) return self.unlocked end
+    end
 
-        GameTooltip:Show()
+    button:SetScript("OnEnter", function(self)
+        if BlizzardMixin and self.info then
+            WeeklyRewardsActivityMixin.OnEnter(self)
+            local tt = GameTooltip
+            if tt:IsShown() and tt:GetOwner() == self then
+                tt:ClearAllPoints()
+                tt:SetPoint("BOTTOMLEFT", self, "TOPRIGHT", -4, 0)
+            end
+        end
     end)
-    btn:SetScript("OnLeave", function()
+
+    button:SetScript("OnClick", function()
+        WeeklyRewards_ShowUI()
+    end)
+
+    button:SetScript("OnLeave", function()
         GameTooltip:Hide()
     end)
 end
@@ -78,13 +102,15 @@ end
 local function loadWeeklyVault(sidebar)
     addon.debugMessage("Loading sidebar: weekly vault...")
 
-    addon.createDivider(sidebar, ANCHOR_X, -175)
+    addon.createDivider(sidebar, ANCHOR_X, -210)
 
     local container = CreateFrame("Frame", nil, sidebar)
     container:SetSize(CONTAINER_W, CONTAINER_H)
-    container:SetPoint("TOPLEFT", sidebar, "TOPLEFT", ANCHOR_X, ANCHOR_Y)
+    container:SetPoint("TOPLEFT", sidebar, "TOPLEFT", CONTAINER_X, ANCHOR_Y)
 
-    -- GetActivities returns all types regardless of the parameter; filter manually
+    C_AddOns.LoadAddOn("Blizzard_WeeklyRewards")
+    local BlizzardMixin = WeeklyRewardsActivityMixin
+
     local all = C_WeeklyRewards.GetActivities() or {}
     local bySlot = {}
     for _, act in ipairs(all) do
@@ -94,11 +120,10 @@ local function loadWeeklyVault(sidebar)
     end
 
     for i = 1, SLOT_COUNT do
-        buildSlot(container, bySlot[i], i)
+        buildSlot(container, bySlot[i], i, BlizzardMixin)
     end
 end
 
 if MPT_Sidebar then
     MPT_Sidebar.getWeeklyVault = loadWeeklyVault
 end
-

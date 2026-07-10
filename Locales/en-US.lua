@@ -30,13 +30,57 @@ local locale = {
     ["SIDEBAR_VAULT_PROGRESS"] = "%d / %d M+ runs completed",
     ["SIDEBAR_VAULT_REWARD_ILVL"] = "Reward Item Level: %d",
     ["SIDEBAR_VAULT_KEY_LEVEL"] = "Best Run: M+%d",
+    ["SIDEBAR_VAULT_NOT_AVAILABLE"] = "–",
+    ["SIDEBAR_VAULT_UNLOCKED"] = "Unlocked",
+    ["SIDEBAR_VAULT_TOP_RUNS"] = "Top Runs This Week:",
     ["DASHBOARD_NOT_MAX_LEVEL"] = "You have not reached max level yet.",
+    -- Dashboard navigation tabs
+    ["DASHBOARD_TAB_OVERVIEW"]  = "Overview",
+    ["DASHBOARD_TAB_RUNS"]      = "Runs",
+    ["DASHBOARD_TAB_KEYSTONES"] = "Keystones",
+    -- Dungeon table column headers
+    ["DUNGEON_COL_DUNGEON"]    = "Dungeon",
+    ["DUNGEON_COL_BEST_LEVEL"] = "Level",
+    ["DUNGEON_COL_SCORE"]      = "Score",
+    ["DUNGEON_COL_RUNS"]       = "Runs",
+    ["DUNGEON_COL_SUCCESS"]    = "Success",
+    ["DUNGEON_COL_TIME_LIMIT"] = "Limit",
+    ["DUNGEON_COL_BEST_TIME"]  = "Best Time",
+    ["DUNGEON_TOOLTIP_TIME_LIMIT"] = "Time Limit",
+    -- Overview summary boxes
+    ["DASHBOARD_SUMMARY_HIGHEST_KEY"]   = "Highest Keystone",
+    ["DASHBOARD_SUMMARY_TOTAL_RUNS"]    = "Total Runs",
+    ["DASHBOARD_SUMMARY_SUCCESS_RUNS"]  = "Successful Runs",
+    -- Runs table column headers
+    ["RUN_COL_DUNGEON"]   = "Dungeon",
+    ["RUN_COL_LEVEL"]     = "Level",
+    ["RUN_COL_COMPLETED"] = "Completed",
+    ["RUN_COL_SCORE"]     = "Score",
+    ["RUN_COL_DURATION"]  = "Time",
+    ["RUN_COL_DATE"]      = "Date",
+    ["RUN_COL_SEASON"]    = "Season",
+    -- Runs table tooltips
+    ["RUN_TOOLTIP_TIME_LIMIT"]    = "Time Limit",
+    ["RUN_TOOLTIP_DUNGEON_SCORE"] = "Dungeon Score",
     -- Dashboard
     ["DASHBOARD_OVERALL"] = "Overall",
     ["DASHBOARD_WEEKLY"] = "Weekly",
     ["DASHBOARD_BEST"] = "Best",
     ["DASHBOARD_RUNS"] = "Runs",
     ["DASHBOARD_SUCCESS"] = "Success",
+    ["DASHBOARD_RUN_TIME"] = "Time",
+    -- Sidebar: Runs tab
+    ["SIDEBAR_RUNS_BEST_RUN"]    = "Best Run",
+    ["SIDEBAR_RUNS_NO_RUNS"]     = "No successful Mythic Plus run completed yet.",
+    ["SIDEBAR_RUNS_TIER_HEADER"] = "Timed Runs",
+    ["SIDEBAR_GROUP_HEADER"]     = "Group",
+    ["SIDEBAR_GROUP_NO_MEMBERS"] = "Not currently in a group.",
+    -- Keystones tab: group keystone overview
+    ["KEYSTONES_COL_PLAYER"]  = "Player",
+    ["KEYSTONES_COL_DUNGEON"] = "Dungeon",
+    ["KEYSTONES_COL_LEVEL"]   = "Level",
+    ["KEYSTONES_NO_ADDON"]    = "No addon",
+    ["KEYSTONES_NO_KEY"]      = "No key",
 }
 
 for key, value in pairs(locale) do

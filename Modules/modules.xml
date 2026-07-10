@@ -3,16 +3,23 @@
     <Include file='Tracker\MainFrame.lua'/>
 
     <Include file='Tracker\Dashboard\init.lua'/>
+    <Include file='Tracker\Dashboard\Navigation.lua'/>
     <Include file='Tracker\Dashboard\Frame.lua'/>
     <Include file='Tracker\Dashboard\Content\NotMaxLevel.lua'/>
     <Include file='Tracker\Dashboard\Content\Dungeons.lua'/>
+    <Include file='Tracker\Dashboard\Content\Runs.lua'/>
+    <Include file='Tracker\Dashboard\Content\Keystones.lua'/>
 
     <Include file='Tracker\Sidebar\init.lua'/>
     <Include file='Tracker\Sidebar\Content\Divider.lua'/>
     <Include file='Tracker\Sidebar\Content\WeeklyVault.lua'/>
+    <Include file='Tracker\Sidebar\Content\TraitNodes.lua'/>
     <Include file='Tracker\Sidebar\Content\Currency.lua'/>
     <Include file='Tracker\Sidebar\Content\Keystone.lua'/>
     <Include file='Tracker\Sidebar\Content\Score.lua'/>
+    <Include file='Tracker\Sidebar\Content\Affixes.lua'/>
+    <Include file='Tracker\Sidebar\Content\RunsStats.lua'/>
+    <Include file='Tracker\Sidebar\Content\GroupScores.lua'/>
     <Include file='Tracker\Sidebar\Frame.lua'/>
 
     <Include file='Tracker\MinimapButton.lua'/>

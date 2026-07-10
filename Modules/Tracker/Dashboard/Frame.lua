@@ -1,6 +1,24 @@
 local addonName, addon = ...
 
 local frame
+local contentWrapper
+local navHeight = 0
+
+-- Tracks the active content panel so we can hide it before showing a new one
+local activeContent = nil
+
+local function showContent(loader, ...)
+    if activeContent then
+        activeContent:Hide()
+        activeContent = nil
+    end
+
+    local panel = CreateFrame("Frame", nil, contentWrapper)
+    panel:SetAllPoints(contentWrapper)
+    activeContent = panel
+
+    loader(MPT_Dashboard, panel, navHeight, ...)
+end
 
 local function create(mainFrame)
     if frame then return frame end
@@ -22,17 +40,33 @@ local function create(mainFrame)
     border:SetAllPoints(borderFrame)
     border:SetAtlas("ui-frame-midnight-border", false)
 
+    local function isMaxLevel()
+        return UnitLevel("player") >= GetMaxPlayerLevel()
+    end
+
+    local tabCallbacks = {
+        [1] = function() if not isMaxLevel() then return false end showContent(MPT_Dashboard.loadDungeons); MPT_Sidebar:showForTab(1) end,
+        [2] = function() if not isMaxLevel() then return false end showContent(MPT_Dashboard.loadRuns);     MPT_Sidebar:showForTab(2) end,
+        [3] = function() if not isMaxLevel() then return false end showContent(MPT_Dashboard.loadKeystones); MPT_Sidebar:showForTab(3) end,
+    }
+
+    navHeight = MPT_Dashboard:createNavigation(frame, tabCallbacks)
+
     frame:SetScript("OnShow", function()
-        if frame.dungeonsLoaded then return end
-        frame.dungeonsLoaded = true
+        if contentWrapper then contentWrapper:Hide() end
+        activeContent = nil
+
+        contentWrapper = CreateFrame("Frame", nil, frame)
+        contentWrapper:SetAllPoints(frame)
+
         addon.debugMessage("Dashboard Frame OnShow")
 
-        if UnitLevel("player") < GetMaxPlayerLevel() then
-            MPT_Dashboard:loadNotMaxLevel(frame)
+        if not isMaxLevel() then
+            MPT_Dashboard:loadNotMaxLevel(contentWrapper)
             return
         end
 
-        MPT_Dashboard:loadDungeons(frame)
+        showContent(MPT_Dashboard.loadDungeons)
     end)
 
     return frame

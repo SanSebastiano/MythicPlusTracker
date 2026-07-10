@@ -32,6 +32,9 @@ Thank you for your interest in contributing! This document explains how to repor
 - Never use `print()` directly — use the `addon.*Message()` helpers (`addonMessage`, `chatMessage`, `errorMessage`, etc.).
 - Never hardcode color escape codes — use `addon.colors.*` and always close with `addon.colors.RESET`.
 - New files must be registered in the correct `.xml` or `.toc` file **at the correct load-order position**.
+- Always spell out variable, function, and file names in full — avoid abbreviations (e.g. `Communication.lua`/`addon.Communication`, not `Comm.lua`/`addon.Comm`).
+- Only comment code that needs clarification — explain non-obvious business logic or WoW API quirks, not what the code is already saying. Avoid section-divider banners, redundant labels, or dead commented-out code.
+- Run `luacheck .` before submitting a PR to catch syntax errors and unused/undefined globals. The repo's `.luacheckrc` is preconfigured with the WoW API globals used by this addon.
 
 ---
 
@@ -61,3 +64,9 @@ Keep the header under 50 characters. Wrap the body at 72 characters.
 ## Questions?
 
 Open a [GitHub Discussion](../../discussions) or create an issue with the `question` label.
+
+---
+
+## License Note
+
+MythicPlusTracker is licensed under [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/). By submitting a pull request, you agree that your contribution may be included in the project under these same license terms.
