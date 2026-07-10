@@ -1,4 +1,3 @@
----@diagnostic disable: unnecessary-if
 local addonName, addon = ...
 
 local SLOT_COUNT   = 3

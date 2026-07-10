@@ -1,13 +1,10 @@
 local addonName, addon = ...
 
--- Main addon namespace
 addon.MythicPlusTracker = addon.MythicPlusTracker or {}
 local MPT = addon.MythicPlusTracker
 
--- Addon state
 MPT.isLoaded = false
 
--- Initialization
 function MPT:Initialize()
     if self.isLoaded then
         return
@@ -16,7 +13,6 @@ function MPT:Initialize()
     self.isLoaded = true
 end
 
--- Event frame for main logic
 local frame = CreateFrame("Frame")
 frame:RegisterEvent("ADDON_LOADED")
 frame:RegisterEvent("PLAYER_LOGIN")

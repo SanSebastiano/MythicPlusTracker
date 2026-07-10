@@ -1,6 +1,5 @@
 local addonName, addon = ...
 
--- Slash command handler for MythicPlusTracker
 local function handleSlashCommand(msg)
     local command = string.lower(string.trim(msg or ""))
 

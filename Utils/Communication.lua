@@ -90,9 +90,6 @@ local function sendKeystoneRequestMessage()
     C_ChatInfo.SendAddonMessage(ADDON_MESSAGE_PREFIX, "REQUEST", channel)
 end
 
----Processes an incoming addon message from another MythicPlusTracker user.
----@param message string
----@param senderFullPlayerName string
 local function handleIncomingMessage(message, senderFullPlayerName)
     if message == "REQUEST" then
         broadcastOwnKeystoneStatus()

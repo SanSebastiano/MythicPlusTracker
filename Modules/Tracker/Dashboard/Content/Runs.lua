@@ -27,10 +27,6 @@ local ARTIFACT_R = 0xe6 / 255
 local ARTIFACT_G = 0xcc / 255
 local ARTIFACT_B = 0x80 / 255
 
--- ---------------------------------------------------------------------------
--- Format helpers
--- ---------------------------------------------------------------------------
-
 local function formatLevel(level)
     if level and level > 0 then
         return addon.colorKeystoneLevel(level) .. "+" .. level .. addon.colors.RESET
@@ -85,10 +81,6 @@ local function formatSeason(s)
     return tostring(s)
 end
 
--- ---------------------------------------------------------------------------
--- Cell helper
--- ---------------------------------------------------------------------------
-
 local function addCell(parent, x, y, w, h, text, font, justifyH, wordWrap)
     local fs = parent:CreateFontString(nil, "OVERLAY", font or "GameFontHighlight")
     fs:SetSize(w, h)
@@ -116,10 +108,6 @@ local function addCellTooltip(parent, x, y, w, h, title, body)
     frame:SetScript("OnLeave", function() GameTooltip:Hide() end)
 end
 
--- ---------------------------------------------------------------------------
--- Header row
--- ---------------------------------------------------------------------------
-
 local function createHeader(parent, colX, nameW)
     local headerDefs = {
         { key = "icon",      localeKey = nil,               w = COL_W.icon,      j = "LEFT"  },
@@ -141,17 +129,12 @@ local function createHeader(parent, colX, nameW)
         end
     end
 
-    -- Divider below header
     local div = parent:CreateTexture(nil, "ARTWORK")
     div:SetPoint("TOPLEFT",  parent, "TOPLEFT",  0, -HEADER_H)
     div:SetPoint("TOPRIGHT", parent, "TOPRIGHT", 0, -HEADER_H)
     div:SetHeight(1)
     div:SetColorTexture(0.45, 0.45, 0.65, 0.5)
 end
-
--- ---------------------------------------------------------------------------
--- Data row
--- ---------------------------------------------------------------------------
 
 local function createRow(parent, run, colX, nameW, rowY, isLast, scoreDeltas)
     local mapID = run.mapChallengeModeID
@@ -171,7 +154,6 @@ local function createRow(parent, run, colX, nameW, rowY, isLast, scoreDeltas)
     addCell(parent, colX["level"], rowY, COL_W.level, ROW_H,
         formatLevel(run.level), "GameFontHighlight", "RIGHT")
 
-    -- Completed indicator: green checkmark or red X atlas texture
     local cellX     = colX["completed"]
     local cellW     = COL_W.completed
     local MARK_SIZE = 16
@@ -218,10 +200,6 @@ local function createRow(parent, run, colX, nameW, rowY, isLast, scoreDeltas)
         div:SetColorTexture(0.45, 0.45, 0.65, 0.3)
     end
 end
-
--- ---------------------------------------------------------------------------
--- Entry point
--- ---------------------------------------------------------------------------
 
 function MPT_Dashboard:loadRuns(frame, topOffset)
     topOffset = topOffset or 0
@@ -274,7 +252,6 @@ function MPT_Dashboard:loadRuns(frame, topOffset)
     outerFrame:SetPoint("TOPLEFT",  MPT_Dashboard.navFrame, "BOTTOMLEFT",  CONTENT_INSET, -SUMMARY_MARGIN)
     outerFrame:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -CONTENT_INSET, CONTENT_INSET)
 
-    -- Table header (outside scroll area so it stays fixed)
     local headerFrame = CreateFrame("Frame", nil, outerFrame)
     headerFrame:SetPoint("TOPLEFT",  outerFrame, "TOPLEFT",  0, 0)
     headerFrame:SetPoint("TOPRIGHT", outerFrame, "TOPRIGHT", -(SCROLL_BTN_SIZE + 4), 0)

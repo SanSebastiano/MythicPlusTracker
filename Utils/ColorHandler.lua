@@ -7,45 +7,38 @@ addon.colors = {
     GREEN = "|cFF00FF00",
     BLUE = "|cFF0000FF",
 
-    -- WoW-specific colors
     GOLD = "|cFFFFD700",
     ORANGE = "|cFFFF8C00",
     YELLOW = "|cFFFFFF00",
     PURPLE = "|cFF9932CC",
     PINK = "|cFFFF69B4",
 
-    -- Quality colors (WoW Item Quality)
-    POOR = "|cFF9d9d9d",        -- Gray
-    COMMON = "|cFFffffff",      -- White
-    UNCOMMON = "|cFF1eff00",    -- Green
-    RARE = "|cFF0070dd",        -- Blue
-    EPIC = "|cFFa335ee",        -- Purple
-    LEGENDARY = "|cFFff8000",   -- Orange
-    ARTIFACT = "|cFFe6cc80",    -- Light Gold
-    HEIRLOOM = "|cFF00ccff",    -- Blizzard Blue
+    POOR = "|cFF9d9d9d",
+    COMMON = "|cFFffffff",
+    UNCOMMON = "|cFF1eff00",
+    RARE = "|cFF0070dd",
+    EPIC = "|cFFa335ee",
+    LEGENDARY = "|cFFff8000",
+    ARTIFACT = "|cFFe6cc80",
+    HEIRLOOM = "|cFF00ccff",
 
-    -- UI-specific colors
-    ERROR = "|cFFFF0000",       -- Red for error messages
-    SUCCESS = "|cFF00FF00",     -- Green for success messages
-    WARNING = "|cFFFFFF00",     -- Yellow for warnings
-    INFO = "|cFF00BFFF",        -- Light blue for information
+    ERROR = "|cFFFF0000",
+    SUCCESS = "|cFF00FF00",
+    WARNING = "|cFFFFFF00",
+    INFO = "|cFF00BFFF",
 
-    -- Mythic Plus specific colors
-    KEYSTONE_LEVEL_LOW = "|cFF1eff00",     -- Green for low levels (2-4)
-    KEYSTONE_LEVEL_MID = "|cFF0070dd",     -- Blue for mid levels (5-9)
-    KEYSTONE_LEVEL_HIGH = "|cFFa335ee",    -- Purple for high levels (10-14)
-    KEYSTONE_LEVEL_VERY_HIGH = "|cFFff8000", -- Orange for very high levels (15+)
+    KEYSTONE_LEVEL_LOW = "|cFF1eff00",
+    KEYSTONE_LEVEL_MID = "|cFF0070dd",
+    KEYSTONE_LEVEL_HIGH = "|cFFa335ee",
+    KEYSTONE_LEVEL_VERY_HIGH = "|cFFff8000",
 
-    -- Timer colors
-    TIMER_SUCCESS = "|cFF00FF00",   -- Green for successful timers
-    TIMER_WARNING = "|cFFFFFF00",   -- Yellow for close timers
-    TIMER_DANGER = "|cFFFF0000",    -- Red for missed timers
+    TIMER_SUCCESS = "|cFF00FF00",
+    TIMER_WARNING = "|cFFFFFF00",
+    TIMER_DANGER = "|cFFFF0000",
 
-    -- Reset code (to end colors)
     RESET = "|r"
 }
 
--- Function for keystone level colors
 addon.colorKeystoneLevel = function(level)
     local levelNum = tonumber(level)
     if not levelNum then

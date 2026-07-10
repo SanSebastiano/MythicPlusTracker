@@ -81,9 +81,6 @@ function MPT_Dashboard:createNavigation(parent, callbacks)
 
     setActiveTab(1)
 
-    -- 3-part decorative bar placed directly below the tab row.
-    -- Left / right caps use their atlas-native size so they are not distorted.
-    -- The center piece stretches horizontally to fill the space between them.
     local barLeft = navFrame:CreateTexture(nil, "ARTWORK")
     barLeft:SetAtlas("midnight-scenario-barframe-borderleft", true)
     barLeft:SetPoint("TOPLEFT", navFrame, "TOPLEFT", 20, -(TAB_ROW_H + 30))

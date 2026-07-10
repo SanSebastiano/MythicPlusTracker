@@ -43,10 +43,6 @@ local CLASS_ICON_ATLAS_BY_ENGLISH_CLASS = {
     WARRIOR     = "UI-HUD-UnitFrame-Player-Portrait-ClassIcon-Warrior",
 }
 
--- ---------------------------------------------------------------------------
--- Group roster helpers
--- ---------------------------------------------------------------------------
-
 ---Resolves the keystone (mapID + level) known for the given unit token, as
 ---well as whether that member is known to run MythicPlusTracker at all.
 ---For the local player this is read directly from the owned keystone item;
@@ -92,10 +88,6 @@ local function getEffectiveRole(unitToken)
     return nil
 end
 
--- ---------------------------------------------------------------------------
--- Header row
--- ---------------------------------------------------------------------------
-
 local function createHeader(parent, colX, nameW, dungeonW)
     local headerDefs = {
         { key = "name",    localeKey = "KEYSTONES_COL_PLAYER",  w = nameW,    j = "LEFT"  },
@@ -121,10 +113,6 @@ local function createHeader(parent, colX, nameW, dungeonW)
     divider:SetColorTexture(0.45, 0.45, 0.65, 0.5)
 end
 
--- ---------------------------------------------------------------------------
--- Row rendering
--- ---------------------------------------------------------------------------
-
 local function createRow(parent, unitToken, colX, nameW, dungeonW, rowY, isLast)
     if not UnitExists(unitToken) then
         return
@@ -134,14 +122,12 @@ local function createRow(parent, unitToken, colX, nameW, dungeonW, rowY, isLast)
     local unitName = UnitName(unitToken) or fullPlayerName or "?"
     local _, englishClass = UnitClass(unitToken)
 
-    -- Portrait
     local portrait = parent:CreateTexture(nil, "ARTWORK")
     portrait:SetSize(PORTRAIT_SIZE, PORTRAIT_SIZE)
     portrait:SetPoint("TOPLEFT", parent, "TOPLEFT",
         colX["portrait"], rowY - (ROW_H - PORTRAIT_SIZE) / 2)
     SetPortraitTexture(portrait, unitToken)
 
-    -- Name, colored by class if available
     local nameText = parent:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     nameText:SetSize(nameW, ROW_H)
     nameText:SetPoint("TOPLEFT", parent, "TOPLEFT", colX["name"], rowY)
@@ -153,7 +139,6 @@ local function createRow(parent, unitToken, colX, nameW, dungeonW, rowY, isLast)
         nameText:SetTextColor(classColor.r, classColor.g, classColor.b)
     end
 
-    -- Class icon
     local classIconAtlas = englishClass and CLASS_ICON_ATLAS_BY_ENGLISH_CLASS[englishClass]
     if classIconAtlas then
         local classIcon = parent:CreateTexture(nil, "ARTWORK")
@@ -163,7 +148,6 @@ local function createRow(parent, unitToken, colX, nameW, dungeonW, rowY, isLast)
             colX["classIcon"], rowY - (ROW_H - COL_W.classIcon) / 2)
     end
 
-    -- Role icon
     local role = getEffectiveRole(unitToken)
     local roleAtlas = role and ROLE_ATLAS_BY_ROLE[role]
     if roleAtlas then
@@ -229,10 +213,6 @@ local function createRow(parent, unitToken, colX, nameW, dungeonW, rowY, isLast)
     end
 end
 
--- ---------------------------------------------------------------------------
--- Entry point
--- ---------------------------------------------------------------------------
-
 function MPT_Dashboard:loadKeystones(frame, topOffset)
     topOffset = topOffset or 0
 
@@ -262,7 +242,6 @@ function MPT_Dashboard:loadKeystones(frame, topOffset)
     outerFrame:SetPoint("TOPLEFT",  MPT_Dashboard.navFrame, "BOTTOMLEFT",  CONTENT_INSET, -SUMMARY_MARGIN)
     outerFrame:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -CONTENT_INSET, CONTENT_INSET)
 
-    -- Table header (outside scroll area so it stays fixed)
     local headerFrame = CreateFrame("Frame", nil, outerFrame)
     headerFrame:SetPoint("TOPLEFT",  outerFrame, "TOPLEFT",  0, 0)
     headerFrame:SetPoint("TOPRIGHT", outerFrame, "TOPRIGHT", -(SCROLL_BTN_SIZE + 4), 0)
