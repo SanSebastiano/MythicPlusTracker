@@ -73,6 +73,14 @@ local locale = {
     ["SIDEBAR_RUNS_BEST_RUN"]    = "Best Run",
     ["SIDEBAR_RUNS_NO_RUNS"]     = "No successful Mythic Plus run completed yet.",
     ["SIDEBAR_RUNS_TIER_HEADER"] = "Timed Runs",
+    ["SIDEBAR_GROUP_HEADER"]     = "Group",
+    ["SIDEBAR_GROUP_NO_MEMBERS"] = "Not currently in a group.",
+    -- Keystones tab: group keystone overview
+    ["KEYSTONES_COL_PLAYER"]  = "Player",
+    ["KEYSTONES_COL_DUNGEON"] = "Dungeon",
+    ["KEYSTONES_COL_LEVEL"]   = "Level",
+    ["KEYSTONES_NO_ADDON"]    = "No addon",
+    ["KEYSTONES_NO_KEY"]      = "No key",
 }
 
 for key, value in pairs(locale) do

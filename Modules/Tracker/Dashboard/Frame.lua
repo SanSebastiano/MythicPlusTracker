@@ -43,7 +43,7 @@ local function create(mainFrame)
     local tabCallbacks = {
         [1] = function() showContent(MPT_Dashboard.loadDungeons); MPT_Sidebar:showForTab(1) end,
         [2] = function() showContent(MPT_Dashboard.loadRuns);     MPT_Sidebar:showForTab(2) end,
-        [3] = function() MPT_Sidebar:showForTab(3) end,   -- Keystones: stub
+        [3] = function() showContent(MPT_Dashboard.loadKeystones); MPT_Sidebar:showForTab(3) end,
     }
 
     navHeight = MPT_Dashboard:createNavigation(frame, tabCallbacks)
@@ -62,7 +62,6 @@ local function create(mainFrame)
             return
         end
 
-        -- Default to tab 1 (Dungeons)
         showContent(MPT_Dashboard.loadDungeons)
     end)
 

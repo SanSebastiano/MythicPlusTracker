@@ -1,8 +1,6 @@
 local addonName, addon = ...
 
--- Color definitions
 addon.colors = {
-    -- Base colors
     WHITE = "|cFFFFFFFF",
     BLACK = "|cFF000000",
     RED = "|cFFFF0000",

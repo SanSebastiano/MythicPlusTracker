@@ -25,7 +25,6 @@ local function loadRunsStats(sidebar)
 
     local runHistory = C_MythicPlus.GetRunHistory(true, true, true) or {}
 
-    -- Find the run with the highest runScore
     local bestRun = nil
     for _, run in ipairs(runHistory) do
         if not bestRun or (run.runScore or 0) > (bestRun.runScore or 0) then
@@ -34,7 +33,7 @@ local function loadRunsStats(sidebar)
     end
 
     -- -----------------------------------------------------------------------
-    -- "Bester Durchlauf" title banner  (score ends at y=-110, 8px gap → y=-118)
+    -- "Best Run" title banner  (score ends at y=-110, 8px gap → y=-118)
     -- SetSize(254, 80) matches the Score card proportions exactly.
     -- -----------------------------------------------------------------------
     local titleFrame = CreateFrame("Frame", nil, sidebar)
@@ -59,7 +58,6 @@ local function loadRunsStats(sidebar)
         local name, _, _, texture = C_ChallengeMode.GetMapUIInfo(mapID)
         name = name or ("Map " .. tostring(mapID))
 
-        -- Dungeon icon
         if texture then
             local icon = sidebar:CreateTexture(nil, "ARTWORK")
             icon:SetSize(ICON_SIZE, ICON_SIZE)
@@ -68,7 +66,6 @@ local function loadRunsStats(sidebar)
             icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
         end
 
-        -- Dungeon name
         local nameLabel = sidebar:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
         nameLabel:SetPoint("TOPLEFT",  sidebar, "TOPLEFT",  CONTENT_X + INSET + ICON_SIZE + 5, -172)
         nameLabel:SetPoint("TOPRIGHT", sidebar, "TOPLEFT",  CONTENT_X + CONTENT_W - INSET - 40, -172)
@@ -77,7 +74,6 @@ local function loadRunsStats(sidebar)
         nameLabel:SetJustifyV("MIDDLE")
         nameLabel:SetText(name)
 
-        -- Key level — right aligned
         local levelLabel = sidebar:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
         levelLabel:SetPoint("TOPRIGHT", sidebar, "TOPLEFT", CONTENT_X + CONTENT_W - INSET, -172)
         levelLabel:SetSize(38, ICON_SIZE)
@@ -95,7 +91,7 @@ local function loadRunsStats(sidebar)
     end
 
     -- -----------------------------------------------------------------------
-    -- "Zeitliche Durchläufe" section header  (fixed at y=-226)
+    -- "Timed Runs" section header  (fixed at y=-226)
     -- Height 46 so the text has breathing room and the atlas isn't over-scaled.
     -- -----------------------------------------------------------------------
     local headerFrame = CreateFrame("Frame", nil, sidebar)
@@ -138,7 +134,6 @@ local function loadRunsStats(sidebar)
     local sectionY = -280
     local ROW_H    = 22
 
-    -- Table header
     local LABEL_W = COL_TOTAL - (CONTENT_X + INSET) - 6
 
     local hLevel = sidebar:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
@@ -165,7 +160,6 @@ local function loadRunsStats(sidebar)
     hSuccess:SetTextColor(ARTIFACT_R, ARTIFACT_G, ARTIFACT_B, 1)
     hSuccess:SetText(addon.locale["DUNGEON_COL_SUCCESS"])
 
-    -- Divider below header
     local hDiv = sidebar:CreateTexture(nil, "ARTWORK")
     hDiv:SetPoint("TOPLEFT",  sidebar, "TOPLEFT",  CONTENT_X + INSET, sectionY - ROW_H)
     hDiv:SetPoint("TOPRIGHT", sidebar, "TOPLEFT",  CONTENT_X + CONTENT_W - INSET, sectionY - ROW_H)
@@ -175,7 +169,6 @@ local function loadRunsStats(sidebar)
     sectionY = sectionY - ROW_H - 2
 
     for i, tier in ipairs(TIERS) do
-        -- Thin divider above every row except the first
         if i > 1 then
             local div = sidebar:CreateTexture(nil, "ARTWORK")
             div:SetPoint("TOPLEFT",  sidebar, "TOPLEFT",  CONTENT_X + INSET, sectionY)
@@ -192,7 +185,6 @@ local function loadRunsStats(sidebar)
         labelFS:SetText(tier.label)
         labelFS:SetTextColor(0.85, 0.85, 0.85, 1)
 
-        -- Total count — always POOR
         local totalFS = sidebar:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
         totalFS:SetPoint("TOPRIGHT", sidebar, "TOPLEFT", COL_TOTAL, sectionY)
         totalFS:SetSize(40, ROW_H)

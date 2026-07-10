@@ -58,7 +58,6 @@ local function handleSlashCommand(msg)
     end
 end
 
--- Register slash commands
 SLASH_MYTHICPLUSTRACKER1 = "/mpt"
 SLASH_MYTHICPLUSTRACKER2 = "/mythicplustracker"
 SlashCmdList["MYTHICPLUSTRACKER"] = handleSlashCommand

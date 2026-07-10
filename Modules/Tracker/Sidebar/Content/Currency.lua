@@ -8,9 +8,9 @@ local CURRENCY_IDS = {
     3383,
 }
 
-local SLOT_W    = 34   -- width per currency slot
-local SLOT_GAP  = 4    -- horizontal gap between slots
-local ICON_SIZE = 22   -- icon dimensions
+local SLOT_W    = 34
+local SLOT_GAP  = 4
+local ICON_SIZE = 22
 local SLOT_H    = ICON_SIZE + 4 + 16  -- icon + gap + amount text
 
 local function loadCurrency(frame, currencyId, index)

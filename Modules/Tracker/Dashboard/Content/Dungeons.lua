@@ -1,6 +1,5 @@
 local addonName, addon = ...
 
--- Layout constants
 local PADDING_X  = 8    -- left/right padding inside the table frame
 local ROW_H      = 50   -- height of each data row (increased for full-height table)
 local HEADER_H   = 30   -- height of the header row

@@ -8,6 +8,7 @@
     <Include file='Tracker\Dashboard\Content\NotMaxLevel.lua'/>
     <Include file='Tracker\Dashboard\Content\Dungeons.lua'/>
     <Include file='Tracker\Dashboard\Content\Runs.lua'/>
+    <Include file='Tracker\Dashboard\Content\Keystones.lua'/>
 
     <Include file='Tracker\Sidebar\init.lua'/>
     <Include file='Tracker\Sidebar\Content\Divider.lua'/>
@@ -18,6 +19,7 @@
     <Include file='Tracker\Sidebar\Content\Score.lua'/>
     <Include file='Tracker\Sidebar\Content\Affixes.lua'/>
     <Include file='Tracker\Sidebar\Content\RunsStats.lua'/>
+    <Include file='Tracker\Sidebar\Content\GroupScores.lua'/>
     <Include file='Tracker\Sidebar\Frame.lua'/>
 
     <Include file='Tracker\MinimapButton.lua'/>

@@ -3,4 +3,5 @@
     <Script file='ColorHandler.lua'/>
     <Script file='MessageHandler.lua'/>
     <Script file='DebugSystem.lua'/>
+    <Script file='Communication.lua'/>
 </Ui>

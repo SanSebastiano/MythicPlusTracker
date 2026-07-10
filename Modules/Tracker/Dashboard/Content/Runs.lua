@@ -1,6 +1,5 @@
 local addonName, addon = ...
 
--- Layout constants
 local PADDING_X      = 8    -- left/right padding inside the table frame
 local ROW_H          = 40   -- height of each data row
 local HEADER_H       = 28   -- height of the header row
@@ -159,7 +158,6 @@ local function createRow(parent, run, colX, nameW, rowY, isLast, scoreDeltas)
     local name, _, timeLimit, texture = C_ChallengeMode.GetMapUIInfo(mapID)
     name = name or ("Map " .. tostring(mapID))
 
-    -- Icon
     if texture then
         local icon = parent:CreateTexture(nil, "ARTWORK")
         icon:SetSize(ICON_SIZE, ICON_SIZE)
@@ -168,10 +166,8 @@ local function createRow(parent, run, colX, nameW, rowY, isLast, scoreDeltas)
         icon:SetTexture(texture)
     end
 
-    -- Name
     addCell(parent, colX["name"], rowY, nameW, ROW_H, name, "GameFontHighlight", "LEFT")
 
-    -- Level
     addCell(parent, colX["level"], rowY, COL_W.level, ROW_H,
         formatLevel(run.level), "GameFontHighlight", "RIGHT")
 
@@ -194,32 +190,26 @@ local function createRow(parent, run, colX, nameW, rowY, isLast, scoreDeltas)
     local scoreAfter = runData and runData.scoreAfter
     addCell(parent, colX["score"], rowY, COL_W.score, ROW_H,
         formatScoreDelta(delta), "GameFontHighlight", "RIGHT")
-    -- Tooltip: total dungeon score after this run
     if scoreAfter and scoreAfter > 0 then
         addCellTooltip(parent, colX["score"], rowY, COL_W.score, ROW_H,
             addon.locale["RUN_TOOLTIP_DUNGEON_SCORE"],
             math.floor(scoreAfter) .. "")
     end
 
-    -- Duration (poor if over time limit)
     addCell(parent, colX["duration"], rowY, COL_W.duration, ROW_H,
         formatDuration(run.durationSec, timeLimit), "GameFontHighlight", "RIGHT")
-    -- Tooltip: original time limit for this dungeon
     if timeLimit and timeLimit > 0 then
         local limitStr = string.format("%d:%02d", math.floor(timeLimit / 60), timeLimit % 60)
         addCellTooltip(parent, colX["duration"], rowY, COL_W.duration, ROW_H,
             addon.locale["RUN_TOOLTIP_TIME_LIMIT"], limitStr)
     end
 
-    -- Date
     addCell(parent, colX["date"], rowY, COL_W.date, ROW_H,
         formatDate(run.completionDate), "GameFontHighlight", "RIGHT", true)
 
-    -- Season
     addCell(parent, colX["season"], rowY, COL_W.season, ROW_H,
         formatSeason(run.season), "GameFontHighlight", "RIGHT")
 
-    -- Row divider
     if not isLast then
         local div = parent:CreateTexture(nil, "ARTWORK")
         div:SetPoint("TOPLEFT",  parent, "TOPLEFT",  0, rowY - ROW_H)
@@ -280,7 +270,6 @@ function MPT_Dashboard:loadRuns(frame, topOffset)
         cursor = cursor + w + COL_GAP
     end
 
-    -- Outer anchor frame (fills available content area below nav)
     local outerFrame = CreateFrame("Frame", nil, frame)
     outerFrame:SetPoint("TOPLEFT",  MPT_Dashboard.navFrame, "BOTTOMLEFT",  CONTENT_INSET, -SUMMARY_MARGIN)
     outerFrame:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -CONTENT_INSET, CONTENT_INSET)
@@ -293,7 +282,6 @@ function MPT_Dashboard:loadRuns(frame, topOffset)
 
     createHeader(headerFrame, colX, nameW)
 
-    -- Scroll area below header
     local scrollFrame = CreateFrame("ScrollFrame", nil, outerFrame)
     scrollFrame:SetPoint("TOPLEFT",  outerFrame, "TOPLEFT",  0, -(HEADER_H + 2))
     scrollFrame:SetPoint("BOTTOMRIGHT", outerFrame, "BOTTOMRIGHT", -(SCROLL_BTN_SIZE + 4), 0)
@@ -303,7 +291,6 @@ function MPT_Dashboard:loadRuns(frame, topOffset)
     scrollChild:SetSize(scrollChildW, totalRowsH)
     scrollFrame:SetScrollChild(scrollChild)
 
-    -- Populate rows
     for i, run in ipairs(runHistory) do
         local rowY   = -((i - 1) * ROW_H)
         local isLast = (i == #runHistory)
@@ -336,7 +323,6 @@ function MPT_Dashboard:loadRuns(frame, topOffset)
         scrollBar:SetValue(newVal)
     end)
 
-    -- Show "no runs" message if history is empty
     if #runHistory == 0 then
         local noData = scrollChild:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
         noData:SetPoint("CENTER", scrollChild, "CENTER")

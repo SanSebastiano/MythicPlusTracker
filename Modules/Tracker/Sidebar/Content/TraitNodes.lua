@@ -144,12 +144,10 @@ local function createPopupIfNeeded()
     popup:SetFrameLevel(200)
     popup:Hide()
 
-    -- Dark background
     local bg = popup:CreateTexture(nil, "BACKGROUND")
     bg:SetAllPoints(popup)
     bg:SetColorTexture(0.05, 0.05, 0.08, 0.92)
 
-    -- Border
     local border = popup:CreateTexture(nil, "BORDER")
     border:SetAllPoints(popup)
     border:SetAtlas("ui-frame-midnight-portraitdisable", false)
@@ -221,7 +219,6 @@ local function showSelectionPopup(ownerBtn, configID, nodeID)
         table.insert(popup._rows, row)
     end
 
-    -- Populate entry rows
     for i, entryID in ipairs(nodeInfo.entryIDs) do
         local row = popup._rows[i]
         local spellID, icon, name = getEntrySpellInfo(configID, entryID)
@@ -230,7 +227,6 @@ local function showSelectionPopup(ownerBtn, configID, nodeID)
         row._ico:SetTexture(icon or "Interface\\Icons\\INV_Misc_QuestionMark")
         local isActive = (entryID == activeEntryID)
 
-        -- Apply visual state to icon and label
         if nodeState == 0 then
             -- Locked: everything greyed out
             row._ico:SetDesaturated(true)
@@ -279,7 +275,6 @@ local function showSelectionPopup(ownerBtn, configID, nodeID)
         popup._rows[i]:Hide()
     end
 
-    -- Anchor above the owner button
     popup:ClearAllPoints()
     popup:SetPoint("BOTTOM", ownerBtn, "TOP", 0, 4)
     popup:Show()
@@ -405,7 +400,6 @@ local function refreshButtons()
             end
         end
     end
-    -- Refresh popup if visible
     if popup and popup:IsShown() then
         popup:Hide()
     end
