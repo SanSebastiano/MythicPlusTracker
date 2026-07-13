@@ -2,6 +2,11 @@
 
 All notable changes to MythicPlusTracker are documented here.
 
+## [1.0.1] - xxxx-xx-xx
+
+### Fixed
+- The dashboard navigation kept highlighting the last active tab (e.g. "Keystones") after closing and reopening the tracker, even though the Overview content was always loaded on open. Navigation, content, and sidebar now consistently show the Overview tab again when the tracker is opened.
+
 ## [1.0.0] - 2026-07-10
 
 ### Added

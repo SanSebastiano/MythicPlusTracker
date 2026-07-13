@@ -64,6 +64,9 @@ globals = {
     "C_UI",
     "C_ChatInfo",
     "C_AddOns",
+    "C_SpellBook",
+    "C_Spell",
+    "Enum",
 
     -- -----------------------------------------------------------------------
     -- WoW UI frame factory & parenting
