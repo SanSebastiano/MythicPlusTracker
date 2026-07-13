@@ -5,7 +5,8 @@ All notable changes to MythicPlusTracker are documented here.
 ## [1.0.1] - xxxx-xx-xx
 
 ### Fixed
-- The dashboard navigation kept highlighting the last active tab (e.g. "Keystones") after closing and reopening the tracker, even though the Overview content was always loaded on open. Navigation, content, and sidebar now consistently show the Overview tab again when the tracker is opened.
+- Fixed the dashboard tab highlight not resetting to Overview when reopening the tracker.
+- Fixed a scrollbar error when switching to the Runs or Keystones tab (`SecureScrollTemplates.lua:24: attempt to call a nil value`).
 
 ## [1.0.0] - 2026-07-10
 

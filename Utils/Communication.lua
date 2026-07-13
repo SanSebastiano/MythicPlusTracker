@@ -63,6 +63,7 @@ end
 local function broadcastOwnKeystoneStatus()
     local channel = getGroupChannel()
     if not channel then
+        addon.debugMessage("Communication: broadcastOwnKeystoneStatus skipped (not in a group)")
         return
     end
 
@@ -77,6 +78,7 @@ local function broadcastOwnKeystoneStatus()
         message = "NOKEY:" .. score
     end
 
+    addon.debugMessage("Communication: sending '" .. message .. "' on " .. channel)
     C_ChatInfo.SendAddonMessage(ADDON_MESSAGE_PREFIX, message, channel)
 end
 
@@ -85,19 +87,24 @@ end
 local function sendKeystoneRequestMessage()
     local channel = getGroupChannel()
     if not channel then
+        addon.debugMessage("Communication: sendKeystoneRequestMessage skipped (not in a group)")
         return
     end
+    addon.debugMessage("Communication: sending 'REQUEST' on " .. channel)
     C_ChatInfo.SendAddonMessage(ADDON_MESSAGE_PREFIX, "REQUEST", channel)
 end
 
 local function handleIncomingMessage(message, senderFullPlayerName)
     if message == "REQUEST" then
+        addon.debugMessage("Communication: received REQUEST from " .. tostring(senderFullPlayerName))
         broadcastOwnKeystoneStatus()
         return
     end
 
     local noKeyScoreText = string.match(message, "^NOKEY:(%d+)$")
     if noKeyScoreText then
+        addon.debugMessage("Communication: received NOKEY from " .. tostring(senderFullPlayerName)
+            .. " (score " .. noKeyScoreText .. ")")
         addon.groupKeystones[senderFullPlayerName] = {
             mapID     = nil,
             level     = nil,
@@ -110,8 +117,13 @@ local function handleIncomingMessage(message, senderFullPlayerName)
 
     local mapIDText, levelText, scoreText = string.match(message, "^KEYSTONE:(%d+):(%d+):(%d+)$")
     if not mapIDText or not levelText then
+        addon.debugMessage("Communication: received unrecognized message from "
+            .. tostring(senderFullPlayerName) .. ": '" .. tostring(message) .. "'")
         return
     end
+
+    addon.debugMessage("Communication: received KEYSTONE from " .. tostring(senderFullPlayerName)
+        .. " (mapID " .. mapIDText .. ", level " .. levelText .. ", score " .. scoreText .. ")")
 
     addon.groupKeystones[senderFullPlayerName] = {
         mapID     = tonumber(mapIDText),
@@ -153,10 +165,16 @@ eventFrame:RegisterEvent("CHAT_MSG_ADDON")
 eventFrame:SetScript("OnEvent", function(self, event, ...)
     if event == "PLAYER_LOGIN" then
         C_ChatInfo.RegisterAddonMessagePrefix(ADDON_MESSAGE_PREFIX)
+        addon.debugMessage("Communication: registered addon message prefix '" .. ADDON_MESSAGE_PREFIX .. "'")
     elseif event == "GROUP_ROSTER_UPDATE" then
+        addon.debugMessage("Communication: group roster changed, re-requesting keystones")
         addon.Communication:RequestGroupKeystones()
     elseif event == "CHAT_MSG_ADDON" then
         local prefix, message, _, senderName = ...
+
+        addon.debugMessage("Communication: CHAT_MSG_ADDON prefix='" .. tostring(prefix)
+            .. "' message='" .. tostring(message) .. "' sender='" .. tostring(senderName) .. "'")
+
         if prefix ~= ADDON_MESSAGE_PREFIX then
             return
         end
