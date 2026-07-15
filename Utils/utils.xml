@@ -4,4 +4,5 @@
     <Script file='MessageHandler.lua'/>
     <Script file='DebugSystem.lua'/>
     <Script file='Communication.lua'/>
+    <Script file='DungeonTeleports.lua'/>
 </Ui>

@@ -2,6 +2,13 @@
 
 All notable changes to MythicPlusTracker are documented here.
 
+## [1.0.1] - xxxx-xx-xx
+
+### Fixed
+- Fixed the dashboard tab highlight not resetting to Overview when reopening the tracker.
+- Fixed a scrollbar error when switching to the Runs or Keystones tab (`SecureScrollTemplates.lua:24: attempt to call a nil value`).
+- Fixed group communication not working due to an incorrect addon message prefix.
+
 ## [1.0.0] - 2026-07-10
 
 ### Added
