@@ -86,7 +86,7 @@ local locale = {
     ["KEYSTONES_COL_DUNGEON"] = "Dungeon",
     ["KEYSTONES_COL_LEVEL"]   = "Stufe",
     ["KEYSTONES_NO_ADDON"]    = "Kein Addon",
-    ["KEYSTONES_NO_KEY"]      = "Kein Key",
+    ["KEYSTONES_NO_KEY"]      = "Kein Schlüsselstein",
 }
 
 for key, value in pairs(locale) do

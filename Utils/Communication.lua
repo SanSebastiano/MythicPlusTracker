@@ -2,7 +2,10 @@ local addonName, addon = ...
 
 -- Addon message prefix used to exchange keystone information between
 -- MythicPlusTracker installations within the same group.
-local ADDON_MESSAGE_PREFIX = "MythicPlusTrackerKeys"
+-- Blizzard limits addon message prefixes to 16 characters (including the
+-- null terminator, i.e. 15 visible characters); longer prefixes silently
+-- fail to register, so messages never actually reach other clients.
+local ADDON_MESSAGE_PREFIX = "MPTrackerKeys"
 
 -- Table of received group keystone information, keyed by "Name-Realm".
 -- Entries are only populated for other group members that also run
@@ -165,19 +168,21 @@ eventFrame:RegisterEvent("CHAT_MSG_ADDON")
 eventFrame:SetScript("OnEvent", function(self, event, ...)
     if event == "PLAYER_LOGIN" then
         C_ChatInfo.RegisterAddonMessagePrefix(ADDON_MESSAGE_PREFIX)
-        addon.debugMessage("Communication: registered addon message prefix '" .. ADDON_MESSAGE_PREFIX .. "'")
+        local isRegistered = C_ChatInfo.IsAddonMessagePrefixRegistered(ADDON_MESSAGE_PREFIX)
+        addon.debugMessage("Communication: registered addon message prefix '" .. ADDON_MESSAGE_PREFIX
+            .. "' (confirmed: " .. tostring(isRegistered) .. ")")
     elseif event == "GROUP_ROSTER_UPDATE" then
         addon.debugMessage("Communication: group roster changed, re-requesting keystones")
         addon.Communication:RequestGroupKeystones()
     elseif event == "CHAT_MSG_ADDON" then
         local prefix, message, _, senderName = ...
 
-        addon.debugMessage("Communication: CHAT_MSG_ADDON prefix='" .. tostring(prefix)
-            .. "' message='" .. tostring(message) .. "' sender='" .. tostring(senderName) .. "'")
-
         if prefix ~= ADDON_MESSAGE_PREFIX then
             return
         end
+
+        addon.debugMessage("Communication: CHAT_MSG_ADDON prefix='" .. tostring(prefix)
+            .. "' message='" .. tostring(message) .. "' sender='" .. tostring(senderName) .. "'")
 
         local senderFullPlayerName = senderName
         if senderFullPlayerName and not string.find(senderFullPlayerName, "-", 1, true) then
