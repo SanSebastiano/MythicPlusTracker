@@ -25,6 +25,12 @@ local function setActiveTab(idx)
     end
 end
 
+-- Exposed so callers outside this file (e.g. Frame.lua on reshow) can
+-- reset the highlighted tab without simulating a click.
+function MPT_Dashboard:setActiveNavTab(idx)
+    setActiveTab(idx)
+end
+
 -- Creates the navigation bar and returns NAV_HEIGHT so the caller can
 -- offset the content below it.  The optional `callbacks` table maps tab
 -- index → function; each function is called when that tab is clicked.

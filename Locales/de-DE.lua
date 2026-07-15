@@ -51,6 +51,8 @@ local locale = {
     ["DUNGEON_COL_TIME_LIMIT"] = "Limit",
     ["DUNGEON_COL_BEST_TIME"]  = "Beste Zeit",
     ["DUNGEON_TOOLTIP_TIME_LIMIT"] = "Zeitlimit",
+    ["DUNGEON_TELEPORT_TOOLTIP"] = "Klicken zum Teleportieren",
+    ["DUNGEON_TELEPORT_NOT_OWNED"] = "Kein Teleport-Spielzeug für diesen Dungeon bekannt oder besessen",
     -- Overview summary boxes
     ["DASHBOARD_SUMMARY_HIGHEST_KEY"]   = "Höchster Schlüsselstein",
     ["DASHBOARD_SUMMARY_TOTAL_RUNS"]    = "Anzahl Läufe",
@@ -84,7 +86,7 @@ local locale = {
     ["KEYSTONES_COL_DUNGEON"] = "Dungeon",
     ["KEYSTONES_COL_LEVEL"]   = "Stufe",
     ["KEYSTONES_NO_ADDON"]    = "Kein Addon",
-    ["KEYSTONES_NO_KEY"]      = "Kein Key",
+    ["KEYSTONES_NO_KEY"]      = "Kein Schlüsselstein",
 }
 
 for key, value in pairs(locale) do

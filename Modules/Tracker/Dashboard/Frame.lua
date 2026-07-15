@@ -61,12 +61,18 @@ local function create(mainFrame)
 
         addon.debugMessage("Dashboard Frame OnShow")
 
+        -- Always reset the nav highlight to Übersicht, since the frame
+        -- reloads the Übersicht content below regardless of which tab
+        -- was active when the frame was last closed.
+        MPT_Dashboard:setActiveNavTab(1)
+
         if not isMaxLevel() then
             MPT_Dashboard:loadNotMaxLevel(contentWrapper)
             return
         end
 
         showContent(MPT_Dashboard.loadDungeons)
+        MPT_Sidebar:showForTab(1)
     end)
 
     return frame

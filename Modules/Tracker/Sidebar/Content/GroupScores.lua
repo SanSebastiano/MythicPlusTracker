@@ -83,7 +83,7 @@ local function createRow(sidebar, unitToken, rowY)
     if groupData and groupData.hasAddon and groupData.score then
         scoreText:SetText(colorForScore(groupData.score) .. groupData.score .. addon.colors.RESET)
     else
-        scoreText:SetText(addon.colors.POOR .. addon.locale["KEYSTONES_NO_ADDON"] .. addon.colors.RESET)
+        scoreText:SetText(addon.colors.POOR .. "-" .. addon.colors.RESET)
     end
 end
 

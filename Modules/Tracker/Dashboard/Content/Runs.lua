@@ -280,6 +280,14 @@ function MPT_Dashboard:loadRuns(frame, topOffset)
     scrollBar:SetPoint("BOTTOMLEFT", scrollFrame, "BOTTOMRIGHT", 2,  16)
     scrollBar:SetMinMaxValues(0, 0)
     scrollBar:SetValueStep(ROW_H)
+
+    -- Attach our own OnValueChanged before the first SetValue() call — otherwise
+    -- the template's built-in default handler fires first and tries to call
+    -- SetVerticalScroll on outerFrame (not a ScrollFrame), causing a nil-call error.
+    scrollBar:SetScript("OnValueChanged", function(self, value)
+        scrollFrame:SetVerticalScroll(value)
+    end)
+
     scrollBar:SetValue(0)
 
     -- Keep scrollFrame and scrollBar in sync
@@ -287,10 +295,6 @@ function MPT_Dashboard:loadRuns(frame, topOffset)
         local current = self:GetVerticalScroll()
         scrollBar:SetMinMaxValues(0, math.max(0, yRange))
         scrollBar:SetValue(math.min(current, math.max(0, yRange)))
-    end)
-
-    scrollBar:SetScript("OnValueChanged", function(self, value)
-        scrollFrame:SetVerticalScroll(value)
     end)
 
     scrollFrame:EnableMouseWheel(true)

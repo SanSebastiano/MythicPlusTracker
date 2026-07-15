@@ -274,6 +274,39 @@ local function createTableRow(child, mapID, colX, rowY, nameW, runLookup, isLast
     icon:SetPoint("TOPLEFT", child, "TOPLEFT", colX["icon"] + 2, rowY - (ROW_H - ICON_SIZE) / 2)
     icon:SetTexture(texture)
 
+    -- Clicking the dungeon icon teleports the player via the matching known
+    -- "Path of ..." spell, if one is known (see Utils/DungeonTeleports.lua).
+    -- Uses a SecureActionButtonTemplate so the protected spell cast is
+    -- allowed to run directly from the click.
+    local teleport = addon.getDungeonTeleport(mapID)
+    local teleportBtn = CreateFrame("Button", nil, child, "SecureActionButtonTemplate")
+    teleportBtn:SetSize(ICON_SIZE, ICON_SIZE)
+    -- Anchored with the same coordinates as `icon`, relative to `child` (a
+    -- Frame) rather than `icon` itself (a Texture/region) — secure/protected
+    -- frames cannot be anchored to regions, only to other frames.
+    teleportBtn:SetPoint("TOPLEFT", child, "TOPLEFT", colX["icon"] + 2, rowY - (ROW_H - ICON_SIZE) / 2)
+    teleportBtn:RegisterForClicks("AnyUp", "AnyDown")
+    if teleport and C_SpellBook.IsSpellKnown(teleport.spellID) then
+        teleportBtn:SetAttribute("type", "spell")
+        teleportBtn:SetAttribute("spell", teleport.spellID)
+    end
+    teleportBtn:SetScript("OnEnter", function(self)
+        icon:SetVertexColor(1.15, 1.15, 1.15)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        if teleport and C_SpellBook.IsSpellKnown(teleport.spellID) then
+            GameTooltip:SetSpellByID(teleport.spellID)
+            GameTooltip:AddLine(addon.locale["DUNGEON_TELEPORT_TOOLTIP"], 0, 1, 0, true)
+        else
+            GameTooltip:AddLine(name, ARTIFACT_R, ARTIFACT_G, ARTIFACT_B)
+            GameTooltip:AddLine(addon.locale["DUNGEON_TELEPORT_NOT_OWNED"], 1, 0.2, 0.2, true)
+        end
+        GameTooltip:Show()
+    end)
+    teleportBtn:SetScript("OnLeave", function()
+        icon:SetVertexColor(1, 1, 1)
+        GameTooltip:Hide()
+    end)
+
     addCell(child, colX["name"], rowY, nameW, ROW_H, name, "GameFontHighlight", "LEFT")
 
     addCell(child, colX["bestLevel"], rowY, COL_W.bestLevel, ROW_H,
@@ -488,4 +521,11 @@ function MPT_Dashboard:loadDungeons(frame, topOffset)
     end)
 
     renderRows(tableFrame, dungeons, colX, nameW, runLookup)
+
+    -- Teleport spell descriptions may still be loading asynchronously when
+    -- this table first renders (see Utils/DungeonTeleports.lua); refresh the
+    -- rows once the teleport lookup is ready so icons become clickable.
+    addon.onDungeonTeleportsReady(function()
+        renderRows(tableFrame, dungeons, colX, nameW, runLookup)
+    end)
 end
