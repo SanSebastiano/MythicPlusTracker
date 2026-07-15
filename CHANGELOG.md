@@ -2,7 +2,7 @@
 
 All notable changes to MythicPlusTracker are documented here.
 
-## [1.0.1] - xxxx-xx-xx
+## [1.0.1] - 2026-07-15
 
 ### Fixed
 - Fixed the dashboard tab highlight not resetting to Overview when reopening the tracker.
