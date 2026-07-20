@@ -81,3 +81,9 @@ end
 function MPT_Dashboard:getFrame(mainFrame)
     return create(mainFrame)
 end
+
+---Re-renders the Keystones tab content in place (e.g. from its refresh
+---button), without touching the nav highlight or the rest of the frame.
+function MPT_Dashboard:refreshKeystonesView()
+    showContent(MPT_Dashboard.loadKeystones)
+end

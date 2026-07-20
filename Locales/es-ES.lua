@@ -88,6 +88,7 @@ local locale = {
     ["KEYSTONES_COL_LEVEL"]   = "Nivel",
     ["KEYSTONES_NO_ADDON"]    = "Sin addon",
     ["KEYSTONES_NO_KEY"]      = "Sin llave",
+    ["KEYSTONES_REFRESH_TOOLTIP"] = "Actualizar vista de grupo",
     -- Settings panel
     ["SETTINGS_CATEGORY_NAME"]         = "Mythic Plus Tracker",
     ["SETTINGS_DEBUG_MODE_LABEL"]      = "Modo de depuración",

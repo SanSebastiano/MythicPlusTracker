@@ -21,6 +21,7 @@ local theme = {
     NOT_MAX_LEVEL_ICON    = "Bags-padlock-authenticator",
     RUN_COMPLETED_ICON    = "common-icon-checkmark",
     RUN_FAILED_ICON       = "common-icon-redx",
+    GROUP_REFRESH_ICON    = "common-icon-undo",
 }
 
 for key, value in pairs(theme) do
