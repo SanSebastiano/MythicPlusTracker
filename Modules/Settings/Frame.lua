@@ -39,6 +39,25 @@ local function createSettingsPanel()
     )
     Settings.CreateCheckbox(category, minimapSetting, addon.locale["SETTINGS_MINIMAP_BUTTON_TOOLTIP"])
 
+    local function getWelcomeMessageShown()
+        return not MythicPlusTrackerDB.welcomeMessageDisabled
+    end
+
+    local function setWelcomeMessageShown(value)
+        MythicPlusTrackerDB.welcomeMessageDisabled = not value
+    end
+
+    local welcomeMessageSetting = Settings.RegisterProxySetting(
+        category,
+        "MPT_ShowWelcomeMessage",
+        Settings.VarType.Boolean,
+        addon.locale["SETTINGS_WELCOME_MESSAGE_LABEL"],
+        true,
+        getWelcomeMessageShown,
+        setWelcomeMessageShown
+    )
+    Settings.CreateCheckbox(category, welcomeMessageSetting, addon.locale["SETTINGS_WELCOME_MESSAGE_TOOLTIP"])
+
     Settings.RegisterAddOnCategory(category)
 
     MPT_Settings.category = category

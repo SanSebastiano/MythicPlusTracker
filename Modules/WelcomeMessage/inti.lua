@@ -7,6 +7,11 @@ local function getAddonMetadata()
 end
 
 local function ShowWelcomeMessage()
+    MythicPlusTrackerDB = MythicPlusTrackerDB or {}
+    if MythicPlusTrackerDB.welcomeMessageDisabled then
+        return
+    end
+
     local title, version, author = getAddonMetadata()
     local locale = addon.locale
 
