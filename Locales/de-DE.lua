@@ -87,6 +87,12 @@ local locale = {
     ["KEYSTONES_COL_LEVEL"]   = "Stufe",
     ["KEYSTONES_NO_ADDON"]    = "Kein Addon",
     ["KEYSTONES_NO_KEY"]      = "Kein Schlüsselstein",
+    -- Settings panel
+    ["SETTINGS_CATEGORY_NAME"]         = "Mythic Plus Tracker",
+    ["SETTINGS_DEBUG_MODE_LABEL"]      = "Debug-Modus",
+    ["SETTINGS_DEBUG_MODE_TOOLTIP"]    = "Zeigt zusätzliche Diagnosemeldungen im Chatfenster an.",
+    ["SETTINGS_MINIMAP_BUTTON_LABEL"]  = "Minimap-Button anzeigen",
+    ["SETTINGS_MINIMAP_BUTTON_TOOLTIP"] = "Zeigt oder versteckt den Mythic Plus Tracker Minimap-Button.",
 }
 
 for key, value in pairs(locale) do

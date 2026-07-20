@@ -26,5 +26,8 @@
 
     <Include file='Tracker\init.lua'/>
 
+    <Include file='Settings\init.lua'/>
+    <Include file='Settings\Frame.lua'/>
+
     <Script file='WelcomeMessage\inti.lua'/>
 </Ui>
