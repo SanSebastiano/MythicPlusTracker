@@ -14,11 +14,11 @@ local function create()
     button:SetFrameLevel(8)
 
     local icon = button:CreateTexture(nil, "ARTWORK")
-    icon:SetAtlas("mythicplus-greatvault-collect")
+    icon:SetAtlas(addon.theme.MINIMAP_BUTTON_ICON)
     icon:SetAllPoints()
 
     local border = button:CreateTexture(nil, "OVERLAY")
-    border:SetAtlas("Minimap-TrackingBorder")
+    border:SetAtlas(addon.theme.MINIMAP_BUTTON_BORDER)
     border:SetAllPoints()
 
     return button

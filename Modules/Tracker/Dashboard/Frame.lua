@@ -30,7 +30,7 @@ local function create(mainFrame)
 
     local bg = frame:CreateTexture(nil, "BACKGROUND")
     bg:SetAllPoints(frame)
-    bg:SetAtlas("ui-frame-midnight-cardparchmentwider", false)
+    bg:SetAtlas(addon.theme.FRAME_BACKGROUND, false)
 
     local borderFrame = CreateFrame("Frame", nil, frame)
     borderFrame:SetAllPoints(frame)
@@ -38,7 +38,7 @@ local function create(mainFrame)
 
     local border = borderFrame:CreateTexture(nil, "OVERLAY")
     border:SetAllPoints(borderFrame)
-    border:SetAtlas("ui-frame-midnight-border", false)
+    border:SetAtlas(addon.theme.FRAME_BORDER, false)
 
     local function isMaxLevel()
         return UnitLevel("player") >= GetMaxPlayerLevel()

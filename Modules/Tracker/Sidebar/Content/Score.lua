@@ -14,7 +14,7 @@ local function loadScore(sidebar)
 
     local background = frame:CreateTexture(nil, "OVERLAY")
     background:SetAllPoints()
-    background:SetAtlas("ui-frame-midnight-border-title-bg", false)
+    background:SetAtlas(addon.theme.CARD_TITLE_BACKGROUND, false)
 
     local score = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     score:SetPoint("CENTER", background, "CENTER", 0, 0)

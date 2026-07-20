@@ -157,7 +157,7 @@ local function createRow(parent, run, colX, nameW, rowY, isLast, scoreDeltas)
     local cellX     = colX["completed"]
     local cellW     = COL_W.completed
     local MARK_SIZE = 16
-    local markAtlas = run.completed and "common-icon-checkmark" or "common-icon-redx"
+    local markAtlas = run.completed and addon.theme.RUN_COMPLETED_ICON or addon.theme.RUN_FAILED_ICON
     local mark = parent:CreateTexture(nil, "ARTWORK")
     mark:SetAtlas(markAtlas, false)
     mark:SetSize(MARK_SIZE, MARK_SIZE)

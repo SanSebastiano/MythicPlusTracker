@@ -137,7 +137,7 @@ local function createPopupIfNeeded()
 
     local border = popup:CreateTexture(nil, "BORDER")
     border:SetAllPoints(popup)
-    border:SetAtlas("ui-frame-midnight-portraitdisable", false)
+    border:SetAtlas(addon.theme.CARD_ICON_BACKGROUND, false)
     border:SetAlpha(0.5)
 
     popup._rows = {}
@@ -282,7 +282,7 @@ local function createNodeButton(parent, configID, nodeID, xOffset)
 
     local bg = btn:CreateTexture(nil, "BACKGROUND")
     bg:SetAllPoints(btn)
-    bg:SetAtlas("ui-frame-midnight-portraitdisable", true)
+    bg:SetAtlas(addon.theme.CARD_ICON_BACKGROUND, true)
     bg:SetAlpha(0.6)
 
     local icon = btn:CreateTexture(nil, "ARTWORK")
