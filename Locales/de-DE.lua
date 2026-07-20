@@ -13,6 +13,7 @@ local locale = {
     ["MINIMAP_BUTTON_NAME"] = "Mythic Plus Tracker",
     ["MINIMAP_BUTTON_CLICK_LEFT"] = "Linksklick: Dashboard umschalten",
     ["MINIMAP_BUTTON_CLICK_RIGHT"] = "Rechtsklick: Große Schatzkammer öffnen",
+    ["MINIMAP_BUTTON_DRAG"] = "Ziehen: Entlang der Minimap verschieben (Shift+Ziehen: Frei verschieben)",
     -- Mythic Plus specific messages
     ["KEYSTONE_UPGRADED"] = "Schlüsselstein auf Level %d aufgewertet!",
     ["KEYSTONE_DEPLETED"] = "Schlüsselstein erschöpft.",
@@ -93,6 +94,8 @@ local locale = {
     ["SETTINGS_DEBUG_MODE_TOOLTIP"]    = "Zeigt zusätzliche Diagnosemeldungen im Chatfenster an.",
     ["SETTINGS_MINIMAP_BUTTON_LABEL"]  = "Minimap-Button anzeigen",
     ["SETTINGS_MINIMAP_BUTTON_TOOLTIP"] = "Zeigt oder versteckt den Mythic Plus Tracker Minimap-Button.",
+    ["SETTINGS_WELCOME_MESSAGE_LABEL"]  = "Willkommensnachricht anzeigen",
+    ["SETTINGS_WELCOME_MESSAGE_TOOLTIP"] = "Zeigt oder versteckt die Mythic Plus Tracker Willkommensnachricht beim Login.",
 }
 
 for key, value in pairs(locale) do
