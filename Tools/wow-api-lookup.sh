@@ -3,13 +3,13 @@
 # Fetches WoW API documentation from warcraft.wiki.gg.
 #
 # Usage:
-#   ./tools/wow-api-lookup.sh <API_name>
+#   ./Tools/wow-api-lookup.sh <API_name>
 #
 # Examples:
-#   ./tools/wow-api-lookup.sh C_MythicPlus.GetRunHistory
-#   ./tools/wow-api-lookup.sh C_ChallengeMode.GetMapTable
-#   ./tools/wow-api-lookup.sh CHALLENGE_MODE_MAPS_UPDATE
-#   ./tools/wow-api-lookup.sh CreateFrame
+#   ./Tools/wow-api-lookup.sh C_MythicPlus.GetRunHistory
+#   ./Tools/wow-api-lookup.sh C_ChallengeMode.GetMapTable
+#   ./Tools/wow-api-lookup.sh CHALLENGE_MODE_MAPS_UPDATE
+#   ./Tools/wow-api-lookup.sh CreateFrame
 
 set -euo pipefail
 

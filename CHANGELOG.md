@@ -2,6 +2,16 @@
 
 All notable changes to MythicPlusTracker are documented here.
 
+## [1.1.0-] unreleased
+
+### Added
+- New slash command `/mpt show` to open the tracker window without using the minimap button.
+- New settings panel (Options → AddOns → Mythic Plus Tracker, or `/mpt settings`) with toggles for Debug Mode and Show Minimap Button.
+- The minimap button can now be dragged along the minimap's edge (left-click-drag) or moved freely anywhere on screen (Shift+left-click-drag); the position is remembered across logins.
+- Introduced a centralized theme catalog (`Utils/Theme.lua`) listing every decorative Atlas texture used across the UI, so the addon can be re-skinned by editing a single file.
+- New "Show Welcome Message" setting to disable the chat welcome message shown on login.
+- Added French (`frFR`) and Spanish (`esES`) translations.
+
 ## [1.0.1] - 2026-07-15
 
 ### Fixed

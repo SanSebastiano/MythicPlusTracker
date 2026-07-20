@@ -3,7 +3,7 @@
 # Validates that all locale files contain the same keys as the reference (en-US.lua).
 #
 # Usage:
-#   ./tools/locale-validator.sh
+#   ./Tools/locale-validator.sh
 #
 # Exit codes:
 #   0 — all locale files are complete

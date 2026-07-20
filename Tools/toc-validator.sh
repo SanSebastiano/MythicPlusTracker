@@ -3,7 +3,7 @@
 # Validates that every file referenced in .toc and .xml files actually exists.
 #
 # Usage:
-#   ./tools/toc-validator.sh
+#   ./Tools/toc-validator.sh
 #
 # Exit codes:
 #   0 — all referenced files exist
