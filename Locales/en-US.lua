@@ -57,7 +57,7 @@ local locale = {
     -- Runs table column headers
     ["RUN_COL_DUNGEON"]   = "Dungeon",
     ["RUN_COL_LEVEL"]     = "Level",
-    ["RUN_COL_COMPLETED"] = "Completed",
+    ["RUN_COL_COMPLETED"] = "Timed",
     ["RUN_COL_SCORE"]     = "Score",
     ["RUN_COL_DURATION"]  = "Time",
     ["RUN_COL_DATE"]      = "Date",

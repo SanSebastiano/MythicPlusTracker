@@ -126,6 +126,11 @@ local function createHeader(parent, colX, nameW)
             local fs = addCell(parent, colX[def.key], 0, def.w, HEADER_H,
                                label, "GameFontNormal", def.j)
             fs:SetTextColor(ARTIFACT_R, ARTIFACT_G, ARTIFACT_B, 1)
+
+            -- Column widths are narrow and headers don't wrap/ellipsize, so
+            -- long labels can get visually clipped. A hover tooltip with the
+            -- full label keeps the column meaning discoverable regardless.
+            addCellTooltip(parent, colX[def.key], 0, def.w, HEADER_H, label)
         end
     end
 

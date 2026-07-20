@@ -11,6 +11,10 @@ All notable changes to MythicPlusTracker are documented here.
 - Introduced a centralized theme catalog (`Utils/Theme.lua`) listing every decorative Atlas texture used across the UI, so the addon can be re-skinned by editing a single file.
 - Added French (`frFR`) and Spanish (`esES`) translations.
 - Added a refresh button to the Keystones tab's group overview to manually re-request and re-render group keystone data (also updates the Sidebar group scores) without needing to switch tabs or reopen the tracker.
+- Added hover tooltips to the Runs tab's column headers so their full names are visible even when the header text is truncated.
+
+### Changed
+- Renamed the Runs tab's "Completed" column to "Timed" to better reflect that it shows whether the run finished within the time limit.
 
 ## [1.0.1] - 2026-07-15
 
