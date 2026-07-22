@@ -39,7 +39,7 @@ local function createHeader(sidebar)
 
     local headerBg = headerFrame:CreateTexture(nil, "BACKGROUND")
     headerBg:SetAllPoints(headerFrame)
-    headerBg:SetAtlas("ui-frame-midnight-border-title-bg", false)
+    headerBg:SetAtlas(addon.theme.CARD_TITLE_BACKGROUND, false)
 
     local headerLabel = headerFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     headerLabel:SetPoint("CENTER", headerFrame, "CENTER", 0, 0)

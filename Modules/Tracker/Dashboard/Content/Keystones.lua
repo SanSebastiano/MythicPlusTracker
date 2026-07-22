@@ -12,6 +12,14 @@ local CONTENT_INSET   = 20   -- aligns with divider caps
 local SUMMARY_MARGIN  = 8    -- vertical gap below navFrame
 local SCROLL_BTN_SIZE = 22   -- gutter reserved for the scrollbar
 local ROW_PADDING_X   = 5    -- inset of row content from the left/right table edges
+local REFRESH_ICON_SIZE = 20 -- refresh button dimensions
+local REFRESH_ICON_PRESS_OFFSET = -2 -- pixels the icon shifts down while the button is held, like the nav tabs
+local REFRESH_COOLDOWN_SECONDS = 2 -- minimum time between refreshes, not shown to the player
+
+-- Timestamp (GetTime()) of the last time the refresh button actually
+-- triggered a refresh. Clicks within REFRESH_COOLDOWN_SECONDS of this are
+-- silently ignored, with no visible feedback to the player.
+local lastRefreshTime = 0
 
 -- Fixed column widths sized to fit their content (name/dungeon columns are dynamic)
 local COL_W = {
@@ -86,6 +94,78 @@ local function getEffectiveRole(unitToken)
     end
 
     return nil
+end
+
+---Requests fresh group keystone data and re-renders both the Keystones tab
+---and the Sidebar group scores view (which always mirrors this tab). Both
+---MPT_Dashboard:refreshKeystonesView() and MPT_Sidebar:showForTab(3) trigger
+---their own addon.Communication:RequestGroupKeystones() call as part of
+---their normal render path, so no separate request is issued here.
+---Calls within REFRESH_COOLDOWN_SECONDS of the previous refresh are silently
+---ignored — no visible feedback is given to the player.
+local function refreshGroupView()
+    local now = GetTime()
+    if now - lastRefreshTime < REFRESH_COOLDOWN_SECONDS then
+        return
+    end
+    lastRefreshTime = now
+
+    if MPT_Dashboard and MPT_Dashboard.refreshKeystonesView then
+        MPT_Dashboard:refreshKeystonesView()
+    end
+
+    if MPT_Sidebar and MPT_Sidebar.showForTab then
+        MPT_Sidebar:showForTab(3)
+    end
+end
+
+---Creates the icon-only refresh button, placed in the scrollbar gutter
+---directly to the right of (and vertically centered on) the column header
+---row, so it never overlaps the "Level" header text.
+---@param outerFrame Frame
+local function createRefreshButton(outerFrame)
+    local gutterWidth = SCROLL_BTN_SIZE + 4
+    local button = CreateFrame("Button", nil, outerFrame)
+    button:SetSize(REFRESH_ICON_SIZE, REFRESH_ICON_SIZE)
+    button:SetPoint("TOPRIGHT", outerFrame, "TOPRIGHT",
+        -(gutterWidth - REFRESH_ICON_SIZE) / 2, -(HEADER_H - REFRESH_ICON_SIZE) / 2)
+
+    local icon = button:CreateTexture(nil, "ARTWORK")
+    icon:SetSize(REFRESH_ICON_SIZE, REFRESH_ICON_SIZE)
+    icon:SetPoint("CENTER", button, "CENTER", 0, 0)
+    icon:SetAtlas(addon.theme.GROUP_REFRESH_ICON, false)
+
+    local highlight = button:CreateTexture(nil, "HIGHLIGHT")
+    highlight:SetAllPoints(button)
+    highlight:SetAtlas(addon.theme.GROUP_REFRESH_ICON, false)
+    highlight:SetBlendMode("ADD")
+    highlight:SetAlpha(0.5)
+    button:SetHighlightTexture(highlight)
+
+    button:SetScript("OnClick", refreshGroupView)
+
+    -- Nudges the icon down while the button is held, mirroring the pushed
+    -- look of the Dashboard nav tabs (whose SetFontString label shifts down
+    -- automatically). Textures don't get that behavior for free, so it's
+    -- reproduced manually here and reverted on release/leave.
+    button:SetScript("OnMouseDown", function(self)
+        icon:SetPoint("CENTER", self, "CENTER", 0, REFRESH_ICON_PRESS_OFFSET)
+    end)
+    button:SetScript("OnMouseUp", function(self)
+        icon:SetPoint("CENTER", self, "CENTER", 0, 0)
+    end)
+
+    button:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        GameTooltip:SetText(addon.locale["KEYSTONES_REFRESH_TOOLTIP"])
+        GameTooltip:Show()
+    end)
+    button:SetScript("OnLeave", function()
+        -- Safety net: reset the icon in case the mouse leaves the button
+        -- while still held down, which would otherwise skip OnMouseUp.
+        icon:SetPoint("CENTER", button, "CENTER", 0, 0)
+        GameTooltip:Hide()
+    end)
 end
 
 local function createHeader(parent, colX, nameW, dungeonW)
@@ -248,6 +328,7 @@ function MPT_Dashboard:loadKeystones(frame, topOffset)
     headerFrame:SetHeight(HEADER_H + 1)
 
     createHeader(headerFrame, colX, nameW, dungeonW)
+    createRefreshButton(outerFrame)
 
     local scrollFrame = CreateFrame("ScrollFrame", nil, outerFrame)
     scrollFrame:SetPoint("TOPLEFT",  outerFrame, "TOPLEFT",  0, -(HEADER_H + 2))

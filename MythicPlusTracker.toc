@@ -1,10 +1,10 @@
 ## Interface: 120007
 ## Title: |cFFA335EEMythic|r |cFFFF8000Plus Tracker|r
 ## Author: SanSebastiano
-## Version: 1.0.1
+## Version: 1.1.0
 ## Notes: Tracks your Mythic+ dungeon runs, group members, deaths, and completion status
 ## Notes-deDE: Verfolgt die Mythic+-Dungeon-Runs, Gruppenmitglieder, Todesfälle und den Abschlussstatus
-## IconTexture: Interface\Icons\Inv_relics_hourglass
+## IconTexture: Interface\AddOns\MythicPlusTracker\mplus-icon-64.png
 ## Category-enUS: Dungeons & Raids
 ## Category-deDE: Dungeons & Schlachtzüge
 ## SavedVariables: MythicPlusTrackerDB

@@ -30,15 +30,17 @@ local function create(mainFrame)
 
     local bg = frame:CreateTexture(nil, "BACKGROUND")
     bg:SetAllPoints(frame)
-    bg:SetAtlas("ui-frame-midnight-cardparchmentwider", false)
+    bg:SetAtlas(addon.theme.FRAME_BACKGROUND, false)
 
     local borderFrame = CreateFrame("Frame", nil, frame)
     borderFrame:SetAllPoints(frame)
+    -- Same technique as the Sidebar border (see Sidebar/Frame.lua); the
+    -- larger panel needs a smaller scale factor to line up the edges.
     borderFrame:SetScale(0.5)
 
     local border = borderFrame:CreateTexture(nil, "OVERLAY")
     border:SetAllPoints(borderFrame)
-    border:SetAtlas("ui-frame-midnight-border", false)
+    border:SetAtlas(addon.theme.FRAME_BORDER, false)
 
     local function isMaxLevel()
         return UnitLevel("player") >= GetMaxPlayerLevel()
@@ -80,4 +82,10 @@ end
 
 function MPT_Dashboard:getFrame(mainFrame)
     return create(mainFrame)
+end
+
+---Re-renders the Keystones tab content in place (e.g. from its refresh
+---button), without touching the nav highlight or the rest of the frame.
+function MPT_Dashboard:refreshKeystonesView()
+    showContent(MPT_Dashboard.loadKeystones)
 end

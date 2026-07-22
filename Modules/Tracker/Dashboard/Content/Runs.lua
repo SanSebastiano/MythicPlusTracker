@@ -126,6 +126,11 @@ local function createHeader(parent, colX, nameW)
             local fs = addCell(parent, colX[def.key], 0, def.w, HEADER_H,
                                label, "GameFontNormal", def.j)
             fs:SetTextColor(ARTIFACT_R, ARTIFACT_G, ARTIFACT_B, 1)
+
+            -- Column widths are narrow and headers don't wrap/ellipsize, so
+            -- long labels can get visually clipped. A hover tooltip with the
+            -- full label keeps the column meaning discoverable regardless.
+            addCellTooltip(parent, colX[def.key], 0, def.w, HEADER_H, label)
         end
     end
 
@@ -157,7 +162,7 @@ local function createRow(parent, run, colX, nameW, rowY, isLast, scoreDeltas)
     local cellX     = colX["completed"]
     local cellW     = COL_W.completed
     local MARK_SIZE = 16
-    local markAtlas = run.completed and "common-icon-checkmark" or "common-icon-redx"
+    local markAtlas = run.completed and addon.theme.RUN_COMPLETED_ICON or addon.theme.RUN_FAILED_ICON
     local mark = parent:CreateTexture(nil, "ARTWORK")
     mark:SetAtlas(markAtlas, false)
     mark:SetSize(MARK_SIZE, MARK_SIZE)

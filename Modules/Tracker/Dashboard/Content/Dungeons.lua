@@ -169,7 +169,7 @@ local function createSummaryBox(container, xOffset, boxW, labelKey, valueText, s
 
     local bg = box:CreateTexture(nil, "BACKGROUND")
     bg:SetAllPoints(box)
-    bg:SetAtlas("ui-frame-midnight-portraitdisable", true)
+    bg:SetAtlas(addon.theme.CARD_ICON_BACKGROUND, true)
 
     local value = box:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     value:SetPoint("CENTER", box, "CENTER", 0, subText and 5 or 0)

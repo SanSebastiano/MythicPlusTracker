@@ -39,15 +39,17 @@ local function create(mainFrame)
 
     local background = frame:CreateTexture(nil, "BACKGROUND")
     background:SetAllPoints(frame)
-    background:SetAtlas("ui-frame-midnight-cardparchmentwider", false)
+    background:SetAtlas(addon.theme.FRAME_BACKGROUND, false)
 
     local borderFrame = CreateFrame("Frame", nil, frame)
     borderFrame:SetAllPoints(frame)
+    -- The border atlas is oversized relative to the frame; scaling this
+    -- wrapper down makes the texture's edges align with the panel's edges.
     borderFrame:SetScale(0.75)
 
     local border = borderFrame:CreateTexture(nil, "OVERLAY")
     border:SetAllPoints(borderFrame)
-    border:SetAtlas("ui-frame-midnight-border", false)
+    border:SetAtlas(addon.theme.FRAME_BORDER, false)
 
     frame:SetScript("OnShow", function()
         rebuildContent(renderDefaultContent)

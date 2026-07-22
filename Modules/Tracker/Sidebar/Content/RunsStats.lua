@@ -42,7 +42,7 @@ local function loadRunsStats(sidebar)
 
     local titleBg = titleFrame:CreateTexture(nil, "BACKGROUND")
     titleBg:SetAllPoints(titleFrame)
-    titleBg:SetAtlas("ui-frame-midnight-border-title-bg", false)
+    titleBg:SetAtlas(addon.theme.CARD_TITLE_BACKGROUND, false)
 
     local titleLabel = titleFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     titleLabel:SetPoint("CENTER", titleFrame, "CENTER", 0, 0)
@@ -100,7 +100,7 @@ local function loadRunsStats(sidebar)
 
     local headerBg = headerFrame:CreateTexture(nil, "BACKGROUND")
     headerBg:SetAllPoints(headerFrame)
-    headerBg:SetAtlas("ui-frame-midnight-border-title-bg", false)
+    headerBg:SetAtlas(addon.theme.CARD_TITLE_BACKGROUND, false)
 
     local headerLabel = headerFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     headerLabel:SetPoint("CENTER", headerFrame, "CENTER", 0, 0)

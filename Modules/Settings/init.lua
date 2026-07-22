@@ -1,0 +1,3 @@
+local addonName, addon = ...
+
+MPT_Settings = {}

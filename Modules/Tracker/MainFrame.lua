@@ -39,3 +39,34 @@ end
 function MPT_MAIN:getFrame()
     return create()
 end
+
+function MPT_MAIN:Show()
+    if addon.showTracker == true then
+        return
+    end
+
+    local mainFrame = self:getFrame()
+    MPT_Dashboard:getFrame(mainFrame)
+    MPT_Sidebar:getFrame(mainFrame)
+
+    mainFrame:Show()
+    addon.showTracker = true
+
+    mainFrame:SetScript("OnHide", function()
+        addon.showTracker = false
+    end)
+end
+
+function MPT_MAIN:Hide()
+    if frame then
+        frame:Hide()
+    end
+end
+
+function MPT_MAIN:Toggle()
+    if addon.showTracker == true then
+        self:Hide()
+    else
+        self:Show()
+    end
+end

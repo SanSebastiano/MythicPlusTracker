@@ -22,10 +22,10 @@ jobs:
           sudo luarocks install luacheck
 
       - name: Locale validator
-        run: bash tools/locale-validator.sh
+        run: bash Tools/locale-validator.sh
 
       - name: TOC validator
-        run: bash tools/toc-validator.sh
+        run: bash Tools/toc-validator.sh
 
       - name: Luacheck
         run: luacheck .

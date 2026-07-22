@@ -14,15 +14,15 @@ Fetches authoritative documentation from **warcraft.wiki.gg** for WoW Lua API fu
 Use the `web_fetch` tool or the shell script:
 
 ```bash
-bash tools/wow-api-lookup.sh <API_NAME>
+bash Tools/wow-api-lookup.sh <API_NAME>
 ```
 
 Examples:
 ```bash
-bash tools/wow-api-lookup.sh C_MythicPlus.GetRunHistory
-bash tools/wow-api-lookup.sh C_ChallengeMode.GetMapTable
-bash tools/wow-api-lookup.sh CHALLENGE_MODE_MAPS_UPDATE
-bash tools/wow-api-lookup.sh CreateFrame
+bash Tools/wow-api-lookup.sh C_MythicPlus.GetRunHistory
+bash Tools/wow-api-lookup.sh C_ChallengeMode.GetMapTable
+bash Tools/wow-api-lookup.sh CHALLENGE_MODE_MAPS_UPDATE
+bash Tools/wow-api-lookup.sh CreateFrame
 ```
 
 URL pattern: `https://warcraft.wiki.gg/wiki/<API_NAME>`
