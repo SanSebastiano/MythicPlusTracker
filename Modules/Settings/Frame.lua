@@ -5,7 +5,9 @@ MythicPlusTrackerDB = MythicPlusTrackerDB or {}
 local function createSettingsPanel()
     local category, layout = Settings.RegisterVerticalLayoutCategory(addon.locale["SETTINGS_CATEGORY_NAME"])
 
-    -- Section: General
+    -- Section headers are inserted directly into the layout (not attached to
+    -- any single setting); the template requires its data as a table
+    -- ({ name = ... }), a bare string silently fails with a nil-call error.
     layout:AddInitializer(Settings.CreateElementInitializer("SettingsListSectionHeaderTemplate", { name = addon.locale["SETTINGS_SECTION_GENERAL_LABEL"] }))
 
     local function getWelcomeMessageShown()
@@ -16,6 +18,9 @@ local function createSettingsPanel()
         MythicPlusTrackerDB.welcomeMessageDisabled = not value
     end
 
+    -- RegisterProxySetting (rather than RegisterAddOnSetting) is used here
+    -- because the stored flag is inverted (welcomeMessageDisabled) relative
+    -- to what the checkbox displays (welcome message shown).
     local welcomeMessageSetting = Settings.RegisterProxySetting(
         category,
         "MPT_ShowWelcomeMessage",
@@ -41,7 +46,6 @@ local function createSettingsPanel()
     end)
     Settings.CreateCheckbox(category, debugSetting, addon.locale["SETTINGS_DEBUG_MODE_TOOLTIP"])
 
-    -- Section: Minimap
     layout:AddInitializer(Settings.CreateElementInitializer("SettingsListSectionHeaderTemplate", { name = addon.locale["SETTINGS_SECTION_MINIMAP_LABEL"] }))
 
     local function getMinimapButtonShown()
@@ -53,6 +57,8 @@ local function createSettingsPanel()
         MPT_MinimapButton:SetHidden(not value)
     end
 
+    -- Proxy setting again: the stored flag is inverted (minimapButtonHidden)
+    -- and the setter must also forward the change to the live button frame.
     local minimapSetting = Settings.RegisterProxySetting(
         category,
         "MPT_ShowMinimapButton",

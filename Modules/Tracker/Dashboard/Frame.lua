@@ -34,6 +34,8 @@ local function create(mainFrame)
 
     local borderFrame = CreateFrame("Frame", nil, frame)
     borderFrame:SetAllPoints(frame)
+    -- Same technique as the Sidebar border (see Sidebar/Frame.lua); the
+    -- larger panel needs a smaller scale factor to line up the edges.
     borderFrame:SetScale(0.5)
 
     local border = borderFrame:CreateTexture(nil, "OVERLAY")

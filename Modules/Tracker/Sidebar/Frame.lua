@@ -43,6 +43,8 @@ local function create(mainFrame)
 
     local borderFrame = CreateFrame("Frame", nil, frame)
     borderFrame:SetAllPoints(frame)
+    -- The border atlas is oversized relative to the frame; scaling this
+    -- wrapper down makes the texture's edges align with the panel's edges.
     borderFrame:SetScale(0.75)
 
     local border = borderFrame:CreateTexture(nil, "OVERLAY")

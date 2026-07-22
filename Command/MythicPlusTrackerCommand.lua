@@ -7,6 +7,8 @@ local function handleSlashCommand(msg)
         addon.setDebugMode()
 
     elseif command == "test" then
+        -- Developer-only diagnostic command: dumps raw C_MythicPlus API
+        -- data to the chat frame for debugging, not listed in "/mpt help".
         C_MythicPlus.RequestMapInfo()
         print('C_MythicPlus.IsMythicPlusActive(): ' .. tostring(C_MythicPlus.IsMythicPlusActive()))
         print('C_MythicPlus.GetCurrentSeason(): ' .. C_MythicPlus.GetCurrentSeason())

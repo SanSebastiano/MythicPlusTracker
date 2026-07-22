@@ -12,6 +12,9 @@ local DEFAULT_MINIMAP_BUTTON_STYLE = "large"
 
 local LARGE_BUTTON_SIZE = 64
 
+-- "Normal" style mimics the classic LibDBIcon look (small round icon behind
+-- a fixed border texture). Size/offset were tuned by eye so the icon fully
+-- fills the border's round cutout with no visible gaps on any side.
 local NORMAL_BUTTON_SIZE = 31
 local NORMAL_BORDER_SIZE = 53
 local NORMAL_ICON_SIZE = 24
@@ -66,6 +69,9 @@ local function ensureMinimapButtonState()
 end
 
 local function getMinimapRadius()
+    -- Derived from the minimap's actual current size (rather than a fixed
+    -- constant) so the button sits at the true outer edge regardless of the
+    -- player's minimap size/scale setting.
     local width = Minimap:GetWidth() or 140
     return (width / 2) + MINIMAP_BUTTON_EDGE_INSET
 end
@@ -87,6 +93,9 @@ local function updatePosition()
 end
 
 local function onEdgeDragUpdate()
+    -- Keeps the button pinned to the minimap's edge: converts the cursor
+    -- position into an angle around the minimap's center and stores that
+    -- angle, rather than storing free-form screen coordinates.
     local minimapX, minimapY = Minimap:GetCenter()
     if not minimapX then
         return
@@ -106,6 +115,9 @@ local function onEdgeDragUpdate()
 end
 
 local function onFreeDragUpdate()
+    -- "Large" style only: lets the button be dropped anywhere on screen,
+    -- clamped to the screen bounds, storing absolute coordinates instead of
+    -- an angle around the minimap.
     local scale = UIParent:GetEffectiveScale()
     local cursorX, cursorY = GetCursorPosition()
     cursorX, cursorY = cursorX / scale, cursorY / scale
@@ -192,6 +204,9 @@ function MPT_MinimapButton:load()
     button:SetScript("OnDragStart", function(self)
         self:LockHighlight()
 
+        -- "Normal" style is always edge-locked (matches other addons'
+        -- minimap buttons); "Large" style defaults to edge-locked too,
+        -- unless Shift is held for a free, anywhere-on-screen drag.
         local state = ensureMinimapButtonState()
         if state.style == "normal" then
             self:SetScript("OnUpdate", onEdgeDragUpdate)
