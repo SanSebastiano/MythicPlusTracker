@@ -5,4 +5,6 @@
 
     <Script file="en-US.lua"/>
     <Script file="de-DE.lua"/>
+    <Script file="fr-FR.lua"/>
+    <Script file="es-ES.lua"/>
 </Ui>

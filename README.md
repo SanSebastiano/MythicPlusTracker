@@ -3,7 +3,7 @@
 # Mythic Plus Tracker
 
 ![WoW Interface](https://img.shields.io/badge/WoW%20Interface-120007-blueviolet)
-![Version](https://img.shields.io/badge/Version-1.0.0-blue)
+![Version](https://img.shields.io/badge/Version-1.1.0-blue)
 [![License: CC BY-NC-ND 4.0](https://img.shields.io/badge/License-CC%20BY--NC--ND%204.0-lightgrey)](https://creativecommons.org/licenses/by-nc-nd/4.0/)
 
 </div>
@@ -33,14 +33,23 @@ The main window has three tabs:
 ### Minimap Button
 - **Left-click** — opens the Mythic Plus Tracker window.
 - **Right-click** — opens the Great Vault (Weekly Rewards frame).
+- **Left-click-drag** — moves the button along the minimap's edge.
+- **Shift+left-click-drag** — moves the button freely anywhere on screen.
 
 ### Slash Commands
 Available as `/mpt` or `/mythicplustracker`:
 - (no argument) or `help` — prints the list of available commands.
+- `show` — opens the tracker window.
+- `settings` (or `options`) — opens the settings panel.
 - `debug`, `debug on`, `debug off` — toggles debug mode, which prints additional diagnostic messages.
 
 ### Group Communication
 MythicPlusTracker automatically syncs keystone and score data between group/raid members who also run the addon, so the Keystones tab and Group Scores section stay up to date without any manual action.
+
+### Settings
+A settings panel is available under the in-game **Options → AddOns → Mythic Plus Tracker** menu, or via `/mpt settings`.
+
+**Debug Mode** — enables additional diagnostic chat messages.
 
 ---
 
@@ -52,6 +61,8 @@ MythicPlusTracker ships with full support for:
 |--------|----------|
 | `enUS` | English  |
 | `deDE` | German   |
+| `frFR` | French   |
+| `esES` | Spanish  |
 
 Want to add your language? See [CONTRIBUTING.md](CONTRIBUTING.md).
 

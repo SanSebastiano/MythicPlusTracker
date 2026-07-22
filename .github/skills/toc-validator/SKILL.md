@@ -13,7 +13,7 @@ Checks that every file listed in `MythicPlusTracker.toc` and every `<Include>` /
 Run the validator script from the repository root:
 
 ```bash
-bash tools/toc-validator.sh
+bash Tools/toc-validator.sh
 ```
 
 ## Output

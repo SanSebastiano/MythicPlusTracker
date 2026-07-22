@@ -13,7 +13,7 @@ Compares every locale file in `Locales/` against the reference (`Locales/en-US.l
 Run the validator script from the repository root:
 
 ```bash
-bash tools/locale-validator.sh
+bash Tools/locale-validator.sh
 ```
 
 ## Output

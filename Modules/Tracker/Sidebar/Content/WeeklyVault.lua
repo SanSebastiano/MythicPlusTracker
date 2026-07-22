@@ -44,7 +44,7 @@ local function buildSlot(container, activity, slotIndex, BlizzardMixin)
 
     local background = slot:CreateTexture(nil, "BACKGROUND")
     background:SetAllPoints(slot)
-    background:SetAtlas("ui-frame-midnight-portraitdisable", true)
+    background:SetAtlas(addon.theme.CARD_ICON_BACKGROUND, true)
 
     local unlocked = activity and (activity.progress >= activity.threshold)
     local itemLevel     = getActivityItemLevel(activity)
