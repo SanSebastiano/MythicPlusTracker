@@ -14,6 +14,7 @@ local locale = {
     ["MINIMAP_BUTTON_CLICK_LEFT"] = "Clic izquierdo: Mostrar/Ocultar el panel",
     ["MINIMAP_BUTTON_CLICK_RIGHT"] = "Clic derecho: Abrir la Gran Bóveda",
     ["MINIMAP_BUTTON_DRAG"] = "Arrastrar: Mover a lo largo del borde del minimapa (Mayús+Arrastrar: Mover libremente)",
+    ["MINIMAP_BUTTON_DRAG_NORMAL"] = "Arrastrar: Mover a lo largo del borde del minimapa",
     -- Mythic Plus specific messages
     ["KEYSTONE_UPGRADED"] = "¡Llave mítica mejorada al nivel %d!",
     ["KEYSTONE_DEPLETED"] = "Llave mítica agotada.",
@@ -91,10 +92,16 @@ local locale = {
     ["KEYSTONES_REFRESH_TOOLTIP"] = "Actualizar vista de grupo",
     -- Settings panel
     ["SETTINGS_CATEGORY_NAME"]         = "Mythic Plus Tracker",
+    ["SETTINGS_SECTION_GENERAL_LABEL"] = "General",
+    ["SETTINGS_SECTION_MINIMAP_LABEL"] = "Minimapa",
     ["SETTINGS_DEBUG_MODE_LABEL"]      = "Modo de depuración",
     ["SETTINGS_DEBUG_MODE_TOOLTIP"]    = "Muestra mensajes de diagnóstico adicionales en la ventana de chat.",
     ["SETTINGS_MINIMAP_BUTTON_LABEL"]  = "Mostrar botón del minimapa",
     ["SETTINGS_MINIMAP_BUTTON_TOOLTIP"] = "Muestra u oculta el botón del minimapa de Mythic Plus Tracker.",
+    ["SETTINGS_MINIMAP_BUTTON_STYLE_LABEL"] = "Estilo del botón del minimapa",
+    ["SETTINGS_MINIMAP_BUTTON_STYLE_TOOLTIP"] = "Elige entre el botón grande movible libremente o un botón normal movible solo por el borde del minimapa.",
+    ["MINIMAP_BUTTON_STYLE_LARGE"] = "Grande",
+    ["MINIMAP_BUTTON_STYLE_NORMAL"] = "Normal",
     ["SETTINGS_WELCOME_MESSAGE_LABEL"]  = "Mostrar mensaje de bienvenida",
     ["SETTINGS_WELCOME_MESSAGE_TOOLTIP"] = "Muestra u oculta el mensaje de bienvenida de Mythic Plus Tracker al iniciar sesión.",
 }

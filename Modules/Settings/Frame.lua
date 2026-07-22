@@ -3,7 +3,29 @@ local addonName, addon = ...
 MythicPlusTrackerDB = MythicPlusTrackerDB or {}
 
 local function createSettingsPanel()
-    local category = Settings.RegisterVerticalLayoutCategory(addon.locale["SETTINGS_CATEGORY_NAME"])
+    local category, layout = Settings.RegisterVerticalLayoutCategory(addon.locale["SETTINGS_CATEGORY_NAME"])
+
+    -- Section: General
+    layout:AddInitializer(Settings.CreateElementInitializer("SettingsListSectionHeaderTemplate", { name = addon.locale["SETTINGS_SECTION_GENERAL_LABEL"] }))
+
+    local function getWelcomeMessageShown()
+        return not MythicPlusTrackerDB.welcomeMessageDisabled
+    end
+
+    local function setWelcomeMessageShown(value)
+        MythicPlusTrackerDB.welcomeMessageDisabled = not value
+    end
+
+    local welcomeMessageSetting = Settings.RegisterProxySetting(
+        category,
+        "MPT_ShowWelcomeMessage",
+        Settings.VarType.Boolean,
+        addon.locale["SETTINGS_WELCOME_MESSAGE_LABEL"],
+        true,
+        getWelcomeMessageShown,
+        setWelcomeMessageShown
+    )
+    Settings.CreateCheckbox(category, welcomeMessageSetting, addon.locale["SETTINGS_WELCOME_MESSAGE_TOOLTIP"])
 
     local debugSetting = Settings.RegisterAddOnSetting(
         category,
@@ -18,6 +40,9 @@ local function createSettingsPanel()
         addon.setDebugMode(value)
     end)
     Settings.CreateCheckbox(category, debugSetting, addon.locale["SETTINGS_DEBUG_MODE_TOOLTIP"])
+
+    -- Section: Minimap
+    layout:AddInitializer(Settings.CreateElementInitializer("SettingsListSectionHeaderTemplate", { name = addon.locale["SETTINGS_SECTION_MINIMAP_LABEL"] }))
 
     local function getMinimapButtonShown()
         return not MythicPlusTrackerDB.minimapButtonHidden
@@ -39,24 +64,32 @@ local function createSettingsPanel()
     )
     Settings.CreateCheckbox(category, minimapSetting, addon.locale["SETTINGS_MINIMAP_BUTTON_TOOLTIP"])
 
-    local function getWelcomeMessageShown()
-        return not MythicPlusTrackerDB.welcomeMessageDisabled
+    local function getMinimapButtonStyle()
+        local minimapButton = MythicPlusTrackerDB.minimapButton
+        return (minimapButton and minimapButton.style) or "large"
     end
 
-    local function setWelcomeMessageShown(value)
-        MythicPlusTrackerDB.welcomeMessageDisabled = not value
+    local function setMinimapButtonStyle(value)
+        MPT_MinimapButton:SetStyle(value)
     end
 
-    local welcomeMessageSetting = Settings.RegisterProxySetting(
+    local function getMinimapButtonStyleOptions()
+        local container = Settings.CreateControlTextContainer()
+        container:Add("large", addon.locale["MINIMAP_BUTTON_STYLE_LARGE"])
+        container:Add("normal", addon.locale["MINIMAP_BUTTON_STYLE_NORMAL"])
+        return container:GetData()
+    end
+
+    local minimapStyleSetting = Settings.RegisterProxySetting(
         category,
-        "MPT_ShowWelcomeMessage",
-        Settings.VarType.Boolean,
-        addon.locale["SETTINGS_WELCOME_MESSAGE_LABEL"],
-        true,
-        getWelcomeMessageShown,
-        setWelcomeMessageShown
+        "MPT_MinimapButtonStyle",
+        Settings.VarType.String,
+        addon.locale["SETTINGS_MINIMAP_BUTTON_STYLE_LABEL"],
+        "large",
+        getMinimapButtonStyle,
+        setMinimapButtonStyle
     )
-    Settings.CreateCheckbox(category, welcomeMessageSetting, addon.locale["SETTINGS_WELCOME_MESSAGE_TOOLTIP"])
+    Settings.CreateDropdown(category, minimapStyleSetting, getMinimapButtonStyleOptions, addon.locale["SETTINGS_MINIMAP_BUTTON_STYLE_TOOLTIP"])
 
     Settings.RegisterAddOnCategory(category)
 

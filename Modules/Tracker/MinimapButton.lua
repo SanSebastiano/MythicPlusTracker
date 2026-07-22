@@ -3,32 +3,71 @@ local addonName, addon = ...
 MPT_MinimapButton = {}
 
 local button
+local icon
+local border
 
-local MINIMAP_BUTTON_RADIUS = 80
+local MINIMAP_BUTTON_EDGE_INSET = 5
 local DEFAULT_MINIMAP_BUTTON_ANGLE = -45
+local DEFAULT_MINIMAP_BUTTON_STYLE = "large"
+
+local LARGE_BUTTON_SIZE = 64
+
+local NORMAL_BUTTON_SIZE = 31
+local NORMAL_BORDER_SIZE = 53
+local NORMAL_ICON_SIZE = 24
+local NORMAL_ICON_OFFSET_X = 5
+local NORMAL_ICON_OFFSET_Y = -5
 
 local function create()
-    local button = CreateFrame("Button", "MPTMinimapButton", Minimap)
-    button:SetSize(64, 64)
-    button:SetFrameStrata("MEDIUM")
-    button:SetFrameLevel(8)
+    local newButton = CreateFrame("Button", "MPTMinimapButton", Minimap)
+    newButton:SetFrameStrata("MEDIUM")
+    newButton:SetFrameLevel(8)
 
-    local icon = button:CreateTexture(nil, "ARTWORK")
-    icon:SetAtlas(addon.theme.MINIMAP_BUTTON_ICON)
-    icon:SetAllPoints()
+    local newIcon = newButton:CreateTexture(nil, "ARTWORK")
+    local newBorder = newButton:CreateTexture(nil, "OVERLAY")
 
-    local border = button:CreateTexture(nil, "OVERLAY")
-    border:SetAtlas(addon.theme.MINIMAP_BUTTON_BORDER)
-    border:SetAllPoints()
+    return newButton, newIcon, newBorder
+end
 
-    return button
+local function applyStyle(style)
+    if style == "normal" then
+        button:SetSize(NORMAL_BUTTON_SIZE, NORMAL_BUTTON_SIZE)
+
+        icon:ClearAllPoints()
+        icon:SetSize(NORMAL_ICON_SIZE, NORMAL_ICON_SIZE)
+        icon:SetPoint("TOPLEFT", NORMAL_ICON_OFFSET_X, NORMAL_ICON_OFFSET_Y)
+        icon:SetTexture(addon.theme.MINIMAP_BUTTON_NORMAL_ICON)
+
+        border:ClearAllPoints()
+        border:SetSize(NORMAL_BORDER_SIZE, NORMAL_BORDER_SIZE)
+        border:SetPoint("TOPLEFT", 0, 0)
+        border:SetTexture(addon.theme.MINIMAP_BUTTON_NORMAL_BORDER)
+        border:Show()
+    else
+        button:SetSize(LARGE_BUTTON_SIZE, LARGE_BUTTON_SIZE)
+
+        icon:ClearAllPoints()
+        icon:SetAllPoints()
+        icon:SetAtlas(addon.theme.MINIMAP_BUTTON_ICON)
+
+        border:Hide()
+    end
 end
 
 local function ensureMinimapButtonState()
     MythicPlusTrackerDB = MythicPlusTrackerDB or {}
-    MythicPlusTrackerDB.minimapButton = MythicPlusTrackerDB.minimapButton or { angle = DEFAULT_MINIMAP_BUTTON_ANGLE }
+    MythicPlusTrackerDB.minimapButton = MythicPlusTrackerDB.minimapButton or {
+        angle = DEFAULT_MINIMAP_BUTTON_ANGLE,
+        style = DEFAULT_MINIMAP_BUTTON_STYLE,
+    }
+    MythicPlusTrackerDB.minimapButton.style = MythicPlusTrackerDB.minimapButton.style or DEFAULT_MINIMAP_BUTTON_STYLE
 
     return MythicPlusTrackerDB.minimapButton
+end
+
+local function getMinimapRadius()
+    local width = Minimap:GetWidth() or 140
+    return (width / 2) + MINIMAP_BUTTON_EDGE_INSET
 end
 
 local function updatePosition()
@@ -40,8 +79,9 @@ local function updatePosition()
         button:SetPoint("CENTER", UIParent, "BOTTOMLEFT", state.x or 0, state.y or 0)
     else
         local angle = math.rad(state.angle or DEFAULT_MINIMAP_BUTTON_ANGLE)
-        local x = MINIMAP_BUTTON_RADIUS * math.cos(angle)
-        local y = MINIMAP_BUTTON_RADIUS * math.sin(angle)
+        local radius = getMinimapRadius()
+        local x = radius * math.cos(angle)
+        local y = radius * math.sin(angle)
         button:SetPoint("CENTER", Minimap, "CENTER", x, y)
     end
 end
@@ -96,12 +136,35 @@ function MPT_MinimapButton:SetHidden(hidden)
     end
 end
 
+function MPT_MinimapButton:SetStyle(style)
+    if style ~= "large" and style ~= "normal" then
+        return
+    end
+
+    local state = ensureMinimapButtonState()
+    if state.style == style then
+        return
+    end
+
+    state.style = style
+
+    if style == "normal" then
+        state.free = false
+    end
+
+    if button then
+        applyStyle(style)
+        updatePosition()
+    end
+end
+
 local function applySavedState()
     if not button then
         return
     end
 
-    ensureMinimapButtonState()
+    local state = ensureMinimapButtonState()
+    applyStyle(state.style)
     updatePosition()
     MPT_MinimapButton:SetHidden(MythicPlusTrackerDB.minimapButtonHidden)
 end
@@ -119,7 +182,7 @@ stateFrame:SetScript("OnEvent", function(self, event, loadedAddonName)
 end)
 
 function MPT_MinimapButton:load()
-    button = create()
+    button, icon, border = create()
 
     applySavedState()
 
@@ -129,7 +192,10 @@ function MPT_MinimapButton:load()
     button:SetScript("OnDragStart", function(self)
         self:LockHighlight()
 
-        if IsShiftKeyDown() then
+        local state = ensureMinimapButtonState()
+        if state.style == "normal" then
+            self:SetScript("OnUpdate", onEdgeDragUpdate)
+        elseif IsShiftKeyDown() then
             self:SetScript("OnUpdate", onFreeDragUpdate)
         else
             self:SetScript("OnUpdate", onEdgeDragUpdate)
@@ -161,11 +227,19 @@ function MPT_MinimapButton:load()
     end)
 
     button:SetScript("OnEnter", function(self)
+        local state = ensureMinimapButtonState()
+
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
         GameTooltip:SetText(addon.locale['MINIMAP_BUTTON_NAME'])
         GameTooltip:AddLine(addon.locale['MINIMAP_BUTTON_CLICK_LEFT'], 1, 1, 1)
         GameTooltip:AddLine(addon.locale['MINIMAP_BUTTON_CLICK_RIGHT'], 1, 1, 1)
-        GameTooltip:AddLine(addon.locale['MINIMAP_BUTTON_DRAG'], 1, 1, 1)
+
+        if state.style == "normal" then
+            GameTooltip:AddLine(addon.locale['MINIMAP_BUTTON_DRAG_NORMAL'], 1, 1, 1)
+        else
+            GameTooltip:AddLine(addon.locale['MINIMAP_BUTTON_DRAG'], 1, 1, 1)
+        end
+
         GameTooltip:Show()
     end)
 

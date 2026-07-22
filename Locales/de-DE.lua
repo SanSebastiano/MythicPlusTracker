@@ -14,6 +14,7 @@ local locale = {
     ["MINIMAP_BUTTON_CLICK_LEFT"] = "Linksklick: Dashboard umschalten",
     ["MINIMAP_BUTTON_CLICK_RIGHT"] = "Rechtsklick: Große Schatzkammer öffnen",
     ["MINIMAP_BUTTON_DRAG"] = "Ziehen: Entlang der Minimap verschieben (Shift+Ziehen: Frei verschieben)",
+    ["MINIMAP_BUTTON_DRAG_NORMAL"] = "Ziehen: Entlang der Minimap verschieben",
     -- Mythic Plus specific messages
     ["KEYSTONE_UPGRADED"] = "Schlüsselstein auf Level %d aufgewertet!",
     ["KEYSTONE_DEPLETED"] = "Schlüsselstein erschöpft.",
@@ -91,10 +92,16 @@ local locale = {
     ["KEYSTONES_REFRESH_TOOLTIP"] = "Gruppenansicht aktualisieren",
     -- Settings panel
     ["SETTINGS_CATEGORY_NAME"]         = "Mythic Plus Tracker",
+    ["SETTINGS_SECTION_GENERAL_LABEL"] = "Allgemein",
+    ["SETTINGS_SECTION_MINIMAP_LABEL"] = "Minimap",
     ["SETTINGS_DEBUG_MODE_LABEL"]      = "Debug-Modus",
     ["SETTINGS_DEBUG_MODE_TOOLTIP"]    = "Zeigt zusätzliche Diagnosemeldungen im Chatfenster an.",
     ["SETTINGS_MINIMAP_BUTTON_LABEL"]  = "Minimap-Button anzeigen",
     ["SETTINGS_MINIMAP_BUTTON_TOOLTIP"] = "Zeigt oder versteckt den Mythic Plus Tracker Minimap-Button.",
+    ["SETTINGS_MINIMAP_BUTTON_STYLE_LABEL"] = "Minimap-Button-Stil",
+    ["SETTINGS_MINIMAP_BUTTON_STYLE_TOOLTIP"] = "Wähle den großen, frei verschiebbaren Button oder den normalen Button, nur am Minimap-Rand verschiebbar.",
+    ["MINIMAP_BUTTON_STYLE_LARGE"] = "Groß",
+    ["MINIMAP_BUTTON_STYLE_NORMAL"] = "Normal",
     ["SETTINGS_WELCOME_MESSAGE_LABEL"]  = "Willkommensnachricht anzeigen",
     ["SETTINGS_WELCOME_MESSAGE_TOOLTIP"] = "Zeigt oder versteckt die Mythic Plus Tracker Willkommensnachricht beim Login.",
 }

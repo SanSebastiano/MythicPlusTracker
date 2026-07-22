@@ -10,6 +10,7 @@ local locale = {
     ["MINIMAP_BUTTON_CLICK_LEFT"] = "Left Click: Toggle Dashboard",
     ["MINIMAP_BUTTON_CLICK_RIGHT"] = "Right Click: Open Great Vault",
     ["MINIMAP_BUTTON_DRAG"] = "Drag: Move along minimap edge (Shift+Drag: Move freely)",
+    ["MINIMAP_BUTTON_DRAG_NORMAL"] = "Drag: Move along minimap edge",
     -- Mythic Plus specific messages
     ["KEYSTONE_UPGRADED"] = "Keystone upgraded to level %d!",
     ["KEYSTONE_DEPLETED"] = "Keystone depleted.",
@@ -87,10 +88,16 @@ local locale = {
     ["KEYSTONES_REFRESH_TOOLTIP"] = "Refresh group view",
     -- Settings panel
     ["SETTINGS_CATEGORY_NAME"]         = "Mythic Plus Tracker",
+    ["SETTINGS_SECTION_GENERAL_LABEL"] = "General",
+    ["SETTINGS_SECTION_MINIMAP_LABEL"] = "Minimap",
     ["SETTINGS_DEBUG_MODE_LABEL"]      = "Debug Mode",
     ["SETTINGS_DEBUG_MODE_TOOLTIP"]    = "Prints additional diagnostic messages to the chat window.",
     ["SETTINGS_MINIMAP_BUTTON_LABEL"]  = "Show Minimap Button",
     ["SETTINGS_MINIMAP_BUTTON_TOOLTIP"] = "Shows or hides the Mythic Plus Tracker minimap button.",
+    ["SETTINGS_MINIMAP_BUTTON_STYLE_LABEL"] = "Minimap Button Style",
+    ["SETTINGS_MINIMAP_BUTTON_STYLE_TOOLTIP"] = "Choose between the large, freely draggable button or a normal button movable only along the minimap edge.",
+    ["MINIMAP_BUTTON_STYLE_LARGE"] = "Large",
+    ["MINIMAP_BUTTON_STYLE_NORMAL"] = "Normal",
     ["SETTINGS_WELCOME_MESSAGE_LABEL"]  = "Show Welcome Message",
     ["SETTINGS_WELCOME_MESSAGE_TOOLTIP"] = "Shows or hides the Mythic Plus Tracker welcome message on login.",
 }

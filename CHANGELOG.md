@@ -2,12 +2,14 @@
 
 All notable changes to MythicPlusTracker are documented here.
 
-## [1.1.0-] unreleased
+## [1.1.0] - 2026-07-22
 
 ### Added
 - New slash command `/mpt show` to open the tracker window without using the minimap button.
-- New settings panel (Options → AddOns → Mythic Plus Tracker, or `/mpt settings`) with toggles for Debug Mode and Show Minimap Button.
+- New settings panel (Options → AddOns → Mythic Plus Tracker, or `/mpt settings`) with toggles for Debug Mode and Show Minimap Button, now grouped into "General" and "Minimap" sections.
 - The minimap button can now be dragged along the minimap's edge (left-click-drag) or moved freely anywhere on screen (Shift+left-click-drag); the position is remembered across logins.
+- New "Minimap Button Style" setting to switch between the large, freely draggable button and a compact button matching the classic look of other addons' minimap icons, which can only be moved along the minimap edge.
+- Custom addon icon, shown in the AddOns list and the AddOn Compartment button.
 - Introduced a centralized theme catalog (`Utils/Theme.lua`) listing every decorative Atlas texture used across the UI, so the addon can be re-skinned by editing a single file.
 - Added French (`frFR`) and Spanish (`esES`) translations.
 - Added a refresh button to the Keystones tab's group overview to manually re-request and re-render group keystone data (also updates the Sidebar group scores) without needing to switch tabs or reopen the tracker.

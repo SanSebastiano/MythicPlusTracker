@@ -14,6 +14,7 @@ local locale = {
     ["MINIMAP_BUTTON_CLICK_LEFT"] = "Clic gauche : Afficher/Masquer le tableau de bord",
     ["MINIMAP_BUTTON_CLICK_RIGHT"] = "Clic droit : Ouvrir le Grand Coffre",
     ["MINIMAP_BUTTON_DRAG"] = "Glisser : Déplacer le long de la minimap (Maj+Glisser : Déplacer librement)",
+    ["MINIMAP_BUTTON_DRAG_NORMAL"] = "Glisser : Déplacer le long de la minimap",
     -- Mythic Plus specific messages
     ["KEYSTONE_UPGRADED"] = "Clé mythique améliorée au niveau %d !",
     ["KEYSTONE_DEPLETED"] = "Clé mythique épuisée.",
@@ -91,10 +92,16 @@ local locale = {
     ["KEYSTONES_REFRESH_TOOLTIP"] = "Actualiser la vue du groupe",
     -- Settings panel
     ["SETTINGS_CATEGORY_NAME"]         = "Mythic Plus Tracker",
+    ["SETTINGS_SECTION_GENERAL_LABEL"] = "Général",
+    ["SETTINGS_SECTION_MINIMAP_LABEL"] = "Minimap",
     ["SETTINGS_DEBUG_MODE_LABEL"]      = "Mode débogage",
     ["SETTINGS_DEBUG_MODE_TOOLTIP"]    = "Affiche des messages de diagnostic supplémentaires dans la fenêtre de discussion.",
     ["SETTINGS_MINIMAP_BUTTON_LABEL"]  = "Afficher le bouton de la minimap",
     ["SETTINGS_MINIMAP_BUTTON_TOOLTIP"] = "Affiche ou masque le bouton de la minimap de Mythic Plus Tracker.",
+    ["SETTINGS_MINIMAP_BUTTON_STYLE_LABEL"] = "Style du bouton de la minimap",
+    ["SETTINGS_MINIMAP_BUTTON_STYLE_TOOLTIP"] = "Choisissez le grand bouton déplaçable librement ou le bouton normal, déplaçable sur le bord de la minimap.",
+    ["MINIMAP_BUTTON_STYLE_LARGE"] = "Grand",
+    ["MINIMAP_BUTTON_STYLE_NORMAL"] = "Normal",
     ["SETTINGS_WELCOME_MESSAGE_LABEL"]  = "Afficher le message de bienvenue",
     ["SETTINGS_WELCOME_MESSAGE_TOOLTIP"] = "Affiche ou masque le message de bienvenue de Mythic Plus Tracker à la connexion.",
 }
