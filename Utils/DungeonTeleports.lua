@@ -38,6 +38,16 @@ local readyCallbacks = {}
 local pendingSpellIDs = {}
 local pendingDungeons, pendingCandidates, pendingTeleports, pendingDungeonSetKey
 
+---Realm-qualified key identifying the current character within the shared,
+---account-wide MythicPlusTrackerDB.dungeonTeleportCache table. Teleport
+---availability is character-specific (e.g. class-locked "Path of ..."
+---spells), so each character caches its own scan result under its own key
+---rather than sharing/overwriting a single account-wide entry.
+---@return string
+local function getCharacterKey()
+    return UnitName("player") .. "-" .. GetNormalizedRealmName()
+end
+
 ---Registers a callback to run once the teleport cache is ready. Runs
 ---immediately if the cache has already been built.
 ---@param callback function
@@ -139,7 +149,14 @@ local function finalizeCache(dungeons, candidates, teleports, dungeonSetKey)
     end
 
     addon.dungeonTeleports = teleports
-    MythicPlusTrackerDB.dungeonTeleportCache = {
+
+    -- Discard a pre-migration (flat, single account-wide entry) cache shape
+    -- from an older addon version rather than trying to interpret it as
+    -- per-character data — it gets rebuilt below, once per character.
+    if not MythicPlusTrackerDB.dungeonTeleportCache or MythicPlusTrackerDB.dungeonTeleportCache.formatVersion then
+        MythicPlusTrackerDB.dungeonTeleportCache = {}
+    end
+    MythicPlusTrackerDB.dungeonTeleportCache[getCharacterKey()] = {
         formatVersion = CACHE_FORMAT_VERSION,
         dungeonSetKey = dungeonSetKey,
         teleports = teleports,
@@ -209,7 +226,10 @@ function addon.buildDungeonTeleportCache()
     local dungeonSetKey = buildDungeonSetKey(dungeons)
 
     MythicPlusTrackerDB = MythicPlusTrackerDB or {}
-    local cache = MythicPlusTrackerDB.dungeonTeleportCache
+    local allCaches = MythicPlusTrackerDB.dungeonTeleportCache
+    -- A truthy formatVersion at this level means it's the old, pre-migration
+    -- flat shape (not keyed by character) — ignore it and rescan instead.
+    local cache = allCaches and not allCaches.formatVersion and allCaches[getCharacterKey()]
     if cache and cache.formatVersion == CACHE_FORMAT_VERSION
         and cache.dungeonSetKey == dungeonSetKey and cache.teleports then
         addon.dungeonTeleports = cache.teleports

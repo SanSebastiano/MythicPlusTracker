@@ -4,38 +4,17 @@ local addonName, addon = ...
 -- RunsStats section headers.
 local CONTENT_X = 23
 local CONTENT_W = 254
-local HEADER_Y  = -118
+local GROUPSCORES_GAP = 8   -- gap after the previous card (Score)
 
 local INSET = 10   -- left/right inset inside content rows
 local ROW_H = 24
 
-local ARTIFACT_R = 0xe6 / 255
-local ARTIFACT_G = 0xcc / 255
-local ARTIFACT_B = 0x80 / 255
+local ARTIFACT_R, ARTIFACT_G, ARTIFACT_B = addon.colorToRGB("ARTIFACT")
 
----Returns the score-tier color for a given overall Mythic+ score, matching
----the coloring used for the local player's own score card.
----@param score number
----@return string colorCode
-local function colorForScore(score)
-    if score <= 999 then
-        return addon.colors.POOR
-    elseif score <= 1499 then
-        return addon.colors.UNCOMMON
-    elseif score <= 1999 then
-        return addon.colors.RARE
-    elseif score <= 2499 then
-        return addon.colors.EPIC
-    elseif score <= 2999 then
-        return addon.colors.LEGENDARY
-    end
-    return addon.colors.ARTIFACT
-end
-
-local function createHeader(sidebar)
+local function createHeader(sidebar, headerY)
     local headerFrame = CreateFrame("Frame", nil, sidebar)
     headerFrame:SetSize(CONTENT_W, 46)
-    headerFrame:SetPoint("TOPLEFT", sidebar, "TOPLEFT", CONTENT_X, HEADER_Y)
+    headerFrame:SetPoint("TOPLEFT", sidebar, "TOPLEFT", CONTENT_X, headerY)
 
     local headerBg = headerFrame:CreateTexture(nil, "BACKGROUND")
     headerBg:SetAllPoints(headerFrame)
@@ -81,16 +60,17 @@ local function createRow(sidebar, unitToken, rowY)
     scoreText:SetJustifyV("MIDDLE")
 
     if groupData and groupData.hasAddon and groupData.score then
-        scoreText:SetText(colorForScore(groupData.score) .. groupData.score .. addon.colors.RESET)
+        scoreText:SetText(addon.colorForScore(groupData.score) .. groupData.score .. addon.colors.RESET)
     else
         scoreText:SetText(addon.colors.POOR .. "-" .. addon.colors.RESET)
     end
 end
 
-local function loadGroupScores(sidebar)
+local function loadGroupScores(sidebar, cursor)
     addon.debugMessage("Loading sidebar: group scores...")
 
-    createHeader(sidebar)
+    local headerY = cursor:current() - GROUPSCORES_GAP
+    createHeader(sidebar, headerY)
 
     if addon.Communication then
         addon.Communication:RequestGroupKeystones()
@@ -107,7 +87,7 @@ local function loadGroupScores(sidebar)
         end
     end
 
-    local rowY = HEADER_Y - 46 - 8
+    local rowY = headerY - 54
 
     if #otherUnitTokens == 0 then
         local noMembers = sidebar:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
@@ -134,6 +114,4 @@ local function loadGroupScores(sidebar)
     end
 end
 
-if MPT_Sidebar then
-    MPT_Sidebar.loadGroupScores = loadGroupScores
-end
+MPT_Sidebar.loadGroupScores = loadGroupScores

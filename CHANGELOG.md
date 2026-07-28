@@ -2,6 +2,31 @@
 
 All notable changes to MythicPlusTracker are documented here.
 
+## [1.1.1] - 2026-07-28
+
+### Fixed
+- Fixed a crash if the welcome message tried to warn about a locale not being loaded yet — it called a non-existent function (`addon.chatError`) instead of the real message helper.
+- Fixed two global-variable leaks in the Sidebar score card that polluted `_G` on every render.
+- Fixed a memory/event-leak in the Sidebar Trait Nodes section, which registered a new event listener every time the sidebar was shown instead of once.
+- Removed a leftover empty `ADDON_LOADED` handler that was never unregistered and ran for the entire session without doing anything.
+- Fixed the dungeon teleport cache being shared account-wide instead of per character, which could make an alt inherit or overwrite another character's teleport data.
+- Fixed the Trait Nodes rune-selection popup truncating longer rune names — it now sizes itself to fit the widest entry instead of using a fixed width.
+- Fixed the rune-selection popup's border not lining up with its actual edges (previously a stretched icon-slot texture); it's now drawn as a precise thin border that always matches the popup's size.
+
+### Changed
+- Centralized score-tier and keystone-level coloring logic in `Utils/ColorHandler.lua` instead of duplicating it across several files.
+- Consolidated duplicated table-cell, row-divider, and scrollbar-wiring code from the Dashboard's Dungeons/Runs/Keystones tabs into shared helpers (`Utils/UIHelpers.lua`).
+- Sidebar sections now use a shared vertical layout cursor instead of hardcoded pixel offsets, making future layout changes less error-prone.
+- Mythic+ run history is now cached and only re-fetched on key completion or login, instead of being requested from the API on every tab switch.
+- Group keystone requests are now centrally rate-limited (max once every 2 seconds) regardless of which UI action triggered them.
+- The group keystone addon-message protocol now includes a version number so future protocol changes can be detected and ignored safely by old clients.
+- Added section-header banners (matching the Runs/Keystones tab style) above the Sidebar Overview tab's Weekly Vault, Trait Nodes, and Currency sections for clearer visual separation, replacing the plain divider bars that used to sit there.
+- Trait Nodes that are purchasable but not yet chosen now show a grayed-out icon with a clearly visible green background highlight, both in the rune row and in the selection popup, instead of a barely-noticeable green icon tint.
+- Weekly Vault boxes now have a simpler border instead of the generic icon background texture.
+
+### Removed
+- Removed the unused, unwired Great Vault quick-access button module.
+
 ## [1.1.0] - 2026-07-22
 
 ### Added
