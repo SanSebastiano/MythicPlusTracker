@@ -4,9 +4,11 @@
 ## Version: 1.1.1
 ## Notes: Tracks your Mythic+ dungeon runs, group members, deaths, and completion status
 ## Notes-deDE: Verfolgt die Mythic+-Dungeon-Runs, Gruppenmitglieder, Todesfälle und den Abschlussstatus
+## Notes-ruRU: Отслеживает Ваши прохождения в подземелья M+, участников группы, смерти и статус завершения
 ## IconTexture: Interface\AddOns\MythicPlusTracker\mplus-icon-64.png
 ## Category-enUS: Dungeons & Raids
 ## Category-deDE: Dungeons & Schlachtzüge
+## Category-ruRU: Подземелья & Рейды
 ## SavedVariables: MythicPlusTrackerDB
 
 init.lua
