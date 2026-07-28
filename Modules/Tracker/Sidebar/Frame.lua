@@ -3,30 +3,36 @@ local addonName, addon = ...
 local frame
 local contentWrapper
 
-local function renderDefaultContent(wrapper)
-    MPT_Sidebar.getScore(wrapper)
-    MPT_Sidebar.getAffixes(wrapper)
-    MPT_Sidebar.getKeystone(wrapper)
-    MPT_Sidebar.getWeeklyVault(wrapper)
-    MPT_Sidebar.getTraitNodes(wrapper)
-    MPT_Sidebar.getCurrencies(wrapper)
+-- Starting Y for the first card (Score). Every subsequent card reads its own
+-- anchor from the cursor and advances it by its own gap + height, so no card
+-- needs to know any other card's size (see Utils/UIHelpers.lua).
+local FIRST_CARD_Y = -30
+
+local function renderDefaultContent(wrapper, cursor)
+    MPT_Sidebar.getScore(wrapper, cursor)
+    MPT_Sidebar.getAffixes(wrapper, cursor)
+    MPT_Sidebar.getKeystone(wrapper, cursor)
+    MPT_Sidebar.getWeeklyVault(wrapper, cursor)
+    MPT_Sidebar.getTraitNodes(wrapper, cursor)
+    MPT_Sidebar.getCurrencies(wrapper, cursor)
 end
 
-local function renderRunsContent(wrapper)
-    MPT_Sidebar.getScore(wrapper)
-    MPT_Sidebar.loadRunsStats(wrapper)
+local function renderRunsContent(wrapper, cursor)
+    MPT_Sidebar.getScore(wrapper, cursor)
+    MPT_Sidebar.loadRunsStats(wrapper, cursor)
 end
 
-local function renderKeystonesContent(wrapper)
-    MPT_Sidebar.getScore(wrapper)
-    MPT_Sidebar.loadGroupScores(wrapper)
+local function renderKeystonesContent(wrapper, cursor)
+    MPT_Sidebar.getScore(wrapper, cursor)
+    MPT_Sidebar.loadGroupScores(wrapper, cursor)
 end
 
 local function rebuildContent(renderFn)
     if contentWrapper then contentWrapper:Hide() end
     contentWrapper = CreateFrame("Frame", nil, frame)
     contentWrapper:SetAllPoints(frame)
-    renderFn(contentWrapper)
+    local cursor = addon.createLayoutCursor(FIRST_CARD_Y)
+    renderFn(contentWrapper, cursor)
 end
 
 local function create(mainFrame)
@@ -58,19 +64,17 @@ local function create(mainFrame)
     return frame
 end
 
-if MPT_Sidebar then
-    function MPT_Sidebar:getFrame(mainFrame)
-        return create(mainFrame)
-    end
+function MPT_Sidebar:getFrame(mainFrame)
+    return create(mainFrame)
+end
 
-    function MPT_Sidebar:showForTab(tabIndex)
-        if not frame then return end
-        if tabIndex == 2 then
-            rebuildContent(renderRunsContent)
-        elseif tabIndex == 3 then
-            rebuildContent(renderKeystonesContent)
-        else
-            rebuildContent(renderDefaultContent)
-        end
+function MPT_Sidebar:showForTab(tabIndex)
+    if not frame then return end
+    if tabIndex == 2 then
+        rebuildContent(renderRunsContent)
+    elseif tabIndex == 3 then
+        rebuildContent(renderKeystonesContent)
+    else
+        rebuildContent(renderDefaultContent)
     end
 end

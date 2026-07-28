@@ -2,10 +2,15 @@ local addonName, addon = ...
 
 local ICON_SIZE  = 28
 local ICON_GAP   = 8
-local ANCHOR_Y   = -120   -- icons start directly after score section (no divider)
+local AFFIXES_GAP = 10   -- gap after the previous card (Score)
 
-local function loadAffixes(sidebar)
+local function loadAffixes(sidebar, cursor)
     addon.debugMessage("Loading sidebar: affixes...")
+
+    -- Advance the cursor unconditionally (even if there are no affixes to show)
+    -- so the vertical space below is reserved exactly like before this refactor.
+    local y = cursor:current() - AFFIXES_GAP
+    cursor:advance(AFFIXES_GAP + ICON_SIZE)
 
     local affixes = C_MythicPlus.GetCurrentAffixes() or {}
     if #affixes == 0 then return end
@@ -16,7 +21,7 @@ local function loadAffixes(sidebar)
 
     local container = CreateFrame("Frame", nil, sidebar)
     container:SetSize(totalW, ICON_SIZE)
-    container:SetPoint("TOPLEFT", sidebar, "TOPLEFT", startX, ANCHOR_Y)
+    container:SetPoint("TOPLEFT", sidebar, "TOPLEFT", startX, y)
 
     for i, affixInfo in ipairs(affixes) do
         local name, description, icon = C_ChallengeMode.GetAffixInfo(affixInfo.id)
@@ -53,6 +58,4 @@ local function loadAffixes(sidebar)
     end
 end
 
-if MPT_Sidebar then
-    MPT_Sidebar.getAffixes = loadAffixes
-end
+MPT_Sidebar.getAffixes = loadAffixes

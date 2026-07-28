@@ -7,6 +7,12 @@ local addonName, addon = ...
 -- fail to register, so messages never actually reach other clients.
 local ADDON_MESSAGE_PREFIX = "MPTrackerKeys"
 
+-- Leading version token on every message, so a future protocol change can be
+-- detected and ignored gracefully instead of being mis-parsed as the old
+-- (or new) shape. WoW addons auto-update, so there's no fleet of old clients
+-- to keep working long-term — a mismatch is simply logged and dropped.
+local PROTOCOL_VERSION = 1
+
 -- Table of received group keystone information, keyed by "Name-Realm".
 -- Entries are only populated for other group members that also run
 -- MythicPlusTracker and have responded with their current keystone.
@@ -76,9 +82,9 @@ local function broadcastOwnKeystoneStatus()
 
     local message
     if mapID and level then
-        message = "KEYSTONE:" .. mapID .. ":" .. level .. ":" .. score
+        message = PROTOCOL_VERSION .. ":KEYSTONE:" .. mapID .. ":" .. level .. ":" .. score
     else
-        message = "NOKEY:" .. score
+        message = PROTOCOL_VERSION .. ":NOKEY:" .. score
     end
 
     addon.debugMessage("Communication: sending '" .. message .. "' on " .. channel)
@@ -94,10 +100,18 @@ local function sendKeystoneRequestMessage()
         return
     end
     addon.debugMessage("Communication: sending 'REQUEST' on " .. channel)
-    C_ChatInfo.SendAddonMessage(ADDON_MESSAGE_PREFIX, "REQUEST", channel)
+    C_ChatInfo.SendAddonMessage(ADDON_MESSAGE_PREFIX, PROTOCOL_VERSION .. ":REQUEST", channel)
 end
 
-local function handleIncomingMessage(message, senderFullPlayerName)
+local function handleIncomingMessage(rawMessage, senderFullPlayerName)
+    local versionText, message = string.match(rawMessage, "^(%d+):(.+)$")
+    local version = tonumber(versionText)
+    if not version or version ~= PROTOCOL_VERSION then
+        addon.debugMessage("Communication: ignoring message with unknown/mismatched protocol version: "
+            .. tostring(rawMessage))
+        return
+    end
+
     if message == "REQUEST" then
         addon.debugMessage("Communication: received REQUEST from " .. tostring(senderFullPlayerName))
         broadcastOwnKeystoneStatus()
@@ -139,9 +153,26 @@ end
 
 addon.Communication = addon.Communication or {}
 
+-- Several call sites (Dashboard Keystones tab, Sidebar group scores, the
+-- manual refresh button, GROUP_ROSTER_UPDATE) each request fresh group
+-- keystone data on their own render path. Throttling here, once, protects
+-- the addon-message channel from being spammed when several of those
+-- happen to fire in quick succession (e.g. rapid tab switching).
+local REQUEST_COOLDOWN_SECONDS = 2
+local lastRequestTime = 0
+
 ---Requests up-to-date keystone information from the current group and
 ---broadcasts the local player's own keystone status at the same time.
+---Calls within REQUEST_COOLDOWN_SECONDS of the previous one are silently
+---ignored.
 function addon.Communication:RequestGroupKeystones()
+    local now = GetTime()
+    if now - lastRequestTime < REQUEST_COOLDOWN_SECONDS then
+        addon.debugMessage("Communication: RequestGroupKeystones skipped (cooldown)")
+        return
+    end
+    lastRequestTime = now
+
     sendKeystoneRequestMessage()
     broadcastOwnKeystoneStatus()
 end

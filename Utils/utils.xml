@@ -6,4 +6,6 @@
     <Script file='DebugSystem.lua'/>
     <Script file='Communication.lua'/>
     <Script file='DungeonTeleports.lua'/>
+    <Script file='RunHistoryCache.lua'/>
+    <Script file='UIHelpers.lua'/>
 </Ui>

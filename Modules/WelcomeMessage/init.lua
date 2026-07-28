@@ -16,7 +16,7 @@ local function ShowWelcomeMessage()
     local locale = addon.locale
 
     if not locale then
-        addon.chatError("Locale not loaded yet!")
+        addon.errorMessage("Locale not loaded yet!")
         return
     end
 

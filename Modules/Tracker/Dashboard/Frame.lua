@@ -2,7 +2,6 @@ local addonName, addon = ...
 
 local frame
 local contentWrapper
-local navHeight = 0
 
 -- Tracks the active content panel so we can hide it before showing a new one
 local activeContent = nil
@@ -17,7 +16,7 @@ local function showContent(loader, ...)
     panel:SetAllPoints(contentWrapper)
     activeContent = panel
 
-    loader(MPT_Dashboard, panel, navHeight, ...)
+    loader(MPT_Dashboard, panel, ...)
 end
 
 local function create(mainFrame)
@@ -52,7 +51,7 @@ local function create(mainFrame)
         [3] = function() if not isMaxLevel() then return false end showContent(MPT_Dashboard.loadKeystones); MPT_Sidebar:showForTab(3) end,
     }
 
-    navHeight = MPT_Dashboard:createNavigation(frame, tabCallbacks)
+    MPT_Dashboard:createNavigation(frame, tabCallbacks)
 
     frame:SetScript("OnShow", function()
         if contentWrapper then contentWrapper:Hide() end

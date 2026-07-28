@@ -55,3 +55,30 @@ addon.colorKeystoneLevel = function(level)
         return addon.colors.KEYSTONE_LEVEL_VERY_HIGH
     end
 end
+
+---Score-tier color, mirroring the thresholds used for overall dungeon score displays.
+function addon.colorForScore(score)
+    if score <= 999 then
+        return addon.colors.POOR
+    elseif score <= 1499 then
+        return addon.colors.UNCOMMON
+    elseif score <= 1999 then
+        return addon.colors.RARE
+    elseif score <= 2499 then
+        return addon.colors.EPIC
+    elseif score <= 2999 then
+        return addon.colors.LEGENDARY
+    end
+    return addon.colors.ARTIFACT
+end
+
+---Parses one of addon.colors' |cFFrrggbb escape-code strings into normalized RGB floats,
+---for APIs like SetTextColor/SetVertexColor that need numbers instead of an escape code.
+function addon.colorToRGB(colorName)
+    local code = addon.colors[colorName]
+    local hex = code and code:match("|[Cc][Ff][Ff](%x%x%x%x%x%x)")
+    if not hex then
+        return 1, 1, 1
+    end
+    return tonumber(hex:sub(1, 2), 16) / 255, tonumber(hex:sub(3, 4), 16) / 255, tonumber(hex:sub(5, 6), 16) / 255
+end

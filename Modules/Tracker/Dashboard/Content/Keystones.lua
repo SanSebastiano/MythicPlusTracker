@@ -6,12 +6,12 @@ local COL_GAP         = 6    -- horizontal gap between columns
 local PORTRAIT_SIZE   = 28   -- player portrait dimensions
 local ROLE_SIZE        = 18  -- role icon dimensions
 local DUNGEON_ICON_SIZE = 24 -- dungeon icon dimensions
-local SCROLL_STEP     = ROW_H * 3   -- pixels per mousewheel scroll
 local DASHBOARD_W     = 800  -- matches Frame.lua
 local CONTENT_INSET   = 20   -- aligns with divider caps
 local SUMMARY_MARGIN  = 8    -- vertical gap below navFrame
 local SCROLL_BTN_SIZE = 22   -- gutter reserved for the scrollbar
 local ROW_PADDING_X   = 5    -- inset of row content from the left/right table edges
+local ARTIFACT_R, ARTIFACT_G, ARTIFACT_B = addon.colorToRGB("ARTIFACT")
 local REFRESH_ICON_SIZE = 20 -- refresh button dimensions
 local REFRESH_ICON_PRESS_OFFSET = -2 -- pixels the icon shifts down while the button is held, like the nav tabs
 local REFRESH_COOLDOWN_SECONDS = 2 -- minimum time between refreshes, not shown to the player
@@ -183,14 +183,10 @@ local function createHeader(parent, colX, nameW, dungeonW)
         fs:SetJustifyH(def.j)
         fs:SetJustifyV("MIDDLE")
         fs:SetText(label)
-        fs:SetTextColor(0xe6 / 255, 0xcc / 255, 0x80 / 255, 1)
+        fs:SetTextColor(ARTIFACT_R, ARTIFACT_G, ARTIFACT_B, 1)
     end
 
-    local divider = parent:CreateTexture(nil, "ARTWORK")
-    divider:SetPoint("TOPLEFT",  parent, "TOPLEFT",  0, -HEADER_H)
-    divider:SetPoint("TOPRIGHT", parent, "TOPRIGHT", 0, -HEADER_H)
-    divider:SetHeight(1)
-    divider:SetColorTexture(0.45, 0.45, 0.65, 0.5)
+    addon.createRowDivider(parent, -HEADER_H, 0.5)
 end
 
 local function createRow(parent, unitToken, colX, nameW, dungeonW, rowY, isLast)
@@ -285,17 +281,11 @@ local function createRow(parent, unitToken, colX, nameW, dungeonW, rowY, isLast)
     end
 
     if not isLast then
-        local divider = parent:CreateTexture(nil, "ARTWORK")
-        divider:SetPoint("TOPLEFT",  parent, "TOPLEFT",  0, rowY - ROW_H)
-        divider:SetPoint("TOPRIGHT", parent, "TOPRIGHT", 0, rowY - ROW_H)
-        divider:SetHeight(1)
-        divider:SetColorTexture(0.45, 0.45, 0.65, 0.3)
+        addon.createRowDivider(parent, rowY - ROW_H, 0.3)
     end
 end
 
-function MPT_Dashboard:loadKeystones(frame, topOffset)
-    topOffset = topOffset or 0
-
+function MPT_Dashboard:loadKeystones(frame)
     -- Make sure we have the freshest possible data before rendering.
     if addon.Communication then
         addon.Communication:RequestGroupKeystones()
@@ -345,31 +335,5 @@ function MPT_Dashboard:loadKeystones(frame, topOffset)
         createRow(scrollChild, unitToken, colX, nameW, dungeonW, rowY, isLast)
     end
 
-    local scrollBar = CreateFrame("Slider", nil, outerFrame, "UIPanelScrollBarTemplate")
-    scrollBar:SetPoint("TOPLEFT",    scrollFrame, "TOPRIGHT",    2, -16)
-    scrollBar:SetPoint("BOTTOMLEFT", scrollFrame, "BOTTOMRIGHT", 2,  16)
-    scrollBar:SetMinMaxValues(0, 0)
-    scrollBar:SetValueStep(ROW_H)
-
-    -- Attach our own OnValueChanged before the first SetValue() call — otherwise
-    -- the template's built-in default handler fires first and tries to call
-    -- SetVerticalScroll on outerFrame (not a ScrollFrame), causing a nil-call error.
-    scrollBar:SetScript("OnValueChanged", function(self, value)
-        scrollFrame:SetVerticalScroll(value)
-    end)
-
-    scrollBar:SetValue(0)
-
-    scrollFrame:SetScript("OnScrollRangeChanged", function(self, _, yRange)
-        local current = self:GetVerticalScroll()
-        scrollBar:SetMinMaxValues(0, math.max(0, yRange))
-        scrollBar:SetValue(math.min(current, math.max(0, yRange)))
-    end)
-
-    scrollFrame:EnableMouseWheel(true)
-    scrollFrame:SetScript("OnMouseWheel", function(self, delta)
-        local maxScroll = self:GetVerticalScrollRange()
-        local newValue = math.max(0, math.min(maxScroll, self:GetVerticalScroll() - delta * SCROLL_STEP))
-        scrollBar:SetValue(newValue)
-    end)
+    addon.createTableScrollbar(outerFrame, scrollFrame, ROW_H)
 end

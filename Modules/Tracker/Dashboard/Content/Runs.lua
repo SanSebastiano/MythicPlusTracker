@@ -5,7 +5,6 @@ local ROW_H          = 40   -- height of each data row
 local HEADER_H       = 28   -- height of the header row
 local COL_GAP        = 6    -- horizontal gap between columns
 local ICON_SIZE      = 28   -- dungeon icon dimensions
-local SCROLL_STEP    = ROW_H * 3   -- pixels per mousewheel scroll
 local DASHBOARD_W    = 800  -- matches Frame.lua
 local CONTENT_INSET  = 20   -- aligns with divider caps
 local SUMMARY_MARGIN = 8    -- vertical gap below navFrame
@@ -22,10 +21,7 @@ local COL_W = {
     season    = 50,
 }
 
--- Parsed RGB from addon.colors.ARTIFACT |cFFe6cc80
-local ARTIFACT_R = 0xe6 / 255
-local ARTIFACT_G = 0xcc / 255
-local ARTIFACT_B = 0x80 / 255
+local ARTIFACT_R, ARTIFACT_G, ARTIFACT_B = addon.colorToRGB("ARTIFACT")
 
 local function formatLevel(level)
     if level and level > 0 then
@@ -81,17 +77,6 @@ local function formatSeason(s)
     return tostring(s)
 end
 
-local function addCell(parent, x, y, w, h, text, font, justifyH, wordWrap)
-    local fs = parent:CreateFontString(nil, "OVERLAY", font or "GameFontHighlight")
-    fs:SetSize(w, h)
-    fs:SetPoint("TOPLEFT", parent, "TOPLEFT", x, y)
-    fs:SetJustifyH(justifyH or "LEFT")
-    fs:SetJustifyV("MIDDLE")
-    if wordWrap then fs:SetWordWrap(true) end
-    fs:SetText(text)
-    return fs
-end
-
 -- Transparent interactive frame that shows a two-line GameTooltip on hover.
 local function addCellTooltip(parent, x, y, w, h, title, body)
     local frame = CreateFrame("Frame", nil, parent)
@@ -123,7 +108,7 @@ local function createHeader(parent, colX, nameW)
     for _, def in ipairs(headerDefs) do
         if def.localeKey then
             local label = addon.locale[def.localeKey] or def.localeKey
-            local fs = addCell(parent, colX[def.key], 0, def.w, HEADER_H,
+            local fs = addon.createTableCell(parent, colX[def.key], 0, def.w, HEADER_H,
                                label, "GameFontNormal", def.j)
             fs:SetTextColor(ARTIFACT_R, ARTIFACT_G, ARTIFACT_B, 1)
 
@@ -134,11 +119,7 @@ local function createHeader(parent, colX, nameW)
         end
     end
 
-    local div = parent:CreateTexture(nil, "ARTWORK")
-    div:SetPoint("TOPLEFT",  parent, "TOPLEFT",  0, -HEADER_H)
-    div:SetPoint("TOPRIGHT", parent, "TOPRIGHT", 0, -HEADER_H)
-    div:SetHeight(1)
-    div:SetColorTexture(0.45, 0.45, 0.65, 0.5)
+    addon.createRowDivider(parent, -HEADER_H, 0.5)
 end
 
 local function createRow(parent, run, colX, nameW, rowY, isLast, scoreDeltas)
@@ -154,9 +135,9 @@ local function createRow(parent, run, colX, nameW, rowY, isLast, scoreDeltas)
         icon:SetTexture(texture)
     end
 
-    addCell(parent, colX["name"], rowY, nameW, ROW_H, name, "GameFontHighlight", "LEFT")
+    addon.createTableCell(parent, colX["name"], rowY, nameW, ROW_H, name, "GameFontHighlight", "LEFT")
 
-    addCell(parent, colX["level"], rowY, COL_W.level, ROW_H,
+    addon.createTableCell(parent, colX["level"], rowY, COL_W.level, ROW_H,
         formatLevel(run.level), "GameFontHighlight", "RIGHT")
 
     local cellX     = colX["completed"]
@@ -175,7 +156,7 @@ local function createRow(parent, run, colX, nameW, rowY, isLast, scoreDeltas)
     local runData    = scoreDeltas and scoreDeltas[runKey]
     local delta      = runData and runData.delta
     local scoreAfter = runData and runData.scoreAfter
-    addCell(parent, colX["score"], rowY, COL_W.score, ROW_H,
+    addon.createTableCell(parent, colX["score"], rowY, COL_W.score, ROW_H,
         formatScoreDelta(delta), "GameFontHighlight", "RIGHT")
     if scoreAfter and scoreAfter > 0 then
         addCellTooltip(parent, colX["score"], rowY, COL_W.score, ROW_H,
@@ -183,7 +164,7 @@ local function createRow(parent, run, colX, nameW, rowY, isLast, scoreDeltas)
             math.floor(scoreAfter) .. "")
     end
 
-    addCell(parent, colX["duration"], rowY, COL_W.duration, ROW_H,
+    addon.createTableCell(parent, colX["duration"], rowY, COL_W.duration, ROW_H,
         formatDuration(run.durationSec, timeLimit), "GameFontHighlight", "RIGHT")
     if timeLimit and timeLimit > 0 then
         local limitStr = string.format("%d:%02d", math.floor(timeLimit / 60), timeLimit % 60)
@@ -191,25 +172,25 @@ local function createRow(parent, run, colX, nameW, rowY, isLast, scoreDeltas)
             addon.locale["RUN_TOOLTIP_TIME_LIMIT"], limitStr)
     end
 
-    addCell(parent, colX["date"], rowY, COL_W.date, ROW_H,
+    addon.createTableCell(parent, colX["date"], rowY, COL_W.date, ROW_H,
         formatDate(run.completionDate), "GameFontHighlight", "RIGHT", true)
 
-    addCell(parent, colX["season"], rowY, COL_W.season, ROW_H,
+    addon.createTableCell(parent, colX["season"], rowY, COL_W.season, ROW_H,
         formatSeason(run.season), "GameFontHighlight", "RIGHT")
 
     if not isLast then
-        local div = parent:CreateTexture(nil, "ARTWORK")
-        div:SetPoint("TOPLEFT",  parent, "TOPLEFT",  0, rowY - ROW_H)
-        div:SetPoint("TOPRIGHT", parent, "TOPRIGHT", 0, rowY - ROW_H)
-        div:SetHeight(1)
-        div:SetColorTexture(0.45, 0.45, 0.65, 0.3)
+        addon.createRowDivider(parent, rowY - ROW_H, 0.3)
     end
 end
 
-function MPT_Dashboard:loadRuns(frame, topOffset)
-    topOffset = topOffset or 0
-
-    local runHistory = C_MythicPlus.GetRunHistory(true, true, true) or {}
+function MPT_Dashboard:loadRuns(frame)
+    -- Sort a shallow copy — addon.getRunHistory() returns a cached, shared
+    -- reference, and sorting it in place would silently reorder it for
+    -- other consumers (e.g. Dungeons.lua, RunsStats.lua) too.
+    local runHistory = {}
+    for i, run in ipairs(addon.getRunHistory()) do
+        runHistory[i] = run
+    end
 
     -- Sort newest first by completionDate (display order)
     table.sort(runHistory, function(a, b)
@@ -279,35 +260,7 @@ function MPT_Dashboard:loadRuns(frame, topOffset)
         createRow(scrollChild, run, colX, nameW, rowY, isLast, scoreDeltas)
     end
 
-    -- Mousewheel scrolling + WoW default scrollbar (UIPanelScrollBarTemplate)
-    local scrollBar = CreateFrame("Slider", nil, outerFrame, "UIPanelScrollBarTemplate")
-    scrollBar:SetPoint("TOPLEFT",    scrollFrame, "TOPRIGHT",    2, -16)
-    scrollBar:SetPoint("BOTTOMLEFT", scrollFrame, "BOTTOMRIGHT", 2,  16)
-    scrollBar:SetMinMaxValues(0, 0)
-    scrollBar:SetValueStep(ROW_H)
-
-    -- Attach our own OnValueChanged before the first SetValue() call — otherwise
-    -- the template's built-in default handler fires first and tries to call
-    -- SetVerticalScroll on outerFrame (not a ScrollFrame), causing a nil-call error.
-    scrollBar:SetScript("OnValueChanged", function(self, value)
-        scrollFrame:SetVerticalScroll(value)
-    end)
-
-    scrollBar:SetValue(0)
-
-    -- Keep scrollFrame and scrollBar in sync
-    scrollFrame:SetScript("OnScrollRangeChanged", function(self, _, yRange)
-        local current = self:GetVerticalScroll()
-        scrollBar:SetMinMaxValues(0, math.max(0, yRange))
-        scrollBar:SetValue(math.min(current, math.max(0, yRange)))
-    end)
-
-    scrollFrame:EnableMouseWheel(true)
-    scrollFrame:SetScript("OnMouseWheel", function(self, delta)
-        local maxScr = self:GetVerticalScrollRange()
-        local newVal = math.max(0, math.min(maxScr, self:GetVerticalScroll() - delta * SCROLL_STEP))
-        scrollBar:SetValue(newVal)
-    end)
+    addon.createTableScrollbar(outerFrame, scrollFrame, ROW_H)
 
     if #runHistory == 0 then
         local noData = scrollChild:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")

@@ -39,6 +39,9 @@ local locale = {
     ["SIDEBAR_VAULT_NOT_AVAILABLE"] = "–",
     ["SIDEBAR_VAULT_UNLOCKED"] = "Desbloqueado",
     ["SIDEBAR_VAULT_TOP_RUNS"] = "Mejores mazmorras de la semana:",
+    -- Sidebar: Overview tab section headers
+    ["SIDEBAR_TRAITNODES_HEADER"] = "Runas de poder",
+    ["SIDEBAR_CURRENCY_HEADER"]   = "Monedas",
     ["DASHBOARD_NOT_MAX_LEVEL"] = "Aún no has alcanzado el nivel máximo.",
     -- Dashboard navigation tabs
     ["DASHBOARD_TAB_OVERVIEW"]  = "Resumen",

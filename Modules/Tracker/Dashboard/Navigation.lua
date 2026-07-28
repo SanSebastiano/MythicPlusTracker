@@ -6,9 +6,8 @@ local TAB_PADDING = 20   -- horizontal padding inside each tab button
 local TAB_SPACING = 8    -- gap between consecutive tabs
 local NAV_HEIGHT  = 85   -- TAB_ROW_H (30) + bar offset (30) + bar height (~18) + buffer (7)
 
--- Parsed RGB for SetTextColor (from addon.colors escape codes)
-local ARTIFACT_R, ARTIFACT_G, ARTIFACT_B = 0xe6 / 255, 0xcc / 255, 0x80 / 255  -- |cFFe6cc80
-local POOR_R,     POOR_G,     POOR_B     = 0x9d / 255, 0x9d / 255, 0x9d / 255  -- |cFF9d9d9d
+local ARTIFACT_R, ARTIFACT_G, ARTIFACT_B = addon.colorToRGB("ARTIFACT")
+local POOR_R,     POOR_G,     POOR_B     = addon.colorToRGB("POOR")
 
 -- Module-level state (reset on each createNavigation call)
 local tabFontStrings = {}

@@ -39,6 +39,9 @@ local locale = {
     ["SIDEBAR_VAULT_NOT_AVAILABLE"] = "–",
     ["SIDEBAR_VAULT_UNLOCKED"] = "Débloqué",
     ["SIDEBAR_VAULT_TOP_RUNS"] = "Meilleurs donjons de la semaine :",
+    -- Sidebar: Overview tab section headers
+    ["SIDEBAR_TRAITNODES_HEADER"] = "Runes de pouvoir",
+    ["SIDEBAR_CURRENCY_HEADER"]   = "Devises",
     ["DASHBOARD_NOT_MAX_LEVEL"] = "Vous n'avez pas encore atteint le niveau maximum.",
     -- Dashboard navigation tabs
     ["DASHBOARD_TAB_OVERVIEW"]  = "Aperçu",
