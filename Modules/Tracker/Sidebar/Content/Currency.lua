@@ -12,6 +12,8 @@ local SLOT_W    = 34
 local SLOT_GAP  = 4
 local ICON_SIZE = 22
 local SLOT_H    = ICON_SIZE + 4 + 16  -- icon + gap + amount text
+local CURRENCY_GAP = 20   -- gap after the previous card (TraitNodes)
+local HEADER_TO_CONTENT_GAP = 4
 
 local function loadCurrency(frame, currencyId, index)
     local currency = C_CurrencyInfo.GetCurrencyInfo(currencyId)
@@ -53,22 +55,24 @@ local function loadCurrency(frame, currencyId, index)
     end)
 end
 
-local function loadBar(sidebar)
+local function loadBar(sidebar, cursor)
     addon.debugMessage("Loading sidebar: currencies...")
 
-    addon.createDivider(sidebar, 23, -385)
+    local headerY = cursor:current() - CURRENCY_GAP
+    local contentY = headerY - addon.SIDEBAR_SECTION_HEADER_HEIGHT - HEADER_TO_CONTENT_GAP
+    cursor:advance(CURRENCY_GAP + addon.SIDEBAR_SECTION_HEADER_HEIGHT + HEADER_TO_CONTENT_GAP + SLOT_H)
+
+    addon.createSidebarSectionHeader(sidebar, headerY, 254, addon.locale["SIDEBAR_CURRENCY_HEADER"])
 
     local totalW = #CURRENCY_IDS * SLOT_W + (#CURRENCY_IDS - 1) * SLOT_GAP
 
     local frame = CreateFrame("Frame", nil, sidebar)
     frame:SetSize(totalW, SLOT_H)
-    frame:SetPoint("TOP", sidebar, "TOP", 0, -410)
+    frame:SetPoint("TOP", sidebar, "TOP", 0, contentY)
 
     for index, currencyId in ipairs(CURRENCY_IDS) do
         loadCurrency(frame, currencyId, index)
     end
 end
 
-if MPT_Sidebar then
-    MPT_Sidebar.getCurrencies = loadBar
-end
+MPT_Sidebar.getCurrencies = loadBar

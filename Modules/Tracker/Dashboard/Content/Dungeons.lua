@@ -58,10 +58,7 @@ local DEFAULT_SORT_DIR = {
     bestTime  = "asc",
 }
 
--- Parsed RGB for header text color (from addon.colors.ARTIFACT |cFFe6cc80)
-local ARTIFACT_R = 0xe6 / 255
-local ARTIFACT_G = 0xcc / 255
-local ARTIFACT_B = 0x80 / 255
+local ARTIFACT_R, ARTIFACT_G, ARTIFACT_B = addon.colorToRGB("ARTIFACT")
 
 local function buildRunLookup(runHistory)
     local lookup = {}
@@ -253,16 +250,6 @@ local function createTierBoxes(parent, tierCounts, anchorBelow)
     return container
 end
 
-local function addCell(parent, x, y, w, h, text, font, justifyH)
-    local fs = parent:CreateFontString(nil, "OVERLAY", font or "GameFontHighlight")
-    fs:SetSize(w, h)
-    fs:SetPoint("TOPLEFT", parent, "TOPLEFT", x, y)
-    fs:SetJustifyH(justifyH or "LEFT")
-    fs:SetJustifyV("MIDDLE")
-    fs:SetText(text)
-    return fs
-end
-
 local function createTableRow(child, mapID, colX, rowY, nameW, runLookup, isLast)
     local name, _, timeLimit, texture = C_ChallengeMode.GetMapUIInfo(mapID)
     if not name then return end
@@ -307,24 +294,24 @@ local function createTableRow(child, mapID, colX, rowY, nameW, runLookup, isLast
         GameTooltip:Hide()
     end)
 
-    addCell(child, colX["name"], rowY, nameW, ROW_H, name, "GameFontHighlight", "LEFT")
+    addon.createTableCell(child, colX["name"], rowY, nameW, ROW_H, name, "GameFontHighlight", "LEFT")
 
-    addCell(child, colX["bestLevel"], rowY, COL_W.bestLevel, ROW_H,
+    addon.createTableCell(child, colX["bestLevel"], rowY, COL_W.bestLevel, ROW_H,
         formatLevel(ri and ri.bestLevel), "GameFontHighlight", "RIGHT")
 
-    addCell(child, colX["score"], rowY, COL_W.score, ROW_H,
+    addon.createTableCell(child, colX["score"], rowY, COL_W.score, ROW_H,
         formatScore(getDungeonScore(mapID, ri)), "GameFontHighlight", "RIGHT")
 
-    addCell(child, colX["runs"], rowY, COL_W.runs, ROW_H,
+    addon.createTableCell(child, colX["runs"], rowY, COL_W.runs, ROW_H,
         formatCount(ri and ri.runs), "GameFontHighlight", "RIGHT")
 
-    addCell(child, colX["success"], rowY, COL_W.success, ROW_H,
+    addon.createTableCell(child, colX["success"], rowY, COL_W.success, ROW_H,
         formatCount(ri and ri.success), "GameFontHighlight", "RIGHT")
 
-    addCell(child, colX["timeLimit"], rowY, COL_W.timeLimit, ROW_H,
+    addon.createTableCell(child, colX["timeLimit"], rowY, COL_W.timeLimit, ROW_H,
         formatTimeMMSS(timeLimit), "GameFontHighlight", "RIGHT")
 
-    addCell(child, colX["bestTime"], rowY, COL_W.bestTime, ROW_H,
+    addon.createTableCell(child, colX["bestTime"], rowY, COL_W.bestTime, ROW_H,
         formatBestTime(ri and ri.bestTime, timeLimit), "GameFontHighlight", "RIGHT")
 
     -- Tooltip on best time cell: title "Zeitlimit" + empty line + signed delta
@@ -356,11 +343,7 @@ local function createTableRow(child, mapID, colX, rowY, nameW, runLookup, isLast
     end
 
     if not isLast then
-        local rowDiv = child:CreateTexture(nil, "ARTWORK")
-        rowDiv:SetPoint("TOPLEFT",  child, "TOPLEFT",  0, rowY - ROW_H)
-        rowDiv:SetPoint("TOPRIGHT", child, "TOPRIGHT", 0, rowY - ROW_H)
-        rowDiv:SetHeight(1)
-        rowDiv:SetColorTexture(0.45, 0.45, 0.65, 0.3)
+        addon.createRowDivider(child, rowY - ROW_H, 0.3)
     end
 end
 
@@ -453,11 +436,7 @@ local function createTableHeader(child, colX, nameW, onSort)
 
     updateHeaderIndicators()
 
-    local div = child:CreateTexture(nil, "ARTWORK")
-    div:SetPoint("TOPLEFT",  child, "TOPLEFT",  0, -HEADER_H)
-    div:SetPoint("TOPRIGHT", child, "TOPRIGHT", 0, -HEADER_H)
-    div:SetHeight(1)
-    div:SetColorTexture(0.45, 0.45, 0.65, 0.5)
+    addon.createRowDivider(child, -HEADER_H, 0.5)
 end
 
 local function renderRows(tableFrame, dungeons, colX, nameW, runLookup)
@@ -480,12 +459,11 @@ local function renderRows(tableFrame, dungeons, colX, nameW, runLookup)
     end
 end
 
-function MPT_Dashboard:loadDungeons(frame, topOffset)
-    topOffset = topOffset or 0
+function MPT_Dashboard:loadDungeons(frame)
     local dungeons = C_ChallengeMode.GetMapTable()
     if not dungeons then return end
 
-    local runHistory = C_MythicPlus.GetRunHistory(true, true, true) or {}
+    local runHistory = addon.getRunHistory()
     local runLookup  = buildRunLookup(runHistory)
 
     local tableW = DASHBOARD_W - CONTENT_INSET * 2  -- align with divider caps

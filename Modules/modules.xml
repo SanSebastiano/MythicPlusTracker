@@ -11,7 +11,6 @@
     <Include file='Tracker\Dashboard\Content\Keystones.lua'/>
 
     <Include file='Tracker\Sidebar\init.lua'/>
-    <Include file='Tracker\Sidebar\Content\Divider.lua'/>
     <Include file='Tracker\Sidebar\Content\WeeklyVault.lua'/>
     <Include file='Tracker\Sidebar\Content\TraitNodes.lua'/>
     <Include file='Tracker\Sidebar\Content\Currency.lua'/>
@@ -29,5 +28,5 @@
     <Include file='Settings\init.lua'/>
     <Include file='Settings\Frame.lua'/>
 
-    <Script file='WelcomeMessage\inti.lua'/>
+    <Script file='WelcomeMessage\init.lua'/>
 </Ui>

@@ -14,16 +14,9 @@ function MPT:Initialize()
 end
 
 local frame = CreateFrame("Frame")
-frame:RegisterEvent("ADDON_LOADED")
 frame:RegisterEvent("PLAYER_LOGIN")
 
 frame:SetScript("OnEvent", function(self, event, ...)
-    if event == "ADDON_LOADED" then
-        local loadedAddonName = ...
-        if loadedAddonName == addonName then
-        end
-    elseif event == "PLAYER_LOGIN" then
-        MPT:Initialize()
-        frame:UnregisterEvent("PLAYER_LOGIN")
-    end
+    MPT:Initialize()
+    frame:UnregisterEvent("PLAYER_LOGIN")
 end)

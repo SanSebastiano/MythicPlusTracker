@@ -1,6 +1,8 @@
 local addonName, addon = ...
 
 local KEYSTONE_ITEM_ID = 180653
+local KEYSTONE_HEIGHT = 50
+local KEYSTONE_GAP = 7   -- gap after the previous card (Affixes)
 
 local function findKeystoneInBags()
     for bag = 0, 4 do
@@ -12,12 +14,15 @@ local function findKeystoneInBags()
     end
 end
 
-local function loadKeystone(sidebar)
+local function loadKeystone(sidebar, cursor)
     addon.debugMessage("Loading sidebar: keystone...")
 
+    local y = cursor:current() - KEYSTONE_GAP
+    cursor:advance(KEYSTONE_GAP + KEYSTONE_HEIGHT)
+
     local frame = CreateFrame("Frame", nil, sidebar)
-    frame:SetSize(254, 50)
-    frame:SetPoint("TOPLEFT", sidebar, "TOPLEFT", 23, -155)
+    frame:SetSize(254, KEYSTONE_HEIGHT)
+    frame:SetPoint("TOPLEFT", sidebar, "TOPLEFT", 23, y)
 
     local mapID = C_MythicPlus.GetOwnedKeystoneChallengeMapID()
     local level = C_MythicPlus.GetOwnedKeystoneLevel()
@@ -69,6 +74,4 @@ local function loadKeystone(sidebar)
     end)
 end
 
-if MPT_Sidebar then
-    MPT_Sidebar.getKeystone = loadKeystone
-end
+MPT_Sidebar.getKeystone = loadKeystone

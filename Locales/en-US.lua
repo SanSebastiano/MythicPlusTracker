@@ -79,6 +79,9 @@ local locale = {
     ["SIDEBAR_RUNS_TIER_HEADER"] = "Timed Runs",
     ["SIDEBAR_GROUP_HEADER"]     = "Group",
     ["SIDEBAR_GROUP_NO_MEMBERS"] = "Not currently in a group.",
+    -- Sidebar: Overview tab section headers
+    ["SIDEBAR_TRAITNODES_HEADER"] = "Runes of Power",
+    ["SIDEBAR_CURRENCY_HEADER"]   = "Currencies",
     -- Keystones tab: group keystone overview
     ["KEYSTONES_COL_PLAYER"]  = "Player",
     ["KEYSTONES_COL_DUNGEON"] = "Dungeon",

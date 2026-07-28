@@ -8,7 +8,8 @@ local CONTAINER_W  = SLOT_COUNT * SLOT_WIDTH + (SLOT_COUNT - 1) * SLOT_GAP  -- 2
 local CONTAINER_H  = SLOT_HEIGHT
 local ANCHOR_X     = 23
 local CONTAINER_X  = ANCHOR_X + math.floor((254 - CONTAINER_W) / 2)  -- centres slots (=37)
-local ANCHOR_Y     = -235
+local WEEKLYVAULT_GAP = 1   -- gap after the previous card (Keystone)
+local HEADER_TO_CONTENT_GAP = 4
 
 local M_PLUS_TYPE  = Enum.WeeklyRewardChestThresholdType and
                      Enum.WeeklyRewardChestThresholdType.Activities or 3
@@ -42,11 +43,14 @@ local function buildSlot(container, activity, slotIndex, BlizzardMixin)
     slot:SetSize(SLOT_WIDTH, SLOT_HEIGHT)
     slot:SetPoint("TOPLEFT", container, "TOPLEFT", xOff, 0)
 
-    local background = slot:CreateTexture(nil, "BACKGROUND")
-    background:SetAllPoints(slot)
-    background:SetAtlas(addon.theme.CARD_ICON_BACKGROUND, true)
-
     local unlocked = activity and (activity.progress >= activity.threshold)
+
+    -- Gold when unlocked (matches the gold section header above), a duller
+    -- gray while still locked/in-progress — same state-color language as the
+    -- Trait Nodes "available" highlight (see TraitNodes.lua).
+    local borderR, borderG, borderB = addon.colorToRGB(unlocked and "ARTIFACT" or "POOR")
+    addon.createThinBorder(slot, 1, borderR, borderG, borderB, unlocked and 0.8 or 0.5)
+
     local itemLevel     = getActivityItemLevel(activity)
 
     local centerText = slot:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
@@ -99,14 +103,18 @@ local function buildSlot(container, activity, slotIndex, BlizzardMixin)
     end)
 end
 
-local function loadWeeklyVault(sidebar)
+local function loadWeeklyVault(sidebar, cursor)
     addon.debugMessage("Loading sidebar: weekly vault...")
 
-    addon.createDivider(sidebar, ANCHOR_X, -210)
+    local headerY = cursor:current() - WEEKLYVAULT_GAP
+    local contentY = headerY - addon.SIDEBAR_SECTION_HEADER_HEIGHT - HEADER_TO_CONTENT_GAP
+    cursor:advance(WEEKLYVAULT_GAP + addon.SIDEBAR_SECTION_HEADER_HEIGHT + HEADER_TO_CONTENT_GAP + CONTAINER_H)
+
+    addon.createSidebarSectionHeader(sidebar, headerY, 254, addon.locale["SIDEBAR_VAULT_TITLE"])
 
     local container = CreateFrame("Frame", nil, sidebar)
     container:SetSize(CONTAINER_W, CONTAINER_H)
-    container:SetPoint("TOPLEFT", sidebar, "TOPLEFT", CONTAINER_X, ANCHOR_Y)
+    container:SetPoint("TOPLEFT", sidebar, "TOPLEFT", CONTAINER_X, contentY)
 
     C_AddOns.LoadAddOn("Blizzard_WeeklyRewards")
     local BlizzardMixin = WeeklyRewardsActivityMixin
@@ -124,6 +132,4 @@ local function loadWeeklyVault(sidebar)
     end
 end
 
-if MPT_Sidebar then
-    MPT_Sidebar.getWeeklyVault = loadWeeklyVault
-end
+MPT_Sidebar.getWeeklyVault = loadWeeklyVault

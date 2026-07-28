@@ -7,9 +7,8 @@ local CONTENT_W = 254
 local ICON_SIZE = 22
 local INSET     = 10   -- left/right inset inside content rows
 
-local ARTIFACT_R = 0xe6 / 255
-local ARTIFACT_G = 0xcc / 255
-local ARTIFACT_B = 0x80 / 255
+local ARTIFACT_R, ARTIFACT_G, ARTIFACT_B = addon.colorToRGB("ARTIFACT")
+local RUNSSTATS_GAP = 8   -- gap after the previous card (Score)
 
 local TIERS = {
     { label = "15+",     min = 15, max = math.huge },
@@ -20,10 +19,10 @@ local TIERS = {
     { label = "2 – 3",   min = 2,  max = 3         },
 }
 
-local function loadRunsStats(sidebar)
+local function loadRunsStats(sidebar, cursor)
     addon.debugMessage("Loading sidebar: runs stats...")
 
-    local runHistory = C_MythicPlus.GetRunHistory(true, true, true) or {}
+    local runHistory = addon.getRunHistory()
 
     local bestRun = nil
     for _, run in ipairs(runHistory) do
@@ -33,12 +32,14 @@ local function loadRunsStats(sidebar)
     end
 
     -- -----------------------------------------------------------------------
-    -- "Best Run" title banner  (score ends at y=-110, 8px gap → y=-118)
-    -- SetSize(254, 80) matches the Score card proportions exactly.
+    -- "Best Run" title banner. SetSize(254, 80) matches the Score card
+    -- proportions exactly. All Y positions below are relative to titleY.
     -- -----------------------------------------------------------------------
+    local titleY = cursor:current() - RUNSSTATS_GAP
+
     local titleFrame = CreateFrame("Frame", nil, sidebar)
     titleFrame:SetSize(CONTENT_W, 46)
-    titleFrame:SetPoint("TOPLEFT", sidebar, "TOPLEFT", CONTENT_X, -118)
+    titleFrame:SetPoint("TOPLEFT", sidebar, "TOPLEFT", CONTENT_X, titleY)
 
     local titleBg = titleFrame:CreateTexture(nil, "BACKGROUND")
     titleBg:SetAllPoints(titleFrame)
@@ -50,9 +51,10 @@ local function loadRunsStats(sidebar)
     titleLabel:SetText(addon.locale["SIDEBAR_RUNS_BEST_RUN"])
 
     -- -----------------------------------------------------------------------
-    -- Best run content  (title bottom: -118-46=-164, 8px gap → y=-172)
-    -- Tier header fixed at y=-226 (covers both run and no-run content heights).
+    -- Best run content  (title bottom: titleY-46, 8px gap → titleY-54)
+    -- Tier header fixed at titleY-108 (covers both run and no-run content heights).
     -- -----------------------------------------------------------------------
+    local bestRunY = titleY - 54
     if bestRun then
         local mapID = bestRun.mapChallengeModeID
         local name, _, _, texture = C_ChallengeMode.GetMapUIInfo(mapID)
@@ -61,21 +63,21 @@ local function loadRunsStats(sidebar)
         if texture then
             local icon = sidebar:CreateTexture(nil, "ARTWORK")
             icon:SetSize(ICON_SIZE, ICON_SIZE)
-            icon:SetPoint("TOPLEFT", sidebar, "TOPLEFT", CONTENT_X + INSET, -172)
+            icon:SetPoint("TOPLEFT", sidebar, "TOPLEFT", CONTENT_X + INSET, bestRunY)
             icon:SetTexture(texture)
             icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
         end
 
         local nameLabel = sidebar:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-        nameLabel:SetPoint("TOPLEFT",  sidebar, "TOPLEFT",  CONTENT_X + INSET + ICON_SIZE + 5, -172)
-        nameLabel:SetPoint("TOPRIGHT", sidebar, "TOPLEFT",  CONTENT_X + CONTENT_W - INSET - 40, -172)
+        nameLabel:SetPoint("TOPLEFT",  sidebar, "TOPLEFT",  CONTENT_X + INSET + ICON_SIZE + 5, bestRunY)
+        nameLabel:SetPoint("TOPRIGHT", sidebar, "TOPLEFT",  CONTENT_X + CONTENT_W - INSET - 40, bestRunY)
         nameLabel:SetHeight(ICON_SIZE)
         nameLabel:SetJustifyH("LEFT")
         nameLabel:SetJustifyV("MIDDLE")
         nameLabel:SetText(name)
 
         local levelLabel = sidebar:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-        levelLabel:SetPoint("TOPRIGHT", sidebar, "TOPLEFT", CONTENT_X + CONTENT_W - INSET, -172)
+        levelLabel:SetPoint("TOPRIGHT", sidebar, "TOPLEFT", CONTENT_X + CONTENT_W - INSET, bestRunY)
         levelLabel:SetSize(38, ICON_SIZE)
         levelLabel:SetJustifyH("RIGHT")
         levelLabel:SetJustifyV("MIDDLE")
@@ -83,7 +85,7 @@ local function loadRunsStats(sidebar)
     else
         local noRun = sidebar:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
         noRun:SetSize(CONTENT_W, 44)
-        noRun:SetPoint("TOPLEFT", sidebar, "TOPLEFT", CONTENT_X, -172)
+        noRun:SetPoint("TOPLEFT", sidebar, "TOPLEFT", CONTENT_X, bestRunY)
         noRun:SetJustifyH("CENTER")
         noRun:SetJustifyV("MIDDLE")
         noRun:SetWordWrap(true)
@@ -91,12 +93,13 @@ local function loadRunsStats(sidebar)
     end
 
     -- -----------------------------------------------------------------------
-    -- "Timed Runs" section header  (fixed at y=-226)
+    -- "Timed Runs" section header  (fixed at titleY-108)
     -- Height 46 so the text has breathing room and the atlas isn't over-scaled.
     -- -----------------------------------------------------------------------
+    local headerY = titleY - 108
     local headerFrame = CreateFrame("Frame", nil, sidebar)
     headerFrame:SetSize(CONTENT_W, 46)
-    headerFrame:SetPoint("TOPLEFT", sidebar, "TOPLEFT", CONTENT_X, -226)
+    headerFrame:SetPoint("TOPLEFT", sidebar, "TOPLEFT", CONTENT_X, headerY)
 
     local headerBg = headerFrame:CreateTexture(nil, "BACKGROUND")
     headerBg:SetAllPoints(headerFrame)
@@ -108,7 +111,7 @@ local function loadRunsStats(sidebar)
     headerLabel:SetText(addon.locale["SIDEBAR_RUNS_TIER_HEADER"])
 
     -- -----------------------------------------------------------------------
-    -- Tier breakdown  (header bottom: -226-46=-272, 8px gap → y=-280)
+    -- Tier breakdown  (header bottom: headerY-46, 8px gap → titleY-162)
     -- Two columns: total (POOR) | successful/completed (ARTIFACT if >0, POOR if 0)
     -- Column layout: label | total right-aligned at -48 | success right-aligned at 0
     -- -----------------------------------------------------------------------
@@ -131,7 +134,7 @@ local function loadRunsStats(sidebar)
         success[tier.label] = won
     end
 
-    local sectionY = -280
+    local sectionY = titleY - 162
     local ROW_H    = 22
 
     local LABEL_W = COL_TOTAL - (CONTENT_X + INSET) - 6
@@ -206,6 +209,4 @@ local function loadRunsStats(sidebar)
     end
 end
 
-if MPT_Sidebar then
-    MPT_Sidebar.loadRunsStats = loadRunsStats
-end
+MPT_Sidebar.loadRunsStats = loadRunsStats
