@@ -6,9 +6,9 @@
 ![Version](https://img.shields.io/badge/Version-1.1.1-blue)
 [![License: CC BY-NC-ND 4.0](https://img.shields.io/badge/License-CC%20BY--NC--ND%204.0-lightgrey)](https://creativecommons.org/licenses/by-nc-nd/4.0/)
 
-</div>
-
 A World of Warcraft retail addon that gives you a clear, at-a-glance overview of your Mythic+ progress — dungeons, score, keystone, group, and Weekly Vault — all in one compact UI.
+
+</div>
 
 ## Features
 
