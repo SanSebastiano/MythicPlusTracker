@@ -14,8 +14,8 @@ Tested and supported on World of Warcraft client version 12.1.0 (Interface `1201
 ### Changed
 - The main tracker window now remembers its position across relogs/reloads instead of always reopening centered on screen.
 - The Dashboard Runs tab's "Timed" column now shows a clock icon instead of a text label (hover for the full description), since the translated label no longer fit the column in several locales.
-- Shortened the Sidebar "Best Run" card's empty-state text in all locales so it no longer wraps onto two lines.
 - Increased the padding around the current-keystone icon and level number in the Sidebar Overview tab so they no longer sit flush against the card's edges.
+- Shortened the Sidebar "Best Run" card's empty-state text in all locales so it no longer wraps onto two lines.
 
 ### Fixed
 - Added the French (`frFR`) and Spanish (`esES`) addon description/category metadata to the `.toc` file, which had been missing since those translations were introduced.
