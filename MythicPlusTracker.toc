@@ -1,4 +1,4 @@
-## Interface: 120007
+## Interface: 120007, 120100
 ## Title: |cFFA335EEMythic|r |cFFFF8000Plus Tracker|r
 ## Author: SanSebastiano
 ## Version: 1.2.0

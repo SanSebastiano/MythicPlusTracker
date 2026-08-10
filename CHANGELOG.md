@@ -4,6 +4,8 @@ All notable changes to MythicPlusTracker are documented here.
 
 ## [1.2.0] - 2026-08-11
 
+Tested and supported on World of Warcraft client version 12.1.0 (Interface `120100`).
+
 ### Added
 - New slash command `/mpt announce` to post your current keystone (dungeon + level) directly to party, raid, or instance chat — posts a clickable item link when the keystone is a physical bag item, so group members can inspect it directly from chat.
 - New setting (Options → AddOns → Mythic Plus Tracker → Dashboard) to open the Dashboard directly to the Keystones tab instead of Overview when you're in a party or raid.
