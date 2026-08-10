@@ -53,6 +53,7 @@ globals = {
     -- -----------------------------------------------------------------------
     "C_MythicPlus",
     "C_ChallengeMode",
+    "C_Container",
     "C_Timer",
     "C_Item",
     "C_PlayerInfo",

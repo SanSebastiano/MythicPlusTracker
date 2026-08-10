@@ -1,18 +1,7 @@
 local addonName, addon = ...
 
-local KEYSTONE_ITEM_ID = 180653
 local KEYSTONE_HEIGHT = 50
 local KEYSTONE_GAP = 7   -- gap after the previous card (Affixes)
-
-local function findKeystoneInBags()
-    for bag = 0, 4 do
-        for slot = 1, C_Container.GetContainerNumSlots(bag) do
-            if C_Container.GetContainerItemID(bag, slot) == KEYSTONE_ITEM_ID then
-                return bag, slot
-            end
-        end
-    end
-end
 
 local function loadKeystone(sidebar, cursor)
     addon.debugMessage("Loading sidebar: keystone...")
@@ -57,7 +46,7 @@ local function loadKeystone(sidebar, cursor)
     tooltipButton:SetSize(frame:GetWidth() - 32, 32)
     tooltipButton:SetPoint("LEFT", icon, "RIGHT", 6, 0)
     tooltipButton:SetScript("OnEnter", function(self)
-        local bag, slot = findKeystoneInBags()
+        local bag, slot = addon.Keystone:FindInBags()
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
         if bag then
             GameTooltip:SetBagItem(bag, slot)

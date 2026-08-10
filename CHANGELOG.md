@@ -5,7 +5,7 @@ All notable changes to MythicPlusTracker are documented here.
 ## [1.2.0] - 2026-08-11
 
 ### Added
-- New slash command `/mpt announce` to post your current keystone (dungeon + level) directly to party, raid, or instance chat.
+- New slash command `/mpt announce` to post your current keystone (dungeon + level) directly to party, raid, or instance chat — posts a clickable item link when the keystone is a physical bag item, so group members can inspect it directly from chat.
 
 ### Fixed
 - Added the French (`frFR`) and Spanish (`esES`) addon description/category metadata to the `.toc` file, which had been missing since those translations were introduced.
