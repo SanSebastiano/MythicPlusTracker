@@ -2,6 +2,11 @@
 
 All notable changes to MythicPlusTracker are documented here.
 
+## [1.2.0] - 2026-08-11
+
+### Fixed
+- Added the French (`frFR`) and Spanish (`esES`) addon description/category metadata to the `.toc` file, which had been missing since those translations were introduced.
+
 ## [1.1.1] - 2026-07-28
 
 ### Fixed

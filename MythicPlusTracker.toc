@@ -2,13 +2,21 @@
 ## Title: |cFFA335EEMythic|r |cFFFF8000Plus Tracker|r
 ## Author: SanSebastiano
 ## Version: 1.1.1
+
 ## Notes: Tracks your Mythic+ dungeon runs, group members, deaths, and completion status
 ## Notes-deDE: Verfolgt die Mythic+-Dungeon-Runs, Gruppenmitglieder, Todesfälle und den Abschlussstatus
+## Notes-frFR: Suit vos donjons Mythique+, les membres du groupe, les morts et le statut de complétion
+## Notes-esES: Rastrea tus mazmorras Míticas+, los miembros del grupo, las muertes y el estado de finalización
 ## Notes-ruRU: Отслеживает Ваши прохождения в подземелья M+, участников группы, смерти и статус завершения
+
 ## IconTexture: Interface\AddOns\MythicPlusTracker\mplus-icon-64.png
+
 ## Category-enUS: Dungeons & Raids
 ## Category-deDE: Dungeons & Schlachtzüge
+## Category-frFR: Donjons et Raids
+## Category-esES: Mazmorras y bandas
 ## Category-ruRU: Подземелья & Рейды
+
 ## SavedVariables: MythicPlusTrackerDB
 
 init.lua
