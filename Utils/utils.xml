@@ -4,6 +4,7 @@
     <Script file='Theme.lua'/>
     <Script file='MessageHandler.lua'/>
     <Script file='DebugSystem.lua'/>
+    <Script file='Keystone.lua'/>
     <Script file='Communication.lua'/>
     <Script file='DungeonTeleports.lua'/>
     <Script file='RunHistoryCache.lua'/>

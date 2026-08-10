@@ -102,6 +102,7 @@ globals = {
     "IsInGroup",
     "IsInRaid",
     "GetNumGroupMembers",
+    "LE_PARTY_CATEGORY_INSTANCE",
     "GetRaidRosterInfo",
     "UnitFullName",
     "UnitGroupRolesAssigned",

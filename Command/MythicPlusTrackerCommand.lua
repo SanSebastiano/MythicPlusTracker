@@ -52,11 +52,15 @@ local function handleSlashCommand(msg)
     elseif command == "settings" or command == "options" then
         MPT_Settings:Open()
 
+    elseif command == "announce" then
+        addon.Keystone:AnnounceToGroup()
+
     elseif command == "help" or command == "" then
         addon.chatMessage(" ")
         addon.addonMessage("Available commands:", addon.colors.INFO)
         addon.chatMessage("  /mpt show - Show the tracker window", addon.colors.WHITE)
         addon.chatMessage("  /mpt settings - Open the settings panel", addon.colors.WHITE)
+        addon.chatMessage("  /mpt announce - Post your current keystone to group/instance chat", addon.colors.WHITE)
         addon.chatMessage("  /mpt debug - Toggle debug mode on/off", addon.colors.WHITE)
         addon.chatMessage("  /mpt debug on - Enable debug mode", addon.colors.WHITE)
         addon.chatMessage("  /mpt debug off - Disable debug mode", addon.colors.WHITE)

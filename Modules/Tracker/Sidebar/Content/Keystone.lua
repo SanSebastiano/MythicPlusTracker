@@ -24,10 +24,9 @@ local function loadKeystone(sidebar, cursor)
     frame:SetSize(254, KEYSTONE_HEIGHT)
     frame:SetPoint("TOPLEFT", sidebar, "TOPLEFT", 23, y)
 
-    local mapID = C_MythicPlus.GetOwnedKeystoneChallengeMapID()
-    local level = C_MythicPlus.GetOwnedKeystoneLevel()
+    local mapID, level, name, texture = addon.Keystone:GetOwned()
 
-    if not mapID or not level then
+    if not mapID then
         local noKeyText = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
         noKeyText:SetAllPoints(frame)
         noKeyText:SetJustifyH("CENTER")
@@ -36,7 +35,6 @@ local function loadKeystone(sidebar, cursor)
         return
     end
 
-    local name, _, _, texture = C_ChallengeMode.GetMapUIInfo(mapID)
     if not name then return end
 
     local icon = frame:CreateTexture(nil, "ARTWORK")
