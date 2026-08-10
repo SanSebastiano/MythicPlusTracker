@@ -2,7 +2,25 @@ local addonName, addon = ...
 
 MPT_MAIN = {}
 
+MythicPlusTrackerDB = MythicPlusTrackerDB or {}
+
 local frame
+
+local function applySavedPosition(f)
+    local saved = MythicPlusTrackerDB.mainFrame
+    f:ClearAllPoints()
+    if saved and saved.point then
+        f:SetPoint(saved.point, UIParent, saved.relativePoint or saved.point, saved.x or 0, saved.y or 0)
+    else
+        f:SetPoint("CENTER")
+    end
+end
+
+local function saveFramePosition(f)
+    local point, _, relativePoint, x, y = f:GetPoint(1)
+    if not point then return end
+    MythicPlusTrackerDB.mainFrame = { point = point, relativePoint = relativePoint, x = x, y = y }
+end
 
 local function create()
     if frame then return frame end
@@ -14,7 +32,7 @@ local function create()
             "BackdropTemplate"
     )
     frame:SetSize(1100, 550)
-    frame:SetPoint("CENTER")
+    applySavedPosition(frame)
     frame:SetFrameStrata("DIALOG")
     frame:SetClampedToScreen(true)
     frame:Hide()
@@ -31,7 +49,10 @@ local function create()
     frame:EnableMouse(true)
     frame:RegisterForDrag("LeftButton")
     frame:SetScript("OnDragStart", frame.StartMoving)
-    frame:SetScript("OnDragStop", frame.StopMovingOrSizing)
+    frame:SetScript("OnDragStop", function(self)
+        self:StopMovingOrSizing()
+        saveFramePosition(self)
+    end)
 
     return frame
 end
