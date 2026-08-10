@@ -13,7 +13,7 @@ init.lua                  → defines _G["MPT"] = addon, addon.locale = {}
 Locales/locales.xml       → populates addon.locale
 Utils/utils.xml           → defines addon.colors, addon.debugMessage, addon.addonMessage, etc.
 MythicPlusTracker.lua     → main MPT namespace, registers ADDON_LOADED / PLAYER_LOGIN
-Command/comands.xml       → registers /mpt and /mythicplustracker slash commands
+Command/commands.xml      → registers /mpt and /mythicplustracker slash commands
 Modules/modules.xml       → loads all UI modules (read the file for exact order)
 ```
 

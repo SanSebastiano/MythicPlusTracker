@@ -38,7 +38,7 @@ init.lua                → addon namespace
 Locales/locales.xml     → addon.locale populated
 Utils/utils.xml         → addon.colors, helpers
 MythicPlusTracker.lua   → event registration
-Command/comands.xml     → slash commands
+Command/commands.xml    → slash commands
 Modules/modules.xml     → all UI modules
 ```
 

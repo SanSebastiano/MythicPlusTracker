@@ -17,5 +17,5 @@ Locales\locales.xml
 Utils\utils.xml
 
 MythicPlusTracker.lua
-Command\comands.xml
+Command\commands.xml
 Modules\modules.xml
