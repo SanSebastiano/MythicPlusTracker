@@ -25,6 +25,7 @@ local locale = {
     ["DEATHS"] = "Deaths: %d",
     ["KEYSTONE_LEVEL"] = "Keystone Level: %d",
     ["SIDEBAR_NO_KEYSTONE"] = "No keystone in bag",
+    ["SIDEBAR_NO_AFFIXES"] = "No affixes found.",
     ["SIDEBAR_KEYSTONE_LEVEL"] = "Key Level",
     ["KEYSTONE_ANNOUNCE_MESSAGE"] = "My current keystone: %s",
     ["KEYSTONE_ANNOUNCE_NOT_IN_GROUP"] = "You must be in a group to announce your keystone.",

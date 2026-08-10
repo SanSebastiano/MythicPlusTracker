@@ -29,6 +29,7 @@ local locale = {
     ["DEATHS"] = "Muertes: %d",
     ["KEYSTONE_LEVEL"] = "Nivel de llave: %d",
     ["SIDEBAR_NO_KEYSTONE"] = "No hay llave mítica en la bolsa",
+    ["SIDEBAR_NO_AFFIXES"] = "No se encontraron afijos.",
     ["SIDEBAR_KEYSTONE_LEVEL"] = "Nivel de llave",
     ["KEYSTONE_ANNOUNCE_MESSAGE"] = "Mi llave mítica actual: %s",
     ["KEYSTONE_ANNOUNCE_NOT_IN_GROUP"] = "Debes estar en un grupo para anunciar tu llave mítica.",

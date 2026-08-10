@@ -29,6 +29,7 @@ local locale = {
     ["DEATHS"] = "Morts : %d",
     ["KEYSTONE_LEVEL"] = "Niveau de clé : %d",
     ["SIDEBAR_NO_KEYSTONE"] = "Aucune clé mythique dans le sac",
+    ["SIDEBAR_NO_AFFIXES"] = "Aucun affixe trouvé.",
     ["SIDEBAR_KEYSTONE_LEVEL"] = "Niveau de clé",
     ["KEYSTONE_ANNOUNCE_MESSAGE"] = "Ma clé mythique actuelle : %s",
     ["KEYSTONE_ANNOUNCE_NOT_IN_GROUP"] = "Vous devez être en groupe pour annoncer votre clé mythique.",

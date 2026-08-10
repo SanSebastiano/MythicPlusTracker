@@ -29,6 +29,7 @@ local locale = {
     ["DEATHS"] = "Смертей: %d",
     ["KEYSTONE_LEVEL"] = "Уровень ключа: %d",
     ["SIDEBAR_NO_KEYSTONE"] = "Нет ключа в сумке",
+    ["SIDEBAR_NO_AFFIXES"] = "Аффиксы не найдены.",
     ["SIDEBAR_KEYSTONE_LEVEL"] = "Уровень ключа",
     ["KEYSTONE_ANNOUNCE_MESSAGE"] = "Мой текущий ключ: %s",
     ["KEYSTONE_ANNOUNCE_NOT_IN_GROUP"] = "Чтобы объявить свой ключ, вы должны быть в группе.",

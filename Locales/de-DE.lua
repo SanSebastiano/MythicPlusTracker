@@ -29,6 +29,7 @@ local locale = {
     ["DEATHS"] = "Tode: %d",
     ["KEYSTONE_LEVEL"] = "Schlüsselstein Level: %d",
     ["SIDEBAR_NO_KEYSTONE"] = "Kein Schlüsselstein im Inventar",
+    ["SIDEBAR_NO_AFFIXES"] = "Keine Affixe gefunden.",
     ["SIDEBAR_KEYSTONE_LEVEL"] = "Key Level",
     ["KEYSTONE_ANNOUNCE_MESSAGE"] = "Mein aktueller Schlüsselstein: %s",
     ["KEYSTONE_ANNOUNCE_NOT_IN_GROUP"] = "Du musst in einer Gruppe sein, um deinen Schlüsselstein anzukündigen.",
