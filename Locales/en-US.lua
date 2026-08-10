@@ -66,6 +66,7 @@ local locale = {
     ["RUN_COL_DURATION"]  = "Time",
     ["RUN_COL_DATE"]      = "Date",
     ["RUN_COL_SEASON"]    = "Season",
+    ["RUN_TABLE_NO_RUNS"] = "No runs recorded yet.",
     -- Runs table tooltips
     ["RUN_TOOLTIP_TIME_LIMIT"]    = "Time Limit",
     ["RUN_TOOLTIP_DUNGEON_SCORE"] = "Dungeon Score",
@@ -78,7 +79,7 @@ local locale = {
     ["DASHBOARD_RUN_TIME"] = "Time",
     -- Sidebar: Runs tab
     ["SIDEBAR_RUNS_BEST_RUN"]    = "Best Run",
-    ["SIDEBAR_RUNS_NO_RUNS"]     = "No successful Mythic Plus run completed yet.",
+    ["SIDEBAR_RUNS_NO_RUNS"]     = "No successful M+ run yet.",
     ["SIDEBAR_RUNS_TIER_HEADER"] = "Timed Runs",
     ["SIDEBAR_GROUP_HEADER"]     = "Group",
     ["SIDEBAR_GROUP_NO_MEMBERS"] = "Not currently in a group.",

@@ -70,6 +70,7 @@ local locale = {
     ["RUN_COL_DURATION"]  = "Время",
     ["RUN_COL_DATE"]      = "Дата",
     ["RUN_COL_SEASON"]    = "Сезон",
+    ["RUN_TABLE_NO_RUNS"] = "Прохождений пока не зафиксировано.",
     -- Runs table tooltips
     ["RUN_TOOLTIP_TIME_LIMIT"]    = "Ограничение по времени",
     ["RUN_TOOLTIP_DUNGEON_SCORE"] = "Результат подземелья",
@@ -82,7 +83,7 @@ local locale = {
     ["DASHBOARD_RUN_TIME"] = "Время",
     -- Sidebar: Runs tab
     ["SIDEBAR_RUNS_BEST_RUN"]    = "Лучшее прохождение",
-    ["SIDEBAR_RUNS_NO_RUNS"]     = "Успешных прохождений М+ пока не завершено.",
+    ["SIDEBAR_RUNS_NO_RUNS"]     = "Нет успешных прохождений М+.",
     ["SIDEBAR_RUNS_TIER_HEADER"] = "Прохождений вовремя",
     ["SIDEBAR_GROUP_HEADER"]     = "Группа",
     ["SIDEBAR_GROUP_NO_MEMBERS"] = "Сейчас не в группе.",

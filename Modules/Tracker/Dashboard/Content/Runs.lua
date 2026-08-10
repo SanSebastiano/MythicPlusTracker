@@ -13,9 +13,9 @@ local SCROLL_BTN_SIZE = 22  -- gutter reserved for the scrollbar (added later)
 -- Fixed column widths sized to fit their header text (name column is computed dynamically)
 local COL_W = {
     icon      = 34,
-    level     = 42,
-    completed = 38,
-    score     = 50,
+    level     = 60,
+    completed = 36,
+    score     = 65,
     duration  = 50,
     date      = 90,
     season    = 50,
@@ -108,9 +108,21 @@ local function createHeader(parent, colX, nameW)
     for _, def in ipairs(headerDefs) do
         if def.localeKey then
             local label = addon.locale[def.localeKey] or def.localeKey
-            local fs = addon.createTableCell(parent, colX[def.key], 0, def.w, HEADER_H,
-                               label, "GameFontNormal", def.j)
-            fs:SetTextColor(ARTIFACT_R, ARTIFACT_G, ARTIFACT_B, 1)
+
+            if def.key == "completed" then
+                -- "Timed" translations vary wildly in length across locales
+                -- (e.g. German "Im Zeitlimit"); an icon sidesteps the width
+                -- problem entirely instead of sizing the column per-locale.
+                local icon = parent:CreateTexture(nil, "ARTWORK")
+                icon:SetAtlas(addon.theme.RUN_TIMED_HEADER_ICON, false)
+                local iconSize = HEADER_H - 6
+                icon:SetSize(iconSize, iconSize)
+                icon:SetPoint("CENTER", parent, "TOPLEFT", colX[def.key] + def.w / 2, -HEADER_H / 2)
+            else
+                local fs = addon.createTableCell(parent, colX[def.key], 0, def.w, HEADER_H,
+                                   label, "GameFontNormal", def.j)
+                fs:SetTextColor(ARTIFACT_R, ARTIFACT_G, ARTIFACT_B, 1)
+            end
 
             -- Column widths are narrow and headers don't wrap/ellipsize, so
             -- long labels can get visually clipped. A hover tooltip with the
@@ -263,9 +275,9 @@ function MPT_Dashboard:loadRuns(frame)
     addon.createTableScrollbar(outerFrame, scrollFrame, ROW_H)
 
     if #runHistory == 0 then
-        local noData = scrollChild:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-        noData:SetPoint("CENTER", scrollChild, "CENTER")
+        local noData = scrollFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+        noData:SetPoint("CENTER", scrollFrame, "CENTER")
         noData:SetTextColor(0.65, 0.65, 0.65, 1)
-        noData:SetText(addon.colors.POOR .. "No runs recorded yet." .. addon.colors.RESET)
+        noData:SetText(addon.colors.POOR .. addon.locale["RUN_TABLE_NO_RUNS"] .. addon.colors.RESET)
     end
 end

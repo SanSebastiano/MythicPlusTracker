@@ -73,6 +73,7 @@ local locale = {
     ["RUN_COL_DURATION"]  = "Tiempo",
     ["RUN_COL_DATE"]      = "Fecha",
     ["RUN_COL_SEASON"]    = "Temporada",
+    ["RUN_TABLE_NO_RUNS"] = "Aún no se ha registrado ninguna mazmorra.",
     -- Runs table tooltips
     ["RUN_TOOLTIP_TIME_LIMIT"]    = "Límite de tiempo",
     ["RUN_TOOLTIP_DUNGEON_SCORE"] = "Puntuación de la mazmorra",
@@ -85,7 +86,7 @@ local locale = {
     ["DASHBOARD_RUN_TIME"] = "Tiempo",
     -- Sidebar: Runs tab
     ["SIDEBAR_RUNS_BEST_RUN"]    = "Mejor mazmorra",
-    ["SIDEBAR_RUNS_NO_RUNS"]     = "Aún no se ha completado ninguna mazmorra Mítica+ con éxito.",
+    ["SIDEBAR_RUNS_NO_RUNS"]     = "Ninguna mazmorra M+ superada aún.",
     ["SIDEBAR_RUNS_TIER_HEADER"] = "Mazmorras a tiempo",
     ["SIDEBAR_GROUP_HEADER"]     = "Grupo",
     ["SIDEBAR_GROUP_NO_MEMBERS"] = "Actualmente no estás en un grupo.",

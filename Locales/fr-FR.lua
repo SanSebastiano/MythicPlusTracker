@@ -73,6 +73,7 @@ local locale = {
     ["RUN_COL_DURATION"]  = "Temps",
     ["RUN_COL_DATE"]      = "Date",
     ["RUN_COL_SEASON"]    = "Saison",
+    ["RUN_TABLE_NO_RUNS"] = "Aucun donjon enregistré pour le moment.",
     -- Runs table tooltips
     ["RUN_TOOLTIP_TIME_LIMIT"]    = "Limite de temps",
     ["RUN_TOOLTIP_DUNGEON_SCORE"] = "Score du donjon",
@@ -85,7 +86,7 @@ local locale = {
     ["DASHBOARD_RUN_TIME"] = "Temps",
     -- Sidebar: Runs tab
     ["SIDEBAR_RUNS_BEST_RUN"]    = "Meilleur donjon",
-    ["SIDEBAR_RUNS_NO_RUNS"]     = "Aucun donjon Mythique+ réussi pour le moment.",
+    ["SIDEBAR_RUNS_NO_RUNS"]     = "Aucun donjon M+ réussi.",
     ["SIDEBAR_RUNS_TIER_HEADER"] = "Donjons dans les temps",
     ["SIDEBAR_GROUP_HEADER"]     = "Groupe",
     ["SIDEBAR_GROUP_NO_MEMBERS"] = "Vous n'êtes actuellement pas en groupe.",

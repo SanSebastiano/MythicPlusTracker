@@ -10,9 +10,13 @@ All notable changes to MythicPlusTracker are documented here.
 
 ### Changed
 - The main tracker window now remembers its position across relogs/reloads instead of always reopening centered on screen.
+- The Dashboard Runs tab's "Timed" column now shows a clock icon instead of a text label (hover for the full description), since the translated label no longer fit the column in several locales.
+- Shortened the Sidebar "Best Run" card's empty-state text in all locales so it no longer wraps onto two lines.
 
 ### Fixed
 - Added the French (`frFR`) and Spanish (`esES`) addon description/category metadata to the `.toc` file, which had been missing since those translations were introduced.
+- Fixed the Dashboard Runs tab's "Level" and "Score" column headers getting visually clipped or overflowing into neighboring columns in German, Spanish, and Russian, by widening those columns.
+- Fixed the Runs tab's empty-state message ("No runs recorded yet.") being hardcoded in English regardless of the active locale, and visually overlapping the column header instead of appearing centered below it.
 
 ## [1.1.1] - 2026-07-28
 
