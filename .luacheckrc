@@ -18,6 +18,27 @@ exclude_files = {
     ".luarocks/**",
 }
 
+-- Translated UI strings vary a lot in length across locales; don't enforce
+-- the code line-length limit on locale tables.
+files["Locales/*.lua"] = {
+    max_line_length = false,
+}
+
+ignore = {
+    -- `local addonName, addon = ...` is present in every file; addonName is
+    -- rarely used but is part of the required vararg destructuring pattern.
+    "211/addonName",
+    "211/addon",
+
+    -- Set by this addon but only ever read by the WoW client itself.
+    "131/SLASH_MYTHICPLUSTRACKER1",
+    "131/SLASH_MYTHICPLUSTRACKER2",
+
+    -- WoW frame callbacks conventionally receive their frame as `self`,
+    -- which intentionally shadows an outer method's `self`.
+    "432/self",
+}
+
 -- ---------------------------------------------------------------------------
 -- WoW Lua global whitelist
 -- These globals are injected by the WoW client and not defined in Lua source.
@@ -53,6 +74,7 @@ globals = {
     -- -----------------------------------------------------------------------
     "C_MythicPlus",
     "C_ChallengeMode",
+    "C_Container",
     "C_Timer",
     "C_Item",
     "C_PlayerInfo",
@@ -66,7 +88,36 @@ globals = {
     "C_AddOns",
     "C_SpellBook",
     "C_Spell",
+    "C_Traits",
     "Enum",
+
+    -- -----------------------------------------------------------------------
+    -- WoW locale detection
+    -- -----------------------------------------------------------------------
+    "GAME_LOCALE",
+    "GetLocale",
+
+    -- -----------------------------------------------------------------------
+    -- WoW modern Settings API
+    -- -----------------------------------------------------------------------
+    "Settings",
+
+    -- -----------------------------------------------------------------------
+    -- WoW combat / input state
+    -- -----------------------------------------------------------------------
+    "InCombatLockdown",
+    "GetCursorPosition",
+    "IsShiftKeyDown",
+
+    -- -----------------------------------------------------------------------
+    -- WoW built-in frames referenced by this addon
+    -- -----------------------------------------------------------------------
+    "UISpecialFrames",
+    "WeeklyRewardsFrame",
+    "WeeklyRewardsActivityMixin",
+    "WeeklyRewards_ShowUI",
+    "PVEFrame",
+    "PVEFrame_ToggleFrame",
 
     -- -----------------------------------------------------------------------
     -- WoW UI frame factory & parenting
@@ -102,6 +153,7 @@ globals = {
     "IsInGroup",
     "IsInRaid",
     "GetNumGroupMembers",
+    "LE_PARTY_CATEGORY_INSTANCE",
     "GetRaidRosterInfo",
     "UnitFullName",
     "UnitGroupRolesAssigned",

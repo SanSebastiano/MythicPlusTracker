@@ -1,5 +1,7 @@
 local addonName, addon = ...
 
+MythicPlusTrackerDB = MythicPlusTrackerDB or {}
+
 local frame
 local contentWrapper
 
@@ -45,6 +47,13 @@ local function create(mainFrame)
         return UnitLevel("player") >= GetMaxPlayerLevel()
     end
 
+    local function getDefaultTabIndex()
+        if MythicPlusTrackerDB.dashboardDefaultTabInGroup and IsInGroup() then
+            return 3 -- Keystones, see tabDefs order in Navigation.lua
+        end
+        return 1 -- Overview
+    end
+
     local tabCallbacks = {
         [1] = function() if not isMaxLevel() then return false end showContent(MPT_Dashboard.loadDungeons); MPT_Sidebar:showForTab(1) end,
         [2] = function() if not isMaxLevel() then return false end showContent(MPT_Dashboard.loadRuns);     MPT_Sidebar:showForTab(2) end,
@@ -62,18 +71,22 @@ local function create(mainFrame)
 
         addon.debugMessage("Dashboard Frame OnShow")
 
-        -- Always reset the nav highlight to Übersicht, since the frame
-        -- reloads the Übersicht content below regardless of which tab
-        -- was active when the frame was last closed.
-        MPT_Dashboard:setActiveNavTab(1)
-
         if not isMaxLevel() then
+            MPT_Dashboard:setActiveNavTab(1)
             MPT_Dashboard:loadNotMaxLevel(contentWrapper)
             return
         end
 
-        showContent(MPT_Dashboard.loadDungeons)
-        MPT_Sidebar:showForTab(1)
+        local defaultTab = getDefaultTabIndex()
+        MPT_Dashboard:setActiveNavTab(defaultTab)
+
+        if defaultTab == 3 then
+            showContent(MPT_Dashboard.loadKeystones)
+            MPT_Sidebar:showForTab(3)
+        else
+            showContent(MPT_Dashboard.loadDungeons)
+            MPT_Sidebar:showForTab(1)
+        end
     end)
 
     return frame

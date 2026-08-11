@@ -23,6 +23,7 @@ local theme = {
     RUN_COMPLETED_ICON    = "common-icon-checkmark",
     RUN_FAILED_ICON       = "common-icon-redx",
     GROUP_REFRESH_ICON    = "common-icon-undo",
+    RUN_TIMED_HEADER_ICON = "icon_cooldownmanager",
 }
 
 for key, value in pairs(theme) do

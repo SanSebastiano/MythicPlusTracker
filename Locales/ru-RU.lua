@@ -1,4 +1,4 @@
-if not ((GAME_LOCALE or GetLocale()) == "ruRU") then
+if (GAME_LOCALE or GetLocale()) ~= "ruRU" then
     return
 end
 
@@ -29,7 +29,11 @@ local locale = {
     ["DEATHS"] = "Смертей: %d",
     ["KEYSTONE_LEVEL"] = "Уровень ключа: %d",
     ["SIDEBAR_NO_KEYSTONE"] = "Нет ключа в сумке",
+    ["SIDEBAR_NO_AFFIXES"] = "Аффиксы не найдены.",
     ["SIDEBAR_KEYSTONE_LEVEL"] = "Уровень ключа",
+    ["KEYSTONE_ANNOUNCE_MESSAGE"] = "Мой текущий ключ: %s",
+    ["KEYSTONE_ANNOUNCE_NOT_IN_GROUP"] = "Чтобы объявить свой ключ, вы должны быть в группе.",
+    ["KEYSTONE_ANNOUNCE_NO_KEYSTONE"] = "У вас нет ключа для объявления.",
     ["SIDEBAR_VAULT_TITLE"] = "Еженедельное хранилище",
     ["SIDEBAR_VAULT_SLOT"] = "Слот %d",
     ["SIDEBAR_VAULT_UNLOCK_RUNS"] = "Пройдите ещё %d М+ для открытия",
@@ -67,6 +71,7 @@ local locale = {
     ["RUN_COL_DURATION"]  = "Время",
     ["RUN_COL_DATE"]      = "Дата",
     ["RUN_COL_SEASON"]    = "Сезон",
+    ["RUN_TABLE_NO_RUNS"] = "Прохождений пока не зафиксировано.",
     -- Runs table tooltips
     ["RUN_TOOLTIP_TIME_LIMIT"]    = "Ограничение по времени",
     ["RUN_TOOLTIP_DUNGEON_SCORE"] = "Результат подземелья",
@@ -79,7 +84,7 @@ local locale = {
     ["DASHBOARD_RUN_TIME"] = "Время",
     -- Sidebar: Runs tab
     ["SIDEBAR_RUNS_BEST_RUN"]    = "Лучшее прохождение",
-    ["SIDEBAR_RUNS_NO_RUNS"]     = "Успешных прохождений М+ пока не завершено.",
+    ["SIDEBAR_RUNS_NO_RUNS"]     = "Нет успешных прохождений М+.",
     ["SIDEBAR_RUNS_TIER_HEADER"] = "Прохождений вовремя",
     ["SIDEBAR_GROUP_HEADER"]     = "Группа",
     ["SIDEBAR_GROUP_NO_MEMBERS"] = "Сейчас не в группе.",
@@ -97,6 +102,9 @@ local locale = {
     ["SETTINGS_CATEGORY_NAME"]         = "Mythic Plus Tracker",
     ["SETTINGS_SECTION_GENERAL_LABEL"] = "Основное",
     ["SETTINGS_SECTION_MINIMAP_LABEL"] = "Миникарта",
+    ["SETTINGS_SECTION_DASHBOARD_LABEL"] = "Панель",
+    ["SETTINGS_DASHBOARD_DEFAULT_TAB_LABEL"] = "Открывать вкладку «Ключи М+» по умолчанию в группе",
+    ["SETTINGS_DASHBOARD_DEFAULT_TAB_TOOLTIP"] = "Когда вы в группе или рейде, открывает панель сразу на вкладке «Ключи М+» вместо «Обзор».",
     ["SETTINGS_DEBUG_MODE_LABEL"]      = "Режим отладки",
     ["SETTINGS_DEBUG_MODE_TOOLTIP"]    = "Выводит дополнительные диагностические сообщения в окно чата.",
     ["SETTINGS_MINIMAP_BUTTON_LABEL"]  = "Показывать кнопку на миникарте",

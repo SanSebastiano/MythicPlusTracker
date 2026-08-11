@@ -1,4 +1,4 @@
-if not ((GAME_LOCALE or GetLocale()) == "deDE") then
+if (GAME_LOCALE or GetLocale()) ~= "deDE" then
     return
 end
 
@@ -29,7 +29,11 @@ local locale = {
     ["DEATHS"] = "Tode: %d",
     ["KEYSTONE_LEVEL"] = "Schlüsselstein Level: %d",
     ["SIDEBAR_NO_KEYSTONE"] = "Kein Schlüsselstein im Inventar",
+    ["SIDEBAR_NO_AFFIXES"] = "Keine Affixe gefunden.",
     ["SIDEBAR_KEYSTONE_LEVEL"] = "Key Level",
+    ["KEYSTONE_ANNOUNCE_MESSAGE"] = "Mein aktueller Schlüsselstein: %s",
+    ["KEYSTONE_ANNOUNCE_NOT_IN_GROUP"] = "Du musst in einer Gruppe sein, um deinen Schlüsselstein anzukündigen.",
+    ["KEYSTONE_ANNOUNCE_NO_KEYSTONE"] = "Du besitzt keinen Schlüsselstein zum Ankündigen.",
     ["SIDEBAR_VAULT_TITLE"] = "Wochenkammer",
     ["SIDEBAR_VAULT_SLOT"] = "Slot %d",
     ["SIDEBAR_VAULT_UNLOCK_RUNS"] = "Noch %d M+-Runs zum Freischalten",
@@ -67,6 +71,7 @@ local locale = {
     ["RUN_COL_DURATION"]  = "Zeit",
     ["RUN_COL_DATE"]      = "Datum",
     ["RUN_COL_SEASON"]    = "Season",
+    ["RUN_TABLE_NO_RUNS"] = "Noch keine Läufe aufgezeichnet.",
     -- Runs table tooltips
     ["RUN_TOOLTIP_TIME_LIMIT"]    = "Zeitlimit",
     ["RUN_TOOLTIP_DUNGEON_SCORE"] = "Dungeon-Wertung",
@@ -79,7 +84,7 @@ local locale = {
     ["DASHBOARD_RUN_TIME"] = "Zeit",
     -- Sidebar: Runs tab
     ["SIDEBAR_RUNS_BEST_RUN"]    = "Bester Durchlauf",
-    ["SIDEBAR_RUNS_NO_RUNS"]     = "Noch keinen erfolgreichen Mythisch Plus Lauf absolviert.",
+    ["SIDEBAR_RUNS_NO_RUNS"]     = "Noch kein erfolgreicher M+-Lauf.",
     ["SIDEBAR_RUNS_TIER_HEADER"] = "Zeitliche Durchläufe",
     ["SIDEBAR_GROUP_HEADER"]     = "Gruppe",
     ["SIDEBAR_GROUP_NO_MEMBERS"] = "Aktuell in keiner Gruppe.",
@@ -97,6 +102,9 @@ local locale = {
     ["SETTINGS_CATEGORY_NAME"]         = "Mythic Plus Tracker",
     ["SETTINGS_SECTION_GENERAL_LABEL"] = "Allgemein",
     ["SETTINGS_SECTION_MINIMAP_LABEL"] = "Minimap",
+    ["SETTINGS_SECTION_DASHBOARD_LABEL"] = "Dashboard",
+    ["SETTINGS_DASHBOARD_DEFAULT_TAB_LABEL"] = "Standardmäßig Schlüsselsteine-Tab in Gruppe",
+    ["SETTINGS_DASHBOARD_DEFAULT_TAB_TOOLTIP"] = "Öffnet das Dashboard in einer Gruppe oder Raid direkt auf dem Schlüsselsteine-Tab statt der Übersicht.",
     ["SETTINGS_DEBUG_MODE_LABEL"]      = "Debug-Modus",
     ["SETTINGS_DEBUG_MODE_TOOLTIP"]    = "Zeigt zusätzliche Diagnosemeldungen im Chatfenster an.",
     ["SETTINGS_MINIMAP_BUTTON_LABEL"]  = "Minimap-Button anzeigen",

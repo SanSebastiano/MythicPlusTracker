@@ -1,4 +1,4 @@
-if not ((GAME_LOCALE or GetLocale()) == "frFR") then
+if (GAME_LOCALE or GetLocale()) ~= "frFR" then
     return
 end
 
@@ -29,7 +29,11 @@ local locale = {
     ["DEATHS"] = "Morts : %d",
     ["KEYSTONE_LEVEL"] = "Niveau de clé : %d",
     ["SIDEBAR_NO_KEYSTONE"] = "Aucune clé mythique dans le sac",
+    ["SIDEBAR_NO_AFFIXES"] = "Aucun affixe trouvé.",
     ["SIDEBAR_KEYSTONE_LEVEL"] = "Niveau de clé",
+    ["KEYSTONE_ANNOUNCE_MESSAGE"] = "Ma clé mythique actuelle : %s",
+    ["KEYSTONE_ANNOUNCE_NOT_IN_GROUP"] = "Vous devez être en groupe pour annoncer votre clé mythique.",
+    ["KEYSTONE_ANNOUNCE_NO_KEYSTONE"] = "Vous n'avez pas de clé mythique à annoncer.",
     ["SIDEBAR_VAULT_TITLE"] = "Coffre hebdomadaire",
     ["SIDEBAR_VAULT_SLOT"] = "Emplacement %d",
     ["SIDEBAR_VAULT_UNLOCK_RUNS"] = "Terminez %d M+ de plus pour débloquer",
@@ -70,6 +74,7 @@ local locale = {
     ["RUN_COL_DURATION"]  = "Temps",
     ["RUN_COL_DATE"]      = "Date",
     ["RUN_COL_SEASON"]    = "Saison",
+    ["RUN_TABLE_NO_RUNS"] = "Aucun donjon enregistré pour le moment.",
     -- Runs table tooltips
     ["RUN_TOOLTIP_TIME_LIMIT"]    = "Limite de temps",
     ["RUN_TOOLTIP_DUNGEON_SCORE"] = "Score du donjon",
@@ -82,7 +87,7 @@ local locale = {
     ["DASHBOARD_RUN_TIME"] = "Temps",
     -- Sidebar: Runs tab
     ["SIDEBAR_RUNS_BEST_RUN"]    = "Meilleur donjon",
-    ["SIDEBAR_RUNS_NO_RUNS"]     = "Aucun donjon Mythique+ réussi pour le moment.",
+    ["SIDEBAR_RUNS_NO_RUNS"]     = "Aucun donjon M+ réussi.",
     ["SIDEBAR_RUNS_TIER_HEADER"] = "Donjons dans les temps",
     ["SIDEBAR_GROUP_HEADER"]     = "Groupe",
     ["SIDEBAR_GROUP_NO_MEMBERS"] = "Vous n'êtes actuellement pas en groupe.",
@@ -97,6 +102,9 @@ local locale = {
     ["SETTINGS_CATEGORY_NAME"]         = "Mythic Plus Tracker",
     ["SETTINGS_SECTION_GENERAL_LABEL"] = "Général",
     ["SETTINGS_SECTION_MINIMAP_LABEL"] = "Minimap",
+    ["SETTINGS_SECTION_DASHBOARD_LABEL"] = "Tableau de bord",
+    ["SETTINGS_DASHBOARD_DEFAULT_TAB_LABEL"] = "Onglet Clés mythiques par défaut en groupe",
+    ["SETTINGS_DASHBOARD_DEFAULT_TAB_TOOLTIP"] = "Lorsque vous êtes en groupe ou en raid, ouvre le tableau de bord directement sur l'onglet Clés mythiques au lieu de l'Aperçu.",
     ["SETTINGS_DEBUG_MODE_LABEL"]      = "Mode débogage",
     ["SETTINGS_DEBUG_MODE_TOOLTIP"]    = "Affiche des messages de diagnostic supplémentaires dans la fenêtre de discussion.",
     ["SETTINGS_MINIMAP_BUTTON_LABEL"]  = "Afficher le bouton de la minimap",

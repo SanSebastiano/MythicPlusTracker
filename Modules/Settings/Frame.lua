@@ -97,6 +97,19 @@ local function createSettingsPanel()
     )
     Settings.CreateDropdown(category, minimapStyleSetting, getMinimapButtonStyleOptions, addon.locale["SETTINGS_MINIMAP_BUTTON_STYLE_TOOLTIP"])
 
+    layout:AddInitializer(Settings.CreateElementInitializer("SettingsListSectionHeaderTemplate", { name = addon.locale["SETTINGS_SECTION_DASHBOARD_LABEL"] }))
+
+    local dashboardDefaultTabSetting = Settings.RegisterAddOnSetting(
+        category,
+        "MPT_DashboardDefaultTabInGroup",
+        "dashboardDefaultTabInGroup",
+        MythicPlusTrackerDB,
+        Settings.VarType.Boolean,
+        addon.locale["SETTINGS_DASHBOARD_DEFAULT_TAB_LABEL"],
+        false
+    )
+    Settings.CreateCheckbox(category, dashboardDefaultTabSetting, addon.locale["SETTINGS_DASHBOARD_DEFAULT_TAB_TOOLTIP"])
+
     Settings.RegisterAddOnCategory(category)
 
     MPT_Settings.category = category
