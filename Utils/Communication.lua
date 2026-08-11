@@ -76,8 +76,7 @@ local function broadcastOwnKeystoneStatus()
         return
     end
 
-    local mapID = C_MythicPlus.GetOwnedKeystoneChallengeMapID()
-    local level = C_MythicPlus.GetOwnedKeystoneLevel()
+    local mapID, level = addon.Keystone:GetOwned()
     local score = C_ChallengeMode.GetOverallDungeonScore() or 0
 
     local message

@@ -1,4 +1,4 @@
-if not ((GAME_LOCALE or GetLocale()) == "esES") then
+if (GAME_LOCALE or GetLocale()) ~= "esES" then
     return
 end
 
@@ -29,7 +29,11 @@ local locale = {
     ["DEATHS"] = "Muertes: %d",
     ["KEYSTONE_LEVEL"] = "Nivel de llave: %d",
     ["SIDEBAR_NO_KEYSTONE"] = "No hay llave mítica en la bolsa",
+    ["SIDEBAR_NO_AFFIXES"] = "No se encontraron afijos.",
     ["SIDEBAR_KEYSTONE_LEVEL"] = "Nivel de llave",
+    ["KEYSTONE_ANNOUNCE_MESSAGE"] = "Mi llave mítica actual: %s",
+    ["KEYSTONE_ANNOUNCE_NOT_IN_GROUP"] = "Debes estar en un grupo para anunciar tu llave mítica.",
+    ["KEYSTONE_ANNOUNCE_NO_KEYSTONE"] = "No tienes ninguna llave mítica para anunciar.",
     ["SIDEBAR_VAULT_TITLE"] = "Bóveda semanal",
     ["SIDEBAR_VAULT_SLOT"] = "Ranura %d",
     ["SIDEBAR_VAULT_UNLOCK_RUNS"] = "Completa %d M+ más para desbloquear",
@@ -70,6 +74,7 @@ local locale = {
     ["RUN_COL_DURATION"]  = "Tiempo",
     ["RUN_COL_DATE"]      = "Fecha",
     ["RUN_COL_SEASON"]    = "Temporada",
+    ["RUN_TABLE_NO_RUNS"] = "Aún no se ha registrado ninguna mazmorra.",
     -- Runs table tooltips
     ["RUN_TOOLTIP_TIME_LIMIT"]    = "Límite de tiempo",
     ["RUN_TOOLTIP_DUNGEON_SCORE"] = "Puntuación de la mazmorra",
@@ -82,7 +87,7 @@ local locale = {
     ["DASHBOARD_RUN_TIME"] = "Tiempo",
     -- Sidebar: Runs tab
     ["SIDEBAR_RUNS_BEST_RUN"]    = "Mejor mazmorra",
-    ["SIDEBAR_RUNS_NO_RUNS"]     = "Aún no se ha completado ninguna mazmorra Mítica+ con éxito.",
+    ["SIDEBAR_RUNS_NO_RUNS"]     = "Ninguna mazmorra M+ superada aún.",
     ["SIDEBAR_RUNS_TIER_HEADER"] = "Mazmorras a tiempo",
     ["SIDEBAR_GROUP_HEADER"]     = "Grupo",
     ["SIDEBAR_GROUP_NO_MEMBERS"] = "Actualmente no estás en un grupo.",
@@ -97,6 +102,9 @@ local locale = {
     ["SETTINGS_CATEGORY_NAME"]         = "Mythic Plus Tracker",
     ["SETTINGS_SECTION_GENERAL_LABEL"] = "General",
     ["SETTINGS_SECTION_MINIMAP_LABEL"] = "Minimapa",
+    ["SETTINGS_SECTION_DASHBOARD_LABEL"] = "Panel",
+    ["SETTINGS_DASHBOARD_DEFAULT_TAB_LABEL"] = "Pestaña Llaves míticas por defecto en grupo",
+    ["SETTINGS_DASHBOARD_DEFAULT_TAB_TOOLTIP"] = "Cuando estás en un grupo o banda, abre el panel directamente en la pestaña Llaves míticas en lugar de Resumen.",
     ["SETTINGS_DEBUG_MODE_LABEL"]      = "Modo de depuración",
     ["SETTINGS_DEBUG_MODE_TOOLTIP"]    = "Muestra mensajes de diagnóstico adicionales en la ventana de chat.",
     ["SETTINGS_MINIMAP_BUTTON_LABEL"]  = "Mostrar botón del minimapa",

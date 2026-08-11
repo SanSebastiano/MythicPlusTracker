@@ -13,7 +13,15 @@ local function loadAffixes(sidebar, cursor)
     cursor:advance(AFFIXES_GAP + ICON_SIZE)
 
     local affixes = C_MythicPlus.GetCurrentAffixes() or {}
-    if #affixes == 0 then return end
+    if #affixes == 0 then
+        local noAffixText = sidebar:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+        noAffixText:SetSize(254, ICON_SIZE)
+        noAffixText:SetPoint("TOPLEFT", sidebar, "TOPLEFT", 23, y)
+        noAffixText:SetJustifyH("CENTER")
+        noAffixText:SetJustifyV("MIDDLE")
+        noAffixText:SetText(addon.colors.POOR .. addon.locale["SIDEBAR_NO_AFFIXES"] .. addon.colors.RESET)
+        return
+    end
 
     local n       = #affixes
     local totalW  = n * ICON_SIZE + (n - 1) * ICON_GAP

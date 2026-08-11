@@ -2,8 +2,8 @@
   
 # Mythic Plus Tracker
 
-![WoW Interface](https://img.shields.io/badge/WoW%20Interface-120007-blueviolet)
-![Version](https://img.shields.io/badge/Version-1.1.1-blue)
+![WoW Interface](https://img.shields.io/badge/WoW%20Interface-120100-blueviolet)
+![Version](https://img.shields.io/badge/Version-1.2.0-blue)
 [![License: CC BY-NC-ND 4.0](https://img.shields.io/badge/License-CC%20BY--NC--ND%204.0-lightgrey)](https://creativecommons.org/licenses/by-nc-nd/4.0/)
 
 </div>
@@ -13,43 +13,33 @@ A World of Warcraft retail addon that gives you a clear, at-a-glance overview of
 ## Features
 
 ### Dashboard
-
-The main window has three tabs:
-
-- **Overview** — a sortable table of every dungeon available in the current Mythic+ season (icon, name, best key level, score, total runs, successful runs, time limit, best time), with a delta tooltip on the best-time column.
-- **Runs** — a scrollable history of your past runs (dungeon, level, completed status, score gain, duration, date/time, season), color-coded by result.
-- **Keystones** — a live overview of your group's keystones: each member's portrait, class, role, and current dungeon + level, with fallback messages for members without a key or without the addon.
+- 🗂️ **Overview** — sortable dungeon table for the season (level, score, runs, time limit, best time), with a best-time delta tooltip.
+- 📜 **Runs** — full run history, color-coded by result.
+- 🔑 **Keystones** — live group keystone overview (portrait, class, role, dungeon + level), with fallbacks for members missing a key or the addon.
 
 ### Sidebar
-- **M+ Score** — your current overall Mythic+ score, color-coded by tier (Poor through Artifact quality).
-- **Keystone** — the dungeon name, icon, and level of the keystone currently in your bags. Hovering shows the full item tooltip.
-- **Weekly Vault** — three Mythic+ vault slots showing either the unlocked item level reward or your current run progress toward unlocking each slot.
-- **Trait Nodes** — your Omnium Folio (Runes of Power) trait choices, with an interactive popup to select or refund ranks.
-- **Currencies** — a live list of your relevant Mythic+ currencies with amounts, highlighted green when the weekly cap is reached.
-- **Affixes** — this week's active affixes with name and description tooltips.
-- **Run Statistics** — your best run this week, plus a breakdown of timed runs by key-level bracket.
-- **Group Scores** — the Mythic+ scores of your current group members.
+- 🏆 **M+ Score** — your overall score, color-coded by tier.
+- 🗝️ **Keystone** — your current keystone, with the full item tooltip on hover.
+- 🗄️ **Weekly Vault** — reward previews and progress for all three vault slots.
+- ✨ **Trait Nodes** — Omnium Folio rune choices, with an interactive select/refund popup.
+- 💰 **Currencies** — your relevant Mythic+ currencies, highlighted when capped.
+- ⚔️ **Affixes** — this week's active affixes, with tooltips.
+- 📈 **Run Statistics** — your best run this week, plus a timed-run breakdown by key level.
+- 👥 **Group Scores** — your group's Mythic+ scores at a glance.
 
 ### Minimap Button
-- **Left-click** — opens the Mythic Plus Tracker window.
-- **Right-click** — opens the Great Vault (Weekly Rewards frame).
-- **Left-click-drag** — moves the button along the minimap's edge.
-- **Shift+left-click-drag** — moves the button freely anywhere on screen.
+- 🧭 A draggable minimap button, available in a large freely-movable style or a compact edge-locked style — left-click opens the tracker, right-click opens the Great Vault.
 
 ### Slash Commands
-Available as `/mpt` or `/mythicplustracker`:
-- (no argument) or `help` — prints the list of available commands.
-- `show` — opens the tracker window.
-- `settings` (or `options`) — opens the settings panel.
-- `debug`, `debug on`, `debug off` — toggles debug mode, which prints additional diagnostic messages.
+- ⌨️ Everything's available via `/mpt` (or `/mythicplustracker`) — run `/mpt help` in-game for the full command list.
+- 📢 `/mpt announce` — posts your current keystone to party, raid, or instance chat, as a clickable item link when possible.
 
 ### Group Communication
-MythicPlusTracker automatically syncs keystone and score data between group/raid members who also run the addon, so the Keystones tab and Group Scores section stay up to date without any manual action.
+- 🔄 Keystone and score data syncs automatically between group/raid members running the addon — no manual action needed.
 
 ### Settings
-A settings panel is available under the in-game **Options → AddOns → Mythic Plus Tracker** menu, or via `/mpt settings`.
-
-**Debug Mode** — enables additional diagnostic chat messages.
+- ⚙️ Configure everything under **Options → AddOns → Mythic Plus Tracker** (or `/mpt settings`) — minimap visibility/style, dashboard default tab, and more.
+- 🐛 **Debug Mode** — prints additional diagnostic chat messages, useful for troubleshooting.
 
 ---
 
@@ -57,12 +47,13 @@ A settings panel is available under the in-game **Options → AddOns → Mythic 
 
 MythicPlusTracker ships with full support for:
 
-| Locale | Language |
-|--------|----------|
-| `enUS` | English  |
-| `deDE` | German   |
-| `frFR` | French   |
-| `esES` | Spanish  |
+| | Locale | Language |
+|---|--------|----------|
+| ![US](https://flagcdn.com/w20/us.png) | `enUS` | English  |
+| ![DE](https://flagcdn.com/w20/de.png) | `deDE` | German   |
+| ![FR](https://flagcdn.com/w20/fr.png) | `frFR` | French   |
+| ![ES](https://flagcdn.com/w20/es.png) | `esES` | Spanish  |
+| ![RU](https://flagcdn.com/w20/ru.png) | `ruRU` | Russian  |
 
 Want to add your language? See [CONTRIBUTING.md](CONTRIBUTING.md).
 
