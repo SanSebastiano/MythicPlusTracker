@@ -14,9 +14,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        run: |
-          git clone "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" .
-          git checkout "${{ github.sha }}"
+        uses: actions/checkout@v4
 
       - name: Extract version and notes from CHANGELOG.md
         id: changelog
@@ -49,8 +47,9 @@ jobs:
 
       - name: Check if tag already exists
         id: tag_check
+        env:
+          TAG: ${{ steps.changelog.outputs.tag }}
         run: |
-          TAG="${{ steps.changelog.outputs.tag }}"
           git fetch --tags
           if git rev-parse "$TAG" >/dev/null 2>&1; then
             echo "Tag $TAG already exists — skipping release."
@@ -61,8 +60,9 @@ jobs:
 
       - name: Create tag
         if: steps.tag_check.outputs.skip == 'false'
+        env:
+          TAG: ${{ steps.changelog.outputs.tag }}
         run: |
-          TAG="${{ steps.changelog.outputs.tag }}"
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git tag "$TAG"
@@ -72,10 +72,10 @@ jobs:
         if: steps.tag_check.outputs.skip == 'false'
         env:
           GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.changelog.outputs.tag }}
+          PRERELEASE: ${{ steps.changelog.outputs.prerelease }}
+          NOTES: ${{ steps.changelog.outputs.notes }}
         run: |
-          TAG="${{ steps.changelog.outputs.tag }}"
-          PRERELEASE="${{ steps.changelog.outputs.prerelease }}"
-          NOTES="${{ steps.changelog.outputs.notes }}"
           PRERELEASE_FLAG=""
           if [ "$PRERELEASE" = "true" ]; then
             PRERELEASE_FLAG="--prerelease"
