@@ -11,7 +11,11 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        run: |
+          git init -q .
+          git remote add origin "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
+          git fetch --depth=1 origin "${{ github.ref }}"
+          git checkout FETCH_HEAD
 
       - name: Install Lua and luacheck
         run: |
