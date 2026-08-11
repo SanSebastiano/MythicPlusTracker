@@ -14,11 +14,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        run: |
-          git init -q .
-          git remote add origin "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
-          git fetch origin "${{ github.ref }}"
-          git checkout FETCH_HEAD
+        uses: actions/checkout@v4
 
       - name: Extract version and notes from CHANGELOG.md
         id: changelog
