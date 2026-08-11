@@ -6,21 +6,9 @@ local HEADER_H   = 30   -- height of the header row
 local COL_GAP    = 8    -- horizontal gap between columns
 local ICON_SIZE  = 36   -- dungeon icon dimensions
 
-local SUMMARY_BOX_W  = 70   -- same as WeeklyVault SLOT_WIDTH
-local SUMMARY_BOX_H  = 45   -- same as WeeklyVault SLOT_HEIGHT
-local SUMMARY_GAP    = 8    -- same as WeeklyVault SLOT_GAP
 local SUMMARY_MARGIN = 8    -- vertical gap below navFrame
 local DASHBOARD_W    = 800  -- dashboard frame width (fixed in Frame.lua)
 local CONTENT_INSET  = 20   -- aligns with the divider bar left/right caps
-
-local TIERS = {
-    { min =  2, max =  3, label = "+2-3"  },
-    { min =  4, max =  6, label = "+4-6"  },
-    { min =  7, max =  9, label = "+7-9"  },
-    { min = 10, max = 11, label = "+10-11" },
-    { min = 12, max = 14, label = "+12-14" },
-    { min = 15, max = math.huge, label = "+15+" },
-}
 
 -- Fixed column widths (name column is computed dynamically)
 local COL_W = {
@@ -87,39 +75,6 @@ local function buildRunLookup(runHistory)
     return lookup
 end
 
-local function buildTierCounts(runHistory)
-    local counts = {}
-    for i = 1, #TIERS do counts[i] = 0 end
-
-    for _, run in ipairs(runHistory) do
-        for i, tier in ipairs(TIERS) do
-            if run.level >= tier.min and run.level <= tier.max then
-                counts[i] = counts[i] + 1
-                break
-            end
-        end
-    end
-
-    return counts
-end
-
-local function buildSummaryData(runLookup, dungeons)
-    local highestKey  = 0
-    local totalRuns   = 0
-    local totalSuccess = 0
-
-    for _, mapID in ipairs(dungeons) do
-        local ri = runLookup[mapID]
-        if ri then
-            if ri.bestLevel > highestKey then highestKey = ri.bestLevel end
-            totalRuns    = totalRuns    + ri.runs
-            totalSuccess = totalSuccess + ri.success
-        end
-    end
-
-    return { highestKey = highestKey, totalRuns = totalRuns, totalSuccess = totalSuccess }
-end
-
 local function getDungeonScore(mapID, ri)
     if C_MythicPlus.GetSeasonBestForMap then
         local info = C_MythicPlus.GetSeasonBestForMap(mapID)
@@ -157,97 +112,6 @@ end
 
 local function formatCount(n)
     return (n and n > 0) and tostring(n) or "–"
-end
-
-local function createSummaryBox(container, xOffset, boxW, labelKey, valueText, subText, rawLabel)
-    local box = CreateFrame("Frame", nil, container)
-    box:SetSize(boxW, SUMMARY_BOX_H)
-    box:SetPoint("TOPLEFT", container, "TOPLEFT", xOffset, 0)
-
-    local bg = box:CreateTexture(nil, "BACKGROUND")
-    bg:SetAllPoints(box)
-    bg:SetAtlas(addon.theme.CARD_ICON_BACKGROUND, true)
-
-    local value = box:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    value:SetPoint("CENTER", box, "CENTER", 0, subText and 5 or 0)
-    value:SetJustifyH("CENTER")
-    value:SetText(valueText)
-
-    if subText then
-        local sub = box:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-        sub:SetPoint("TOP", value, "BOTTOM", 0, -2)
-        sub:SetJustifyH("CENTER")
-        sub:SetTextColor(0.65, 0.65, 0.65, 1)
-        sub:SetText(subText)
-    end
-
-    -- Tooltip on hover: rawLabel takes priority over locale lookup
-    local tooltipText = rawLabel or (labelKey and (addon.locale[labelKey] or labelKey))
-    if tooltipText then
-        box:EnableMouse(true)
-        box:SetScript("OnEnter", function(self)
-            GameTooltip:SetOwner(self, "ANCHOR_TOP")
-            GameTooltip:SetText(tooltipText, 1, 1, 1, 1, true)
-            GameTooltip:Show()
-        end)
-        box:SetScript("OnLeave", function()
-            GameTooltip:Hide()
-        end)
-    end
-end
-
-local function createSummaryBoxes(parent, summaryData)
-    local totalBoxW = SUMMARY_BOX_W * 3 + SUMMARY_GAP * 2
-
-    local container = CreateFrame("Frame", nil, parent)
-    container:SetSize(totalBoxW, SUMMARY_BOX_H)
-
-    if MPT_Dashboard.navFrame then
-        container:SetPoint("TOPLEFT", MPT_Dashboard.navFrame, "BOTTOMLEFT", CONTENT_INSET, -SUMMARY_MARGIN)
-    else
-        container:SetPoint("TOPLEFT", parent, "TOPLEFT", CONTENT_INSET, -SUMMARY_MARGIN)
-    end
-
-    local highestKeyText = summaryData.highestKey > 0
-        and (addon.colorKeystoneLevel(summaryData.highestKey) .. "+" .. summaryData.highestKey .. addon.colors.RESET)
-        or addon.colors.POOR .. "–" .. addon.colors.RESET
-    createSummaryBox(container, 0, SUMMARY_BOX_W, "DASHBOARD_SUMMARY_HIGHEST_KEY", highestKeyText, nil)
-
-    local totalRunsText = summaryData.totalRuns > 0
-        and (addon.colors.WHITE .. summaryData.totalRuns .. addon.colors.RESET)
-        or addon.colors.POOR .. "–" .. addon.colors.RESET
-    createSummaryBox(container, SUMMARY_BOX_W + SUMMARY_GAP, SUMMARY_BOX_W, "DASHBOARD_SUMMARY_TOTAL_RUNS", totalRunsText, nil)
-
-    local successText = summaryData.totalSuccess > 0
-        and (addon.colors.SUCCESS .. summaryData.totalSuccess .. addon.colors.RESET)
-        or addon.colors.POOR .. "–" .. addon.colors.RESET
-    local pctText = nil
-    if summaryData.totalRuns > 0 then
-        local pct = math.floor(summaryData.totalSuccess / summaryData.totalRuns * 100 + 0.5)
-        pctText = addon.colors.POOR .. pct .. "%" .. addon.colors.RESET
-    end
-    createSummaryBox(container, (SUMMARY_BOX_W + SUMMARY_GAP) * 2, SUMMARY_BOX_W, "DASHBOARD_SUMMARY_SUCCESS_RUNS", successText, pctText)
-
-    return container
-end
-
-local function createTierBoxes(parent, tierCounts, anchorBelow)
-    local totalW = SUMMARY_BOX_W * #TIERS + SUMMARY_GAP * (#TIERS - 1)
-
-    local container = CreateFrame("Frame", nil, parent)
-    container:SetSize(totalW, SUMMARY_BOX_H)
-    container:SetPoint("TOPLEFT", anchorBelow, "BOTTOMLEFT", 0, -SUMMARY_MARGIN)
-
-    for i, tier in ipairs(TIERS) do
-        local xOffset = (i - 1) * (SUMMARY_BOX_W + SUMMARY_GAP)
-        local count   = tierCounts[i] or 0
-        local countText = count > 0
-            and (addon.colorKeystoneLevel(tier.min) .. count .. addon.colors.RESET)
-            or  (addon.colors.POOR .. "–" .. addon.colors.RESET)
-        createSummaryBox(container, xOffset, SUMMARY_BOX_W, nil, countText, nil, tier.label)
-    end
-
-    return container
 end
 
 local function createTableRow(child, mapID, colX, rowY, nameW, runLookup, isLast)

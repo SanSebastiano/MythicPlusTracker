@@ -49,8 +49,6 @@ function MPT_Dashboard:createNavigation(parent, callbacks)
         addon.locale["DASHBOARD_TAB_KEYSTONES"],
     }
 
-    local tabY = -(TAB_ROW_H - TAB_HEIGHT) / 2
-
     local prevBtn = nil
     for i, label in ipairs(tabDefs) do
         local btn = CreateFrame("Button", nil, navFrame)

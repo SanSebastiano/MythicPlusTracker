@@ -1,7 +1,7 @@
 local addonName, addon = ...
 
 local function handleSlashCommand(msg)
-    local command = string.lower(string.trim(msg or ""))
+    local command = string.lower(string.trim(msg or "")) -- luacheck: ignore 143
 
     if command == "debug" then
         addon.setDebugMode()

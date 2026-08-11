@@ -44,12 +44,6 @@ local function getEntrySpellInfo(configID, entryID)
     return spellID, icon, name
 end
 
-local function getFirstEntrySpellID(configID, nodeInfo)
-    if not nodeInfo.entryIDs or #nodeInfo.entryIDs == 0 then return nil end
-    local spellID = select(1, getEntrySpellInfo(configID, nodeInfo.entryIDs[1]))
-    return spellID
-end
-
 local function getSortedNodeIDs(configID, treeID)
     local treeNodes = C_Traits.GetTreeNodes(treeID)
     if not treeNodes then return {} end
