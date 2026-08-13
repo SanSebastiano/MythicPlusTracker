@@ -8,6 +8,7 @@ addon.locale = addon.locale or {}
 
 local locale = {
     ["WELCOME_MESSAGE"] = "%s v%s de %s chargé avec succès !",
+    ["COMBAT_LOCKDOWN_WARNING"] = "La fenêtre du suivi ne peut pas être ouverte en combat.",
     ["WELCOME_MESSAGE_DEBUG"] = "Le mode débogage est activé. Certaines fonctionnalités peuvent être limitées.",
     -- Minimap Button
     ["MINIMAP_BUTTON_NAME"] = "Mythic Plus Tracker",
