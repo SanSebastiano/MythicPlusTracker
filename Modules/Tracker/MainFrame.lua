@@ -5,6 +5,7 @@ MPT_MAIN = {}
 MythicPlusTrackerDB = MythicPlusTrackerDB or {}
 
 local frame
+local lastCombatWarningTime = 0
 
 local function applySavedPosition(f)
     local saved = MythicPlusTrackerDB.mainFrame
@@ -54,6 +55,13 @@ local function create()
         saveFramePosition(self)
     end)
 
+    frame:SetScript("OnShow", function()
+        addon.showTracker = true
+    end)
+    frame:SetScript("OnHide", function()
+        addon.showTracker = false
+    end)
+
     return frame
 end
 
@@ -62,7 +70,16 @@ function MPT_MAIN:getFrame()
 end
 
 function MPT_MAIN:Show()
-    if addon.showTracker == true then
+    if InCombatLockdown() then
+        local now = GetTime()
+        if now - lastCombatWarningTime > 5 then
+            lastCombatWarningTime = now
+            addon.chatMessage(addon.locale["COMBAT_LOCKDOWN_WARNING"], addon.colors.RED)
+        end
+        return
+    end
+
+    if frame and frame:IsShown() then
         return
     end
 
@@ -71,11 +88,6 @@ function MPT_MAIN:Show()
     MPT_Sidebar:getFrame(mainFrame)
 
     mainFrame:Show()
-    addon.showTracker = true
-
-    mainFrame:SetScript("OnHide", function()
-        addon.showTracker = false
-    end)
 end
 
 function MPT_MAIN:Hide()
@@ -85,7 +97,7 @@ function MPT_MAIN:Hide()
 end
 
 function MPT_MAIN:Toggle()
-    if addon.showTracker == true then
+    if frame and frame:IsShown() then
         self:Hide()
     else
         self:Show()
