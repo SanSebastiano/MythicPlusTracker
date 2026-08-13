@@ -1,11 +1,11 @@
 local addonName, addon = ...
 
 local CURRENCY_IDS = {
-    3347,
-    3345,
-    3343,
-    3341,
-    3383,
+    3442,
+    3443,
+    3444,
+    3445,
+    3446,
 }
 
 local SLOT_W    = 34

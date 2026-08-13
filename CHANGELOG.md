@@ -2,6 +2,14 @@
 
 All notable changes to MythicPlusTracker are documented here.
 
+## [1.2.1] - 2026-08-13
+
+### Changed
+- Updated the Sidebar Overview currencies section to track the new Season 2 crest currencies (Adventurer/Veteran/Champion/Hero/Myth Mistcrest, IDs 3442-3446) instead of the retired Season 1 Dawncrest currencies (IDs 3341, 3343, 3345, 3347, 3383).
+
+### Fixed
+- Fixed the tracker window getting permanently stuck in an "open" state if it was opened while in combat — subsequent attempts to open it silently did nothing until `/reload`. The window can no longer be opened during combat lockdown (a chat message explains why, throttled to once every 5 seconds), and its open/closed state now always reflects the actual window visibility.
+
 ## [1.2.0] - 2026-08-11
 
 Tested and supported on World of Warcraft client version 12.1.0 (Interface `120100`).
