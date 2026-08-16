@@ -99,6 +99,9 @@ local locale = {
     ["KEYSTONES_NO_ADDON"]    = "Sin addon",
     ["KEYSTONES_NO_KEY"]      = "Sin llave",
     ["KEYSTONES_REFRESH_TOOLTIP"] = "Actualizar vista de grupo",
+    ["KEYSTONES_MODE_GROUP"]  = "Grupo",
+    ["KEYSTONES_MODE_ALTS"]   = "Alts",
+    ["KEYSTONES_ALTS_EMPTY"]  = "Todavía no se han guardado alts.",
     -- Settings panel
     ["SETTINGS_CATEGORY_NAME"]         = "Mythic Plus Tracker",
     ["SETTINGS_SECTION_GENERAL_LABEL"] = "General",

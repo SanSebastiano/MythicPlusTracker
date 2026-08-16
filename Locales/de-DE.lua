@@ -99,6 +99,9 @@ local locale = {
     ["KEYSTONES_NO_ADDON"]    = "Kein Addon",
     ["KEYSTONES_NO_KEY"]      = "Kein Schlüsselstein",
     ["KEYSTONES_REFRESH_TOOLTIP"] = "Gruppenansicht aktualisieren",
+    ["KEYSTONES_MODE_GROUP"]  = "Gruppe",
+    ["KEYSTONES_MODE_ALTS"]   = "Twinks",
+    ["KEYSTONES_ALTS_EMPTY"]  = "Noch keine Twinks gespeichert.",
     -- Settings panel
     ["SETTINGS_CATEGORY_NAME"]         = "Mythic Plus Tracker",
     ["SETTINGS_SECTION_GENERAL_LABEL"] = "Allgemein",

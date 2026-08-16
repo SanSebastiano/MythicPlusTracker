@@ -99,6 +99,9 @@ local locale = {
     ["KEYSTONES_NO_ADDON"]    = "Нет аддона",
     ["KEYSTONES_NO_KEY"]      = "Нет ключа",
     ["KEYSTONES_REFRESH_TOOLTIP"] = "Обновить вид группы",
+    ["KEYSTONES_MODE_GROUP"]  = "Группа",
+    ["KEYSTONES_MODE_ALTS"]   = "Твинки",
+    ["KEYSTONES_ALTS_EMPTY"]  = "Твинки пока не сохранены.",
     -- Settings panel
     ["SETTINGS_CATEGORY_NAME"]         = "Mythic Plus Tracker",
     ["SETTINGS_SECTION_GENERAL_LABEL"] = "Основное",
