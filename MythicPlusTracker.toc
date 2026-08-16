@@ -17,7 +17,7 @@
 ## Category-esES: Mazmorras y bandas
 ## Category-ruRU: Подземелья и рейды
 
-## SavedVariables: MythicPlusTrackerDB
+## SavedVariables: MythicPlusTrackerDB, MythicPlusTrackerAltDB
 
 init.lua
 
