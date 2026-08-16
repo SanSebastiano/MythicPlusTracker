@@ -92,6 +92,11 @@ local locale = {
     ["SIDEBAR_RUNS_TIER_HEADER"] = "Mazmorras a tiempo",
     ["SIDEBAR_GROUP_HEADER"]     = "Grupo",
     ["SIDEBAR_GROUP_NO_MEMBERS"] = "Actualmente no estás en un grupo.",
+    -- Sidebar: Statistics tab (Keystones)
+    ["SIDEBAR_STATS_AVG_SCORE"] = "Puntuación media",
+    ["SIDEBAR_STATS_AVG_LEVEL"] = "Nivel medio",
+    ["SIDEBAR_STATS_WITH_KEY"]  = "Con llave",
+    ["SIDEBAR_STATS_BEST"]      = "Mejor:",
     -- Keystones tab: group keystone overview
     ["KEYSTONES_COL_PLAYER"]  = "Jugador",
     ["KEYSTONES_COL_DUNGEON"] = "Mazmorra",

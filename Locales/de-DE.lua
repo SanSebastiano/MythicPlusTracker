@@ -89,6 +89,11 @@ local locale = {
     ["SIDEBAR_RUNS_TIER_HEADER"] = "Zeitliche Durchläufe",
     ["SIDEBAR_GROUP_HEADER"]     = "Gruppe",
     ["SIDEBAR_GROUP_NO_MEMBERS"] = "Aktuell in keiner Gruppe.",
+    -- Sidebar: Statistics tab (Keystones)
+    ["SIDEBAR_STATS_AVG_SCORE"] = "Ø Wertung",
+    ["SIDEBAR_STATS_AVG_LEVEL"] = "Ø Stufe",
+    ["SIDEBAR_STATS_WITH_KEY"]  = "Mit Schlüssel",
+    ["SIDEBAR_STATS_BEST"]      = "Bester:",
     -- Sidebar: Overview tab section headers
     ["SIDEBAR_TRAITNODES_HEADER"] = "Runen der Macht",
     ["SIDEBAR_CURRENCY_HEADER"]   = "Währungen",

@@ -24,7 +24,7 @@ end
 
 local function renderKeystonesContent(wrapper, cursor)
     MPT_Sidebar.getScore(wrapper, cursor)
-    MPT_Sidebar.loadGroupScores(wrapper, cursor)
+    MPT_Sidebar.loadStatistics(wrapper, cursor)
 end
 
 local function rebuildContent(renderFn)

@@ -92,6 +92,11 @@ local locale = {
     ["SIDEBAR_RUNS_TIER_HEADER"] = "Donjons dans les temps",
     ["SIDEBAR_GROUP_HEADER"]     = "Groupe",
     ["SIDEBAR_GROUP_NO_MEMBERS"] = "Vous n'êtes actuellement pas en groupe.",
+    -- Sidebar: Statistics tab (Keystones)
+    ["SIDEBAR_STATS_AVG_SCORE"] = "Score moyen",
+    ["SIDEBAR_STATS_AVG_LEVEL"] = "Niveau moyen",
+    ["SIDEBAR_STATS_WITH_KEY"]  = "Avec clé",
+    ["SIDEBAR_STATS_BEST"]      = "Meilleur :",
     -- Keystones tab: group keystone overview
     ["KEYSTONES_COL_PLAYER"]  = "Joueur",
     ["KEYSTONES_COL_DUNGEON"] = "Donjon",

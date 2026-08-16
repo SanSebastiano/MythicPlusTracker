@@ -89,6 +89,11 @@ local locale = {
     ["SIDEBAR_RUNS_TIER_HEADER"] = "Прохождений вовремя",
     ["SIDEBAR_GROUP_HEADER"]     = "Группа",
     ["SIDEBAR_GROUP_NO_MEMBERS"] = "Сейчас не в группе.",
+    -- Sidebar: Statistics tab (Keystones)
+    ["SIDEBAR_STATS_AVG_SCORE"] = "Средний рейтинг",
+    ["SIDEBAR_STATS_AVG_LEVEL"] = "Средний уровень",
+    ["SIDEBAR_STATS_WITH_KEY"]  = "С ключом",
+    ["SIDEBAR_STATS_BEST"]      = "Лучший:",
     -- Sidebar: Overview tab section headers
     ["SIDEBAR_TRAITNODES_HEADER"] = "Руны мощи",
     ["SIDEBAR_CURRENCY_HEADER"]   = "Валюты",

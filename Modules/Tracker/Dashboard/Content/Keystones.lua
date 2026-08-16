@@ -226,7 +226,8 @@ end
 
 ---Creates the Group/Alts mode dropdown, right-aligned above the table.
 ---Selecting an option persists it to MythicPlusTrackerDB.keystonesTabMode
----and re-renders the tab in place via the existing refresh mechanism.
+---and re-renders both the Dashboard tab and the Sidebar (which mirrors the
+---same mode, see Modules/Tracker/Sidebar/Content/Statistics.lua) in place.
 ---@param frame Frame the tab's content panel
 local function createModeDropdown(frame)
     local function labelFor(mode)
@@ -252,6 +253,9 @@ local function createModeDropdown(frame)
                     setMode(mode)
                     dropdown:SetText(label)
                     MPT_Dashboard:refreshKeystonesView()
+                    if MPT_Sidebar and MPT_Sidebar.showForTab then
+                        MPT_Sidebar:showForTab(3)
+                    end
                 end)
         end
     end)
