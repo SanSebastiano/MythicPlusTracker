@@ -34,6 +34,30 @@ local MODE_OPTIONS = {
     { mode = MODE_ALTS,  localeKey = "KEYSTONES_MODE_ALTS" },
 }
 
+-- Sort state for the clickable column headers, shared across both Group and
+-- Alts modes (same table layout, same header row). nil sortCol means "no
+-- explicit sort yet": Group keeps roster order, Alts keeps its own default
+-- (level desc, then name — see Utils/AltKeystones.lua:GetEntries()). Plain
+-- module-level locals, like Dungeons.lua's sortCol/sortDir — persists across
+-- re-renders within the session, reset only by /reload.
+local sortCol = nil
+local sortDir = "asc"
+local headerCells = {} -- [colKey] = FontString, updated when sort changes
+
+local HEADER_LOCALE = {
+    name    = "KEYSTONES_COL_PLAYER",
+    dungeon = "KEYSTONES_COL_DUNGEON",
+    level   = "KEYSTONES_COL_LEVEL",
+    score   = "KEYSTONES_COL_SCORE",
+}
+
+local SORT_DEFAULT_DIR = {
+    name    = "asc",
+    dungeon = "asc",
+    level   = "desc",
+    score   = "desc",
+}
+
 -- Fixed column widths sized to fit their content (name/dungeon columns are dynamic)
 local COL_W = {
     portrait  = 34,
@@ -235,25 +259,141 @@ local function createModeDropdown(frame)
     return dropdown
 end
 
-local function createHeader(parent, colX, nameW, dungeonW)
+---Refreshes every header FontString's label + sort-direction indicator
+---(^ ascending / v descending) to match the current sortCol/sortDir.
+local function updateHeaderIndicators()
+    for colKey, fs in pairs(headerCells) do
+        local localeKey = HEADER_LOCALE[colKey]
+        local label = addon.locale[localeKey] or localeKey
+        local indicator = (colKey == sortCol) and (sortDir == "asc" and " ^" or " v") or ""
+        fs:SetText(label .. indicator)
+        fs:SetTextColor(ARTIFACT_R, ARTIFACT_G, ARTIFACT_B, 1)
+    end
+end
+
+---Resolves the dungeon name for a normalized row entry, used only for
+---sorting by the "Dungeon" column. Group entries (see buildGroupEntries)
+---already carry a cached dungeonName; Alts entries (from
+---Utils/AltKeystones.lua) don't, so it's resolved here on demand instead of
+---changing that module's saved data shape.
+---@param entry table
+---@return string|nil
+local function resolveDungeonName(entry)
+    if entry.dungeonName ~= nil then
+        return entry.dungeonName
+    end
+    return entry.mapID and (C_ChallengeMode.GetMapUIInfo(entry.mapID))
+end
+
+---Sorts a row-entry array in place by the active header column, if any.
+---Shared by both Group and Alts modes since both feed the same table layout
+---(both entry shapes expose .name/.mapID/.level/.score). No-op when no
+---column has been clicked yet, preserving each mode's own default order.
+---@param entries table
+---@return table entries
+local function sortEntries(entries)
+    if not sortCol or #entries == 0 then
+        return entries
+    end
+
+    table.sort(entries, function(a, b)
+        if sortCol == "name" then
+            local an, bn = a.name or "", b.name or ""
+            if sortDir == "asc" then return an < bn end
+            return an > bn
+        elseif sortCol == "dungeon" then
+            local ad, bd = resolveDungeonName(a), resolveDungeonName(b)
+            if (ad == nil) ~= (bd == nil) then return ad ~= nil end
+            ad, bd = ad or "", bd or ""
+            if sortDir == "asc" then return ad < bd end
+            return ad > bd
+        else -- "level" or "score": numeric, push unknown (nil/0) entries last regardless of direction
+            local va = a[sortCol] or 0
+            local vb = b[sortCol] or 0
+            if (va == 0) ~= (vb == 0) then return va ~= 0 end
+            if sortDir == "desc" then return va > vb end
+            return va < vb
+        end
+    end)
+
+    return entries
+end
+
+---Builds a normalized row-entry array for the Group mode's live unit
+---tokens, resolving each unit's name/class/keystone/score once up front so
+---sortEntries() can sort them like any other column data. entry.unitToken
+---is kept around for the bits that still need a live unit (portrait, role).
+---@param unitTokens table
+---@return table entries
+local function buildGroupEntries(unitTokens)
+    local entries = {}
+    for _, unitToken in ipairs(unitTokens) do
+        if UnitExists(unitToken) then
+            local fullPlayerName = addon.Communication:GetFullPlayerName(unitToken)
+            local unitName = UnitName(unitToken) or fullPlayerName or "?"
+            local _, englishClass = UnitClass(unitToken)
+            local mapID, level, hasAddon, score = getKnownKeystoneForUnit(unitToken, fullPlayerName)
+            local dungeonName = mapID and (C_ChallengeMode.GetMapUIInfo(mapID))
+
+            table.insert(entries, {
+                unitToken   = unitToken,
+                name        = unitName,
+                class       = englishClass,
+                mapID       = mapID,
+                level       = level,
+                hasAddon    = hasAddon,
+                score       = score,
+                dungeonName = dungeonName,
+            })
+        end
+    end
+    return entries
+end
+
+local function createHeader(parent, colX, nameW, dungeonW, onSort)
+    wipe(headerCells)
+
     local headerDefs = {
-        { key = "name",    localeKey = "KEYSTONES_COL_PLAYER",  w = nameW,    j = "LEFT"  },
-        { key = "dungeon", localeKey = "KEYSTONES_COL_DUNGEON", w = dungeonW, j = "LEFT"  },
-        { key = "level",   localeKey = "KEYSTONES_COL_LEVEL",   w = COL_W.level, j = "RIGHT" },
-        { key = "score",   localeKey = "KEYSTONES_COL_SCORE",   w = COL_W.score, j = "RIGHT" },
+        { key = "name",    w = nameW,        j = "LEFT"  },
+        { key = "dungeon", w = dungeonW,     j = "LEFT"  },
+        { key = "level",   w = COL_W.level,  j = "RIGHT" },
+        { key = "score",   w = COL_W.score,  j = "RIGHT" },
     }
 
     for _, def in ipairs(headerDefs) do
-        local label = addon.locale[def.localeKey] or def.localeKey
-        local fs = parent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        local btn = CreateFrame("Button", nil, parent)
+        btn:SetSize(def.w, HEADER_H)
+        btn:SetPoint("TOPLEFT", parent, "TOPLEFT", colX[def.key], 0)
+
+        local fs = btn:CreateFontString(nil, "OVERLAY", "GameFontNormal")
         fs:SetSize(def.w, HEADER_H)
-        fs:SetPoint("TOPLEFT", parent, "TOPLEFT", colX[def.key], 0)
+        fs:SetPoint("TOPLEFT", btn, "TOPLEFT", 0, 0)
         fs:SetJustifyH(def.j)
         fs:SetJustifyV("MIDDLE")
-        fs:SetText(label)
-        fs:SetTextColor(ARTIFACT_R, ARTIFACT_G, ARTIFACT_B, 1)
+        fs:SetWordWrap(false)
+
+        headerCells[def.key] = fs
+
+        btn:SetScript("OnClick", function()
+            if sortCol == def.key then
+                sortDir = sortDir == "asc" and "desc" or "asc"
+            else
+                sortCol = def.key
+                sortDir = SORT_DEFAULT_DIR[def.key] or "asc"
+            end
+            updateHeaderIndicators()
+            onSort()
+        end)
+
+        btn:SetScript("OnEnter", function()
+            fs:SetTextColor(1, 1, 1, 1)
+        end)
+        btn:SetScript("OnLeave", function()
+            fs:SetTextColor(ARTIFACT_R, ARTIFACT_G, ARTIFACT_B, 1)
+        end)
     end
 
+    updateHeaderIndicators()
     addon.createRowDivider(parent, -HEADER_H, 0.5)
 end
 
@@ -356,14 +496,13 @@ local function createScoreCell(parent, colX, rowY, score)
     end
 end
 
-local function createRow(parent, unitToken, colX, nameW, dungeonW, rowY, isLast)
-    if not UnitExists(unitToken) then
-        return
-    end
-
-    local fullPlayerName = addon.Communication:GetFullPlayerName(unitToken)
-    local unitName = UnitName(unitToken) or fullPlayerName or "?"
-    local _, englishClass = UnitClass(unitToken)
+---Renders one Group row from a normalized entry (see buildGroupEntries).
+---entry.unitToken is still needed for the portrait render and the live role
+---lookup — neither is precomputed since they don't factor into sorting.
+---@param parent Frame
+---@param entry table entry from buildGroupEntries
+local function createRow(parent, entry, colX, nameW, dungeonW, rowY, isLast)
+    local unitToken = entry.unitToken
 
     local portrait = parent:CreateTexture(nil, "ARTWORK")
     portrait:SetSize(PORTRAIT_SIZE, PORTRAIT_SIZE)
@@ -371,7 +510,7 @@ local function createRow(parent, unitToken, colX, nameW, dungeonW, rowY, isLast)
         colX["portrait"], rowY - (ROW_H - PORTRAIT_SIZE) / 2)
     SetPortraitTexture(portrait, unitToken)
 
-    createNameAndClassCell(parent, colX, nameW, rowY, unitName, englishClass)
+    createNameAndClassCell(parent, colX, nameW, rowY, entry.name, entry.class)
 
     local role = getEffectiveRole(unitToken)
     local roleAtlas = role and ROLE_ATLAS_BY_ROLE[role]
@@ -384,9 +523,8 @@ local function createRow(parent, unitToken, colX, nameW, dungeonW, rowY, isLast)
     end
 
     -- Dungeon + level, or a fallback message describing why no key is known
-    local mapID, level, hasAddon, score = getKnownKeystoneForUnit(unitToken, fullPlayerName)
-    if hasAddon then
-        createDungeonAndLevelCell(parent, colX, dungeonW, rowY, mapID, level, addon.locale["KEYSTONES_NO_KEY"])
+    if entry.hasAddon then
+        createDungeonAndLevelCell(parent, colX, dungeonW, rowY, entry.mapID, entry.level, addon.locale["KEYSTONES_NO_KEY"])
     else
         -- No response received at all: member likely does not run MythicPlusTracker.
         local noAddonText = parent:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
@@ -396,7 +534,7 @@ local function createRow(parent, unitToken, colX, nameW, dungeonW, rowY, isLast)
         noAddonText:SetJustifyV("MIDDLE")
         noAddonText:SetText(addon.colors.POOR .. "– " .. addon.locale["KEYSTONES_NO_ADDON"] .. " –" .. addon.colors.RESET)
     end
-    createScoreCell(parent, colX, rowY, score)
+    createScoreCell(parent, colX, rowY, entry.score)
 
     if not isLast then
         addon.createRowDivider(parent, rowY - ROW_H, 0.3)
@@ -478,7 +616,9 @@ function MPT_Dashboard:loadKeystones(frame)
     headerFrame:SetPoint("TOPRIGHT", outerFrame, "TOPRIGHT", -(SCROLL_BTN_SIZE + 4), 0)
     headerFrame:SetHeight(HEADER_H + 1)
 
-    createHeader(headerFrame, colX, nameW, dungeonW)
+    createHeader(headerFrame, colX, nameW, dungeonW, function()
+        MPT_Dashboard:refreshKeystonesView()
+    end)
 
     if mode == MODE_GROUP then
         createRefreshButton(dropdown)
@@ -498,15 +638,16 @@ function MPT_Dashboard:loadKeystones(frame)
         end
 
         local unitTokens = addon.Communication:GetGroupUnitTokens()
-        scrollChild:SetSize(scrollChildW, #unitTokens * ROW_H)
+        local entries = sortEntries(buildGroupEntries(unitTokens))
+        scrollChild:SetSize(scrollChildW, #entries * ROW_H)
 
-        for rowIndex, unitToken in ipairs(unitTokens) do
+        for rowIndex, entry in ipairs(entries) do
             local rowY   = -((rowIndex - 1) * ROW_H)
-            local isLast = (rowIndex == #unitTokens)
-            createRow(scrollChild, unitToken, colX, nameW, dungeonW, rowY, isLast)
+            local isLast = (rowIndex == #entries)
+            createRow(scrollChild, entry, colX, nameW, dungeonW, rowY, isLast)
         end
     else
-        local altEntries = addon.AltKeystones:GetEntries()
+        local altEntries = sortEntries(addon.AltKeystones:GetEntries())
         scrollChild:SetSize(scrollChildW, math.max(#altEntries, 1) * ROW_H)
 
         if #altEntries == 0 then
