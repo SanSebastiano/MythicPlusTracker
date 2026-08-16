@@ -96,6 +96,7 @@ local locale = {
     ["KEYSTONES_COL_PLAYER"]  = "Игрок",
     ["KEYSTONES_COL_DUNGEON"] = "Подземелье",
     ["KEYSTONES_COL_LEVEL"]   = "Уровень",
+    ["KEYSTONES_COL_SCORE"]   = "Результат",
     ["KEYSTONES_NO_ADDON"]    = "Нет аддона",
     ["KEYSTONES_NO_KEY"]      = "Нет ключа",
     ["KEYSTONES_REFRESH_TOOLTIP"] = "Обновить вид группы",

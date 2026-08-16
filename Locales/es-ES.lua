@@ -96,6 +96,7 @@ local locale = {
     ["KEYSTONES_COL_PLAYER"]  = "Jugador",
     ["KEYSTONES_COL_DUNGEON"] = "Mazmorra",
     ["KEYSTONES_COL_LEVEL"]   = "Nivel",
+    ["KEYSTONES_COL_SCORE"]   = "Puntuación",
     ["KEYSTONES_NO_ADDON"]    = "Sin addon",
     ["KEYSTONES_NO_KEY"]      = "Sin llave",
     ["KEYSTONES_REFRESH_TOOLTIP"] = "Actualizar vista de grupo",

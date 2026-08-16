@@ -96,6 +96,7 @@ local locale = {
     ["KEYSTONES_COL_PLAYER"]  = "Spieler",
     ["KEYSTONES_COL_DUNGEON"] = "Dungeon",
     ["KEYSTONES_COL_LEVEL"]   = "Stufe",
+    ["KEYSTONES_COL_SCORE"]   = "Wertung",
     ["KEYSTONES_NO_ADDON"]    = "Kein Addon",
     ["KEYSTONES_NO_KEY"]      = "Kein Schlüsselstein",
     ["KEYSTONES_REFRESH_TOOLTIP"] = "Gruppenansicht aktualisieren",

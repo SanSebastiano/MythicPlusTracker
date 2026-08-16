@@ -96,6 +96,7 @@ local locale = {
     ["KEYSTONES_COL_PLAYER"]  = "Joueur",
     ["KEYSTONES_COL_DUNGEON"] = "Donjon",
     ["KEYSTONES_COL_LEVEL"]   = "Niveau",
+    ["KEYSTONES_COL_SCORE"]   = "Score",
     ["KEYSTONES_NO_ADDON"]    = "Aucun addon",
     ["KEYSTONES_NO_KEY"]      = "Aucune clé",
     ["KEYSTONES_REFRESH_TOOLTIP"] = "Actualiser la vue du groupe",

@@ -40,6 +40,7 @@ local COL_W = {
     classIcon = 22,
     role      = 30,
     level     = 50,
+    score     = 80,
 }
 
 local ROLE_ATLAS_BY_ROLE = {
@@ -87,17 +88,19 @@ end
 ---@return number|nil mapID
 ---@return number|nil level
 ---@return boolean hasAddon
+---@return number|nil score
 local function getKnownKeystoneForUnit(unitToken, fullPlayerName)
     if unitToken == "player" then
-        return C_MythicPlus.GetOwnedKeystoneChallengeMapID(), C_MythicPlus.GetOwnedKeystoneLevel(), true
+        return C_MythicPlus.GetOwnedKeystoneChallengeMapID(), C_MythicPlus.GetOwnedKeystoneLevel(), true,
+            C_ChallengeMode.GetOverallDungeonScore()
     end
 
     local groupKeystoneData = fullPlayerName and addon.groupKeystones[fullPlayerName]
     if not groupKeystoneData then
-        return nil, nil, false
+        return nil, nil, false, nil
     end
 
-    return groupKeystoneData.mapID, groupKeystoneData.level, groupKeystoneData.hasAddon == true
+    return groupKeystoneData.mapID, groupKeystoneData.level, groupKeystoneData.hasAddon == true, groupKeystoneData.score
 end
 
 ---Determines the effective role ("TANK"/"HEALER"/"DAMAGER") for a unit.
@@ -237,6 +240,7 @@ local function createHeader(parent, colX, nameW, dungeonW)
         { key = "name",    localeKey = "KEYSTONES_COL_PLAYER",  w = nameW,    j = "LEFT"  },
         { key = "dungeon", localeKey = "KEYSTONES_COL_DUNGEON", w = dungeonW, j = "LEFT"  },
         { key = "level",   localeKey = "KEYSTONES_COL_LEVEL",   w = COL_W.level, j = "RIGHT" },
+        { key = "score",   localeKey = "KEYSTONES_COL_SCORE",   w = COL_W.score, j = "RIGHT" },
     }
 
     for _, def in ipairs(headerDefs) do
@@ -331,6 +335,27 @@ local function createDungeonAndLevelCell(parent, colX, dungeonW, rowY, mapID, le
     end
 end
 
+---Renders the M+ score column, right-justified, or a "–" fallback when the
+---score isn't known (e.g. a Group member without the addon). Independent of
+---whether a keystone is currently owned — score reflects overall rating, not
+---the currently-held key.
+---@param parent Frame
+---@param colX table
+---@param rowY number
+---@param score number|nil
+local function createScoreCell(parent, colX, rowY, score)
+    local scoreText = parent:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    scoreText:SetSize(COL_W.score, ROW_H)
+    scoreText:SetPoint("TOPLEFT", parent, "TOPLEFT", colX["score"], rowY)
+    scoreText:SetJustifyH("RIGHT")
+    scoreText:SetJustifyV("MIDDLE")
+    if score and score > 0 then
+        scoreText:SetText(addon.colors.ARTIFACT .. score .. addon.colors.RESET)
+    else
+        scoreText:SetText(addon.colors.POOR .. "–" .. addon.colors.RESET)
+    end
+end
+
 local function createRow(parent, unitToken, colX, nameW, dungeonW, rowY, isLast)
     if not UnitExists(unitToken) then
         return
@@ -359,7 +384,7 @@ local function createRow(parent, unitToken, colX, nameW, dungeonW, rowY, isLast)
     end
 
     -- Dungeon + level, or a fallback message describing why no key is known
-    local mapID, level, hasAddon = getKnownKeystoneForUnit(unitToken, fullPlayerName)
+    local mapID, level, hasAddon, score = getKnownKeystoneForUnit(unitToken, fullPlayerName)
     if hasAddon then
         createDungeonAndLevelCell(parent, colX, dungeonW, rowY, mapID, level, addon.locale["KEYSTONES_NO_KEY"])
     else
@@ -371,6 +396,7 @@ local function createRow(parent, unitToken, colX, nameW, dungeonW, rowY, isLast)
         noAddonText:SetJustifyV("MIDDLE")
         noAddonText:SetText(addon.colors.POOR .. "– " .. addon.locale["KEYSTONES_NO_ADDON"] .. " –" .. addon.colors.RESET)
     end
+    createScoreCell(parent, colX, rowY, score)
 
     if not isLast then
         addon.createRowDivider(parent, rowY - ROW_H, 0.3)
@@ -385,6 +411,7 @@ end
 local function createAltRow(parent, altEntry, colX, nameW, dungeonW, rowY, isLast)
     createNameAndClassCell(parent, colX, nameW, rowY, altEntry.name, altEntry.class)
     createDungeonAndLevelCell(parent, colX, dungeonW, rowY, altEntry.mapID, altEntry.level, addon.locale["KEYSTONES_NO_KEY"])
+    createScoreCell(parent, colX, rowY, altEntry.score)
 
     if not isLast then
         addon.createRowDivider(parent, rowY - ROW_H, 0.3)
@@ -406,23 +433,25 @@ local function buildColumnLayout(mode, scrollChildW, nameW)
     local dungeonW
 
     if mode == MODE_GROUP then
-        dungeonW = scrollChildW - COL_W.portrait - COL_W.classIcon - COL_W.role - nameW - COL_W.level
-            - 5 * COL_GAP - (2 * ROW_PADDING_X)
+        dungeonW = scrollChildW - COL_W.portrait - COL_W.classIcon - COL_W.role - nameW - COL_W.level - COL_W.score
+            - 6 * COL_GAP - (2 * ROW_PADDING_X)
 
         colX["portrait"]  = cursor; cursor = cursor + COL_W.portrait + COL_GAP
         colX["classIcon"] = cursor; cursor = cursor + COL_W.classIcon + COL_GAP
         colX["name"]      = cursor; cursor = cursor + nameW + COL_GAP
         colX["role"]      = cursor; cursor = cursor + COL_W.role + COL_GAP
         colX["dungeon"]   = cursor; cursor = cursor + dungeonW + COL_GAP
-        colX["level"]     = cursor
+        colX["level"]     = cursor; cursor = cursor + COL_W.level + COL_GAP
+        colX["score"]     = cursor
     else
-        dungeonW = scrollChildW - COL_W.classIcon - nameW - COL_W.level
-            - 3 * COL_GAP - (2 * ROW_PADDING_X)
+        dungeonW = scrollChildW - COL_W.classIcon - nameW - COL_W.level - COL_W.score
+            - 4 * COL_GAP - (2 * ROW_PADDING_X)
 
         colX["classIcon"] = cursor; cursor = cursor + COL_W.classIcon + COL_GAP
         colX["name"]      = cursor; cursor = cursor + nameW + COL_GAP
         colX["dungeon"]   = cursor; cursor = cursor + dungeonW + COL_GAP
-        colX["level"]     = cursor
+        colX["level"]     = cursor; cursor = cursor + COL_W.level + COL_GAP
+        colX["score"]     = cursor
     end
 
     return colX, dungeonW
