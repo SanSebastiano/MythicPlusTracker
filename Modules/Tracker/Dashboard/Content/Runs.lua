@@ -8,7 +8,7 @@ local ICON_SIZE      = 28   -- dungeon icon dimensions
 local DASHBOARD_W    = 800  -- matches Frame.lua
 local CONTENT_INSET  = 20   -- aligns with divider caps
 local SUMMARY_MARGIN = 8    -- vertical gap below navFrame
-local SCROLL_BTN_SIZE = 22  -- gutter reserved for the scrollbar (added later)
+local SCROLL_BTN_SIZE = 10  -- gutter reserved for the scrollbar (MinimalScrollBar is 8px wide)
 
 -- Fixed column widths sized to fit their header text (name column is computed dynamically)
 local COL_W = {

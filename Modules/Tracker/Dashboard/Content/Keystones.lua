@@ -11,7 +11,7 @@ local DUNGEON_ICON_SIZE = 24 -- dungeon icon dimensions
 local DASHBOARD_W     = 800  -- matches Frame.lua
 local CONTENT_INSET   = 20   -- aligns with divider caps
 local SUMMARY_MARGIN  = 8    -- vertical gap below navFrame/mode dropdown
-local SCROLL_BTN_SIZE = 22   -- gutter reserved for the scrollbar
+local SCROLL_BTN_SIZE = 10   -- gutter reserved for the scrollbar (MinimalScrollBar is 8px wide)
 local ROW_PADDING_X   = 5    -- inset of row content from the left/right table edges
 local ARTIFACT_R, ARTIFACT_G, ARTIFACT_B = addon.colorToRGB("ARTIFACT")
 local REFRESH_ICON_SIZE = 20 -- refresh button dimensions
@@ -145,18 +145,19 @@ local function refreshGroupView()
     end
 end
 
----Creates the icon-only refresh button, placed in the scrollbar gutter
----directly to the right of (and vertically centered on) the column header
----row, so it never overlaps the "Level" header text. Only relevant to the
----Group mode — the Alts view has nothing to live-request, it just reflects
----whatever each character last saved on login (see Utils/AltKeystones.lua).
----@param outerFrame Frame
-local function createRefreshButton(outerFrame)
-    local gutterWidth = SCROLL_BTN_SIZE + 4
-    local button = CreateFrame("Button", nil, outerFrame)
+---Creates the icon-only refresh button, anchored directly to the left of the
+---Group/Alts mode dropdown (in the row above the table). The scrollbar
+---gutter (Utils/UIHelpers.lua) is only 14px wide — too narrow for a 20px
+---icon now that it hosts the slim MinimalScrollBar instead of the old, wider
+---UIPanelScrollBarTemplate — so this button no longer lives there. Only
+---relevant to the Group mode — the Alts view has nothing to live-request, it
+---just reflects whatever each character last saved on login (see
+---Utils/AltKeystones.lua).
+---@param dropdown Frame the mode dropdown returned by createModeDropdown
+local function createRefreshButton(dropdown)
+    local button = CreateFrame("Button", nil, dropdown)
     button:SetSize(REFRESH_ICON_SIZE, REFRESH_ICON_SIZE)
-    button:SetPoint("TOPRIGHT", outerFrame, "TOPRIGHT",
-        -(gutterWidth - REFRESH_ICON_SIZE) / 2, -(HEADER_H - REFRESH_ICON_SIZE) / 2)
+    button:SetPoint("RIGHT", dropdown, "LEFT", -8, 0)
 
     local icon = button:CreateTexture(nil, "ARTWORK")
     icon:SetSize(REFRESH_ICON_SIZE, REFRESH_ICON_SIZE)
@@ -430,7 +431,7 @@ end
 function MPT_Dashboard:loadKeystones(frame)
     local mode = getMode()
 
-    createModeDropdown(frame)
+    local dropdown = createModeDropdown(frame)
 
     local tableW       = DASHBOARD_W - CONTENT_INSET * 2
     local scrollChildW = tableW - SCROLL_BTN_SIZE - 4
@@ -451,7 +452,7 @@ function MPT_Dashboard:loadKeystones(frame)
     createHeader(headerFrame, colX, nameW, dungeonW)
 
     if mode == MODE_GROUP then
-        createRefreshButton(outerFrame)
+        createRefreshButton(dropdown)
     end
 
     local scrollFrame = CreateFrame("ScrollFrame", nil, outerFrame)
