@@ -6,6 +6,8 @@ local addonName, addon = ...
 -- messages on the GUILD channel — both the member's own broadcast and,
 -- transitively, other online members relaying whatever they've learned.
 MythicPlusTrackerGuildDB = MythicPlusTrackerGuildDB or {}
+MythicPlusTrackerDB = MythicPlusTrackerDB or {}
+MythicPlusTrackerAltDB = MythicPlusTrackerAltDB or {}
 
 addon.GuildKeys = addon.GuildKeys or {}
 
@@ -43,46 +45,43 @@ function addon.GuildKeys:Merge(key, entry)
     end
 
     MythicPlusTrackerGuildDB[key] = entry
+    MythicPlusTrackerDB.guildKeysLastRefreshedAt = GetServerTime()
     return true
 end
 
----Returns every known guild entry, plus a synthetic "no addon" entry for
----every currently online guild member we've never heard a broadcast from,
----sorted by keystone level (highest first, no-key/no-addon entries last)
----and then by name.
+---Returns the server timestamp of the last time MythicPlusTrackerGuildDB
+---actually learned something new (own broadcast, an incoming KEY message, or
+---an incoming BULK dump), or nil if that hasn't happened yet. Used by the
+---Guild view's info tooltip.
+---@return number|nil
+function addon.GuildKeys:GetLastRefreshedAt()
+    return MythicPlusTrackerDB.guildKeysLastRefreshedAt
+end
+
+---Returns every currently online guild member, sorted by keystone level
+---(highest first, no-key/no-addon entries last) and then by name.
 ---
----Entries whose resetEpoch no longer matches the current weekly reset are
----stale (the keystone has reset since that member's data was last saved):
----their keystone fields are cleared so the member still appears in the list
----as "known, no key this week" (hasAddon=true/no-mapID — same state the
----Group tab shows for a member who responded with NOKEY), rather than
----disappearing or showing a leftover pre-reset level.
+---Name/class/online-status come from a live roster scan
+---(GetNumGuildMembers/GetGuildRosterInfo). Keystone/score come from our own
+---broadcast protocol (MythicPlusTrackerGuildDB, see Utils/GuildComm.lua);
+---hasAddon is false when no broadcast has been heard from that member.
 ---
----Members with no entry at all are otherwise indistinguishable from someone
----who simply hasn't broadcast yet, so a live guild-roster scan fills in
----"no addon" (hasAddon=false) for anyone currently online who still has no
----entry — mirroring the Group tab's fallback for unresponsive members.
----Offline members with no known entry are left out entirely: there's no way
----to tell "no addon" apart from "has the addon, just not logged in" for
----someone who isn't online to ask.
+---Members who are also the local account's own alts (MythicPlusTrackerAltDB)
+---are excluded, since they already show in the Twinks tab — except the
+---currently-played character, which stays in the list like any other member.
 ---@return table entries
 function addon.GuildKeys:GetEntries()
     local currentResetEpoch = C_DateAndTime.GetWeeklyResetStartTime()
+    local currentCharacterKey = UnitName("player") .. "-" .. GetNormalizedRealmName()
 
-    local entries = {}
-    local seenKeys = {}
-    for key, entry in pairs(MythicPlusTrackerGuildDB) do
-        if entry.resetEpoch ~= currentResetEpoch then
-            entry.mapID = nil
-            entry.level = nil
-            entry.score = nil
-            entry.resetEpoch = currentResetEpoch
+    local ownOtherAltKeys = {}
+    for key in pairs(MythicPlusTrackerAltDB) do
+        if key ~= currentCharacterKey then
+            ownOtherAltKeys[key] = true
         end
-        entry.hasAddon = true
-        table.insert(entries, entry)
-        seenKeys[key] = true
     end
 
+    local entries = {}
     if IsInGuild() then
         C_GuildInfo.GuildRoster()
         -- GetGuildRosterInfo return order (per the Blizzard UI code at the
@@ -93,14 +92,24 @@ function addon.GuildKeys:GetEntries()
             if isOnline and rawName and rawName ~= "" then
                 local name, realm = splitNameRealm(rawName)
                 local key = name .. "-" .. realm
-                if not seenKeys[key] then
+                if not ownOtherAltKeys[key] then
+                    local broadcastEntry = MythicPlusTrackerGuildDB[key]
+                    if broadcastEntry and broadcastEntry.resetEpoch ~= currentResetEpoch then
+                        broadcastEntry.mapID = nil
+                        broadcastEntry.level = nil
+                        broadcastEntry.score = nil
+                        broadcastEntry.resetEpoch = currentResetEpoch
+                    end
+
                     table.insert(entries, {
                         name     = name,
                         realm    = realm,
                         class    = classFileName,
-                        hasAddon = false,
+                        mapID    = broadcastEntry and broadcastEntry.mapID or nil,
+                        level    = broadcastEntry and broadcastEntry.level or nil,
+                        score    = broadcastEntry and broadcastEntry.score or nil,
+                        hasAddon = broadcastEntry ~= nil,
                     })
-                    seenKeys[key] = true
                 end
             end
         end
