@@ -35,6 +35,12 @@ local lastBulkBroadcastTime = 0
 -- {dumpId, total, chunks = {[chunkIndex] = payload}, receivedCount}
 local bulkBuffers = {}
 
+-- Last own-keystone state actually sent to the guild, so broadcastOwnKeystone
+-- can no-op when triggered by BAG_UPDATE_DELAYED without anything having
+-- changed (that event fires on every inventory shuffle, not just keystone
+-- swaps).
+local lastBroadcastMapID, lastBroadcastLevel, lastBroadcastScore = nil, nil, nil
+
 ---@return boolean
 local function isMaxLevel()
     return UnitLevel("player") >= GetMaxPlayerLevel()
@@ -140,6 +146,13 @@ local function broadcastOwnKeystone()
     end
 
     local mapID, level = addon.Keystone:GetOwned()
+    local score = C_ChallengeMode.GetOverallDungeonScore() or 0
+
+    if mapID == lastBroadcastMapID and level == lastBroadcastLevel and score == lastBroadcastScore then
+        return
+    end
+    lastBroadcastMapID, lastBroadcastLevel, lastBroadcastScore = mapID, level, score
+
     local _, englishClass = UnitClass("player")
 
     local entry = {
@@ -148,7 +161,7 @@ local function broadcastOwnKeystone()
         class      = englishClass,
         mapID      = mapID,
         level      = level,
-        score      = C_ChallengeMode.GetOverallDungeonScore() or 0,
+        score      = score,
         savedAt    = GetServerTime(),
         resetEpoch = C_DateAndTime.GetWeeklyResetStartTime(),
     }
@@ -272,6 +285,9 @@ local eventFrame = CreateFrame("Frame")
 eventFrame:RegisterEvent("PLAYER_LOGIN")
 eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 eventFrame:RegisterEvent("CHALLENGE_MODE_COMPLETED")
+-- Catches keystone changes that aren't a dungeon completion or a loading
+-- screen, e.g. trading a timed-out key down at Lindormi.
+eventFrame:RegisterEvent("BAG_UPDATE_DELAYED")
 eventFrame:RegisterEvent("CHAT_MSG_ADDON")
 
 eventFrame:SetScript("OnEvent", function(self, event, ...)
@@ -288,6 +304,9 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
         C_Timer.After(math.random(2, 8), requestBulkBroadcastIfDue)
 
     elseif event == "CHALLENGE_MODE_COMPLETED" then
+        broadcastOwnKeystone()
+
+    elseif event == "BAG_UPDATE_DELAYED" then
         broadcastOwnKeystone()
 
     elseif event == "CHAT_MSG_ADDON" then

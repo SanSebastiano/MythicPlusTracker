@@ -82,4 +82,7 @@ end
 local eventFrame = CreateFrame("Frame")
 eventFrame:RegisterEvent("CHALLENGE_MODE_COMPLETED")
 eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+-- Catches keystone changes that aren't a dungeon completion or a loading
+-- screen, e.g. trading a timed-out key down at Lindormi.
+eventFrame:RegisterEvent("BAG_UPDATE_DELAYED")
 eventFrame:SetScript("OnEvent", persistOwnKeystoneIfEligible)
