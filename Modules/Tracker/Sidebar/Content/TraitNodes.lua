@@ -13,7 +13,7 @@ local POPUP_MAX_W   = 300  -- matches the Sidebar's own width, a sensible cap fo
 local POPUP_ROW_H   = 28
 local POPUP_PAD     = 6
 local POPUP_ICON    = 22
-local POPUP_LABEL_GAP = 6  -- gap between icon and label
+local POPUP_LABEL_GAP = 6
 
 local ARTIFACT_R, ARTIFACT_G, ARTIFACT_B = addon.colorToRGB("ARTIFACT")
 

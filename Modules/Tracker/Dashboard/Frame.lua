@@ -5,7 +5,10 @@ MythicPlusTrackerDB = MythicPlusTrackerDB or {}
 local frame
 local contentWrapper
 
--- Tracks the active content panel so we can hide it before showing a new one
+local TAB_OVERVIEW  = 1
+local TAB_RUNS       = 2
+local TAB_KEYSTONES = 3
+
 local activeContent = nil
 
 local function showContent(loader, ...)
@@ -49,15 +52,27 @@ local function create(mainFrame)
 
     local function getDefaultTabIndex()
         if MythicPlusTrackerDB.dashboardDefaultTabInGroup and IsInGroup() then
-            return 3 -- Keystones, see tabDefs order in Navigation.lua
+            return TAB_KEYSTONES
         end
-        return 1 -- Overview
+        return TAB_OVERVIEW
     end
 
     local tabCallbacks = {
-        [1] = function() if not isMaxLevel() then return false end showContent(MPT_Dashboard.loadDungeons); MPT_Sidebar:showForTab(1) end,
-        [2] = function() if not isMaxLevel() then return false end showContent(MPT_Dashboard.loadRuns);     MPT_Sidebar:showForTab(2) end,
-        [3] = function() if not isMaxLevel() then return false end showContent(MPT_Dashboard.loadKeystones); MPT_Sidebar:showForTab(3) end,
+        [TAB_OVERVIEW] = function()
+            if not isMaxLevel() then return false end
+            showContent(MPT_Dashboard.loadDungeons)
+            MPT_Sidebar:showForTab(TAB_OVERVIEW)
+        end,
+        [TAB_RUNS] = function()
+            if not isMaxLevel() then return false end
+            showContent(MPT_Dashboard.loadRuns)
+            MPT_Sidebar:showForTab(TAB_RUNS)
+        end,
+        [TAB_KEYSTONES] = function()
+            if not isMaxLevel() then return false end
+            showContent(MPT_Dashboard.loadKeystones)
+            MPT_Sidebar:showForTab(TAB_KEYSTONES)
+        end,
     }
 
     MPT_Dashboard:createNavigation(frame, tabCallbacks)
@@ -72,7 +87,7 @@ local function create(mainFrame)
         addon.debugMessage("Dashboard Frame OnShow")
 
         if not isMaxLevel() then
-            MPT_Dashboard:setActiveNavTab(1)
+            MPT_Dashboard:setActiveNavTab(TAB_OVERVIEW)
             MPT_Dashboard:loadNotMaxLevel(contentWrapper)
             return
         end
@@ -80,12 +95,12 @@ local function create(mainFrame)
         local defaultTab = getDefaultTabIndex()
         MPT_Dashboard:setActiveNavTab(defaultTab)
 
-        if defaultTab == 3 then
+        if defaultTab == TAB_KEYSTONES then
             showContent(MPT_Dashboard.loadKeystones)
-            MPT_Sidebar:showForTab(3)
+            MPT_Sidebar:showForTab(TAB_KEYSTONES)
         else
             showContent(MPT_Dashboard.loadDungeons)
-            MPT_Sidebar:showForTab(1)
+            MPT_Sidebar:showForTab(TAB_OVERVIEW)
         end
     end)
 

@@ -13,12 +13,10 @@ local ADDON_MESSAGE_PREFIX = "MPTrackerKeys"
 -- to keep working long-term — a mismatch is simply logged and dropped.
 local PROTOCOL_VERSION = 1
 
--- Table of received group keystone information, keyed by "Name-Realm".
 -- Entries are only populated for other group members that also run
 -- MythicPlusTracker and have responded with their current keystone.
 addon.groupKeystones = addon.groupKeystones or {}
 
----Determines which chat channel to use for the current group, if any.
 ---@return string|nil channel
 local function getGroupChannel()
     if IsInRaid() then
@@ -29,7 +27,6 @@ local function getGroupChannel()
     return nil
 end
 
----Builds a realm-qualified player name for a given unit token.
 ---@param unitToken string
 ---@return string|nil fullPlayerName
 local function getFullPlayerName(unitToken)
@@ -43,8 +40,7 @@ local function getFullPlayerName(unitToken)
     return name .. "-" .. realm
 end
 
----Returns the list of unit tokens for the current group, including the
----local player. Solo players get a single-entry list containing "player".
+---Solo players get a single-entry list containing "player".
 ---@return table unitTokens
 local function getGroupUnitTokens()
     local unitTokens = {}
@@ -90,8 +86,6 @@ local function broadcastOwnKeystoneStatus()
     C_ChatInfo.SendAddonMessage(ADDON_MESSAGE_PREFIX, message, channel)
 end
 
----Asks other group members running MythicPlusTracker to broadcast their
----current keystone back to the group.
 local function sendKeystoneRequestMessage()
     local channel = getGroupChannel()
     if not channel then
@@ -160,8 +154,6 @@ addon.Communication = addon.Communication or {}
 local REQUEST_COOLDOWN_SECONDS = 2
 local lastRequestTime = 0
 
----Requests up-to-date keystone information from the current group and
----broadcasts the local player's own keystone status at the same time.
 ---Calls within REQUEST_COOLDOWN_SECONDS of the previous one are silently
 ---ignored.
 function addon.Communication:RequestGroupKeystones()
@@ -176,15 +168,13 @@ function addon.Communication:RequestGroupKeystones()
     broadcastOwnKeystoneStatus()
 end
 
----Builds a realm-qualified player name for a given unit token.
 ---@param unitToken string
 ---@return string|nil fullPlayerName
 function addon.Communication:GetFullPlayerName(unitToken)
     return getFullPlayerName(unitToken)
 end
 
----Returns the list of unit tokens for the current group, including the
----local player. Solo players get a single-entry list containing "player".
+---Solo players get a single-entry list containing "player".
 ---@return table unitTokens
 function addon.Communication:GetGroupUnitTokens()
     return getGroupUnitTokens()

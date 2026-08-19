@@ -1,14 +1,14 @@
 local addonName, addon = ...
 
-local PADDING_X      = 8    -- left/right padding inside the table frame
-local ROW_H          = 40   -- height of each data row
-local HEADER_H       = 28   -- height of the header row
-local COL_GAP        = 6    -- horizontal gap between columns
-local ICON_SIZE      = 28   -- dungeon icon dimensions
+local PADDING_X      = 8
+local ROW_H          = 40
+local HEADER_H       = 28
+local COL_GAP        = 6
+local ICON_SIZE      = 28
 local DASHBOARD_W    = 800  -- matches Frame.lua
 local CONTENT_INSET  = 20   -- aligns with divider caps
-local SUMMARY_MARGIN = 8    -- vertical gap below navFrame
-local SCROLL_BTN_SIZE = 22  -- gutter reserved for the scrollbar (added later)
+local NAV_BOTTOM_MARGIN = 8
+local SCROLL_BTN_SIZE = 10  -- gutter reserved for the scrollbar (MinimalScrollBar is 8px wide)
 
 -- Fixed column widths sized to fit their header text (name column is computed dynamically)
 local COL_W = {
@@ -30,8 +30,8 @@ local function formatLevel(level)
     return addon.colors.POOR .. "–" .. addon.colors.RESET
 end
 
--- Score delta: how much this run improved the score for its dungeon vs the
--- previous best. Positive gain shown in gold, no gain shown as a dash.
+-- Delta: how much this run improved the score for its dungeon vs the
+-- previous best.
 local function formatScoreDelta(delta)
     if not delta or delta <= 0 then
         return addon.colors.POOR .. "–" .. addon.colors.RESET
@@ -39,7 +39,6 @@ local function formatScoreDelta(delta)
     return addon.colors.ARTIFACT .. "+" .. math.floor(delta) .. addon.colors.RESET
 end
 
--- Duration: poor if over the time limit, white if within
 local function formatDuration(sec, timeLimit)
     if not sec or sec <= 0 then
         return addon.colors.POOR .. "–" .. addon.colors.RESET
@@ -77,7 +76,6 @@ local function formatSeason(s)
     return tostring(s)
 end
 
--- Transparent interactive frame that shows a two-line GameTooltip on hover.
 local function addCellTooltip(parent, x, y, w, h, title, body)
     local frame = CreateFrame("Frame", nil, parent)
     frame:SetSize(w, h)
@@ -163,7 +161,6 @@ local function createRow(parent, run, colX, nameW, rowY, isLast, scoreDeltas)
         cellX + (cellW - MARK_SIZE) / 2,
         rowY - (ROW_H - MARK_SIZE) / 2)
 
-    -- Score delta: how much this run improved the dungeon score vs previous best
     local runKey     = run.mapChallengeModeID .. "_" .. dateToSortKey(run.completionDate)
     local runData    = scoreDeltas and scoreDeltas[runKey]
     local delta      = runData and runData.delta
@@ -204,7 +201,6 @@ function MPT_Dashboard:loadRuns(frame)
         runHistory[i] = run
     end
 
-    -- Sort newest first by completionDate (display order)
     table.sort(runHistory, function(a, b)
         return dateToSortKey(a.completionDate) > dateToSortKey(b.completionDate)
     end)
@@ -214,7 +210,6 @@ function MPT_Dashboard:loadRuns(frame)
     -- prevBest reflects only runs that happened before the current one.
     local scoreDeltas = {}
     local prevBest    = {}
-    -- Iterate newest-first slice in reverse = oldest-first
     for i = #runHistory, 1, -1 do
         local run   = runHistory[i]
         local id    = run.mapChallengeModeID
@@ -230,12 +225,11 @@ function MPT_Dashboard:loadRuns(frame)
         end
     end
 
-    -- Column layout — reserve right gutter for the scrollbar
     local tableW       = DASHBOARD_W - CONTENT_INSET * 2
     local scrollChildW = tableW - SCROLL_BTN_SIZE - 4
     local fixedW   = COL_W.icon + COL_W.level + COL_W.completed + COL_W.score
                    + COL_W.duration + COL_W.date + COL_W.season
-    local numGaps  = 7   -- gaps between 8 columns
+    local numGaps  = 7
     local nameW    = scrollChildW - PADDING_X * 2 - fixedW - numGaps * COL_GAP
 
     local colX  = {}
@@ -247,7 +241,7 @@ function MPT_Dashboard:loadRuns(frame)
     end
 
     local outerFrame = CreateFrame("Frame", nil, frame)
-    outerFrame:SetPoint("TOPLEFT",  MPT_Dashboard.navFrame, "BOTTOMLEFT",  CONTENT_INSET, -SUMMARY_MARGIN)
+    outerFrame:SetPoint("TOPLEFT",  MPT_Dashboard.navFrame, "BOTTOMLEFT",  CONTENT_INSET, -NAV_BOTTOM_MARGIN)
     outerFrame:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -CONTENT_INSET, CONTENT_INSET)
 
     local headerFrame = CreateFrame("Frame", nil, outerFrame)

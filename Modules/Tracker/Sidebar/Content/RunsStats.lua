@@ -5,7 +5,7 @@ local CONTENT_X = 23
 local CONTENT_W = 254
 
 local ICON_SIZE = 22
-local INSET     = 10   -- left/right inset inside content rows
+local INSET     = 10
 
 local ARTIFACT_R, ARTIFACT_G, ARTIFACT_B = addon.colorToRGB("ARTIFACT")
 local RUNSSTATS_GAP = 8   -- gap after the previous card (Score)
@@ -115,8 +115,8 @@ local function loadRunsStats(sidebar, cursor)
     -- Two columns: total (POOR) | successful/completed (ARTIFACT if >0, POOR if 0)
     -- Column layout: label | total right-aligned at -48 | success right-aligned at 0
     -- -----------------------------------------------------------------------
-    local COL_SUCCESS = CONTENT_X + CONTENT_W - INSET        -- right edge for success col
-    local COL_TOTAL   = CONTENT_X + CONTENT_W - INSET - 48   -- right edge for total col
+    local COL_SUCCESS = CONTENT_X + CONTENT_W - INSET
+    local COL_TOTAL   = CONTENT_X + CONTENT_W - INSET - 48
 
     local counts   = {}
     local success  = {}
@@ -195,7 +195,6 @@ local function loadRunsStats(sidebar, cursor)
         totalFS:SetJustifyV("MIDDLE")
         totalFS:SetText(addon.colors.POOR .. tostring(counts[tier.label] or 0) .. addon.colors.RESET)
 
-        -- Successful count — ARTIFACT if >0, POOR if 0
         local won        = success[tier.label] or 0
         local wonColor   = won > 0 and addon.colors.ARTIFACT or addon.colors.POOR
         local successFS  = sidebar:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")

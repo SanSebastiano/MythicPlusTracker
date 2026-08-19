@@ -48,8 +48,6 @@ local function getCharacterKey()
     return UnitName("player") .. "-" .. GetNormalizedRealmName()
 end
 
----Registers a callback to run once the teleport cache is ready. Runs
----immediately if the cache has already been built.
 ---@param callback function
 function addon.onDungeonTeleportsReady(callback)
     if hasScanned then
@@ -80,8 +78,6 @@ local function buildDungeonSetKey(dungeons)
     return table.concat(ids, ",")
 end
 
----Returns true if the given spell's description references the given
----dungeon name.
 ---@param spellID number
 ---@param dungeonName string
 ---@return boolean
@@ -93,9 +89,7 @@ local function spellMatchesDungeon(spellID, dungeonName)
     return description:lower():find(dungeonName:lower(), 1, true) ~= nil
 end
 
----Scans the player's known spellbook spells and returns a list of
----candidates to check against dungeons. Flyouts and future (not-yet-learned)
----spells are skipped.
+---Flyouts and future (not-yet-learned) spells are skipped.
 ---@return table candidates array of { spellID = number, icon = number }
 local function collectSpellbookCandidates()
     local candidates = {}
@@ -120,9 +114,9 @@ local function collectSpellbookCandidates()
     return candidates
 end
 
----Matches candidate spells against dungeon icons and finalizes the cache.
----Called once every remaining candidate spell's description data is
----available (for dungeons that couldn't be resolved by icon alone).
+---Matches remaining candidates by description text (icon matches were
+---already resolved by matchByIcon). Called once every remaining candidate
+---spell's description data has finished loading.
 ---@param dungeons table
 ---@param candidates table array of { spellID, icon }
 ---@param teleports table teleports already resolved via icon matching
@@ -241,7 +235,6 @@ function addon.buildDungeonTeleportCache()
     local candidates = collectSpellbookCandidates()
     local teleports = matchByIcon(dungeons, candidates)
 
-    -- Only need to wait for description data for dungeons still unresolved.
     local unresolvedCount = 0
     for _, mapID in ipairs(dungeons) do
         if not teleports[mapID] then
@@ -275,7 +268,6 @@ function addon.buildDungeonTeleportCache()
     eventFrame:RegisterEvent("SPELL_DATA_LOAD_RESULT")
 end
 
----Returns the teleport spell info for a given mapID, if one is known.
 ---@param mapID number
 ---@return table|nil teleport { spellID }
 function addon.getDungeonTeleport(mapID)

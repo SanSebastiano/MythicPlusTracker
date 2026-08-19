@@ -4,10 +4,10 @@ local SLOT_COUNT   = 3
 local SLOT_WIDTH   = 70
 local SLOT_HEIGHT  = 45
 local SLOT_GAP     = 8
-local CONTAINER_W  = SLOT_COUNT * SLOT_WIDTH + (SLOT_COUNT - 1) * SLOT_GAP  -- 226
+local CONTAINER_W  = SLOT_COUNT * SLOT_WIDTH + (SLOT_COUNT - 1) * SLOT_GAP
 local CONTAINER_H  = SLOT_HEIGHT
 local ANCHOR_X     = 23
-local CONTAINER_X  = ANCHOR_X + math.floor((254 - CONTAINER_W) / 2)  -- centres slots (=37)
+local SLOTS_CENTERED_X = ANCHOR_X + math.floor((254 - CONTAINER_W) / 2)
 local WEEKLYVAULT_GAP = 1   -- gap after the previous card (Keystone)
 local HEADER_TO_CONTENT_GAP = 4
 
@@ -114,7 +114,7 @@ local function loadWeeklyVault(sidebar, cursor)
 
     local container = CreateFrame("Frame", nil, sidebar)
     container:SetSize(CONTAINER_W, CONTAINER_H)
-    container:SetPoint("TOPLEFT", sidebar, "TOPLEFT", CONTAINER_X, contentY)
+    container:SetPoint("TOPLEFT", sidebar, "TOPLEFT", SLOTS_CENTERED_X, contentY)
 
     C_AddOns.LoadAddOn("Blizzard_WeeklyRewards")
     local BlizzardMixin = WeeklyRewardsActivityMixin

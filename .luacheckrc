@@ -89,6 +89,8 @@ globals = {
     "C_SpellBook",
     "C_Spell",
     "C_Traits",
+    "C_DateAndTime",
+    "C_GuildInfo",
     "Enum",
 
     -- -----------------------------------------------------------------------
@@ -101,6 +103,11 @@ globals = {
     -- WoW modern Settings API
     -- -----------------------------------------------------------------------
     "Settings",
+
+    -- -----------------------------------------------------------------------
+    -- WoW modern scroll framework (MinimalScrollBar wiring)
+    -- -----------------------------------------------------------------------
+    "ScrollUtil",
 
     -- -----------------------------------------------------------------------
     -- WoW combat / input state
@@ -152,6 +159,9 @@ globals = {
     "GetMaxPlayerLevel",
     "IsInGroup",
     "IsInRaid",
+    "IsInGuild",
+    "GetNumGuildMembers",
+    "GetGuildRosterInfo",
     "GetNumGroupMembers",
     "LE_PARTY_CATEGORY_INSTANCE",
     "GetRaidRosterInfo",

@@ -1,9 +1,9 @@
 local addonName, addon = ...
 
-local TAB_ROW_H   = 30   -- height reserved for the tab button row
-local TAB_HEIGHT  = 26   -- individual button height
-local TAB_PADDING = 20   -- horizontal padding inside each tab button
-local TAB_SPACING = 8    -- gap between consecutive tabs
+local TAB_ROW_H   = 30
+local TAB_HEIGHT  = 26
+local TAB_PADDING = 20
+local TAB_SPACING = 8
 local NAV_HEIGHT  = 85   -- TAB_ROW_H (30) + bar offset (30) + bar height (~18) + buffer (7)
 
 local ARTIFACT_R, ARTIFACT_G, ARTIFACT_B = addon.colorToRGB("ARTIFACT")
@@ -30,9 +30,11 @@ function MPT_Dashboard:setActiveNavTab(idx)
     setActiveTab(idx)
 end
 
--- Creates the navigation bar and returns NAV_HEIGHT so the caller can
--- offset the content below it.  The optional `callbacks` table maps tab
--- index → function; each function is called when that tab is clicked.
+---@param parent Frame
+---@param callbacks table|nil maps tab index -> function, called on click; a
+---callback returning exactly `false` blocks the tab switch (activeTabIndex
+---and the highlight stay on the previous tab)
+---@return number navHeight so the caller can offset content below it
 function MPT_Dashboard:createNavigation(parent, callbacks)
     wipe(tabFontStrings)
     activeTabIndex = 1
