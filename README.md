@@ -15,7 +15,7 @@ A World of Warcraft retail addon that gives you a clear, at-a-glance overview of
 ### Dashboard
 - 🗂️ **Overview** — sortable dungeon table for the season (level, score, runs, time limit, best time), with a best-time delta tooltip.
 - 📜 **Runs** — full run history, color-coded by result.
-- 🔑 **Keystones** — live group keystone overview (portrait, class, role, dungeon + level), with fallbacks for members missing a key or the addon.
+- 🔑 **Keystones** — switch between Group, Alts, and Guild views via a dropdown; sortable columns (dungeon, level, score) with fallbacks for members missing a key or the addon. A refresh button (Group) or a "last updated" info tooltip (Alts/Guild) shows how fresh the data is.
 
 ### Sidebar
 - 🏆 **M+ Score** — your overall score, color-coded by tier.
@@ -25,7 +25,7 @@ A World of Warcraft retail addon that gives you a clear, at-a-glance overview of
 - 💰 **Currencies** — your relevant Mythic+ currencies, highlighted when capped.
 - ⚔️ **Affixes** — this week's active affixes, with tooltips.
 - 📈 **Run Statistics** — your best run this week, plus a timed-run breakdown by key level.
-- 👥 **Group Scores** — your group's Mythic+ scores at a glance.
+- 📊 **Statistics** — average score, average keystone level, how many currently hold a key, and the best performer — automatically follows whichever Keystones-tab mode (Group, Alts, or Guild) is selected.
 
 ### Minimap Button
 - 🧭 A draggable minimap button, available in a large freely-movable style or a compact edge-locked style — left-click opens the tracker, right-click opens the Great Vault.
@@ -34,8 +34,9 @@ A World of Warcraft retail addon that gives you a clear, at-a-glance overview of
 - ⌨️ Everything's available via `/mpt` (or `/mythicplustracker`) — run `/mpt help` in-game for the full command list.
 - 📢 `/mpt announce` — posts your current keystone to party, raid, or instance chat, as a clickable item link when possible.
 
-### Group Communication
+### Group & Guild Communication
 - 🔄 Keystone and score data syncs automatically between group/raid members running the addon — no manual action needed.
+- 🏰 The same sync happens guild-wide over guild chat, covering every currently online guild member running the addon (shown in the Keystones tab's Guild view).
 
 ### Settings
 - ⚙️ Configure everything under **Options → AddOns → Mythic Plus Tracker** (or `/mpt settings`) — minimap visibility/style, dashboard default tab, and more.
