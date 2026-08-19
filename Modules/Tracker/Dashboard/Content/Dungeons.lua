@@ -1,14 +1,14 @@
 local addonName, addon = ...
 
-local PADDING_X  = 8    -- left/right padding inside the table frame
-local ROW_H      = 50   -- height of each data row (increased for full-height table)
-local HEADER_H   = 30   -- height of the header row
-local COL_GAP    = 8    -- horizontal gap between columns
-local ICON_SIZE  = 36   -- dungeon icon dimensions
+local PADDING_X  = 8
+local ROW_H      = 50   -- increased over HEADER_H's 30 for a full-height table
+local HEADER_H   = 30
+local COL_GAP    = 8
+local ICON_SIZE  = 36
 
-local SUMMARY_MARGIN = 8    -- vertical gap below navFrame
-local DASHBOARD_W    = 800  -- dashboard frame width (fixed in Frame.lua)
-local CONTENT_INSET  = 20   -- aligns with the divider bar left/right caps
+local NAV_BOTTOM_MARGIN = 8
+local DASHBOARD_W       = 800  -- dashboard frame width (fixed in Frame.lua)
+local CONTENT_INSET     = 20   -- aligns with the divider bar left/right caps
 
 -- Fixed column widths (name column is computed dynamically)
 local COL_W = {
@@ -178,7 +178,6 @@ local function createTableRow(child, mapID, colX, rowY, nameW, runLookup, isLast
     addon.createTableCell(child, colX["bestTime"], rowY, COL_W.bestTime, ROW_H,
         formatBestTime(ri and ri.bestTime, timeLimit), "GameFontHighlight", "RIGHT")
 
-    -- Tooltip on best time cell: title "Zeitlimit" + empty line + signed delta
     if ri and ri.bestTime and ri.bestTime > 0 then
         local hitFrame = CreateFrame("Frame", nil, child)
         hitFrame:SetSize(COL_W.bestTime, ROW_H)
@@ -330,12 +329,11 @@ function MPT_Dashboard:loadDungeons(frame)
     local runHistory = addon.getRunHistory()
     local runLookup  = buildRunLookup(runHistory)
 
-    local tableW = DASHBOARD_W - CONTENT_INSET * 2  -- align with divider caps
+    local tableW = DASHBOARD_W - CONTENT_INSET * 2
 
-    -- Compute column x-positions dynamically; name column takes remaining space
     local fixedW = COL_W.icon + COL_W.bestLevel + COL_W.score
                  + COL_W.runs + COL_W.success + COL_W.timeLimit + COL_W.bestTime
-    local numGaps = 7  -- gaps between 8 columns
+    local numGaps = 7
     local nameW = tableW - PADDING_X * 2 - fixedW - numGaps * COL_GAP
 
     local colX = {}
@@ -354,8 +352,7 @@ function MPT_Dashboard:loadDungeons(frame)
 
     local tableFrame = CreateFrame("Frame", nil, frame)
     tableFrame:SetSize(tableW, childHeight)
-    -- Anchor directly below the nav bar — table fills the full remaining height
-    tableFrame:SetPoint("TOP",  MPT_Dashboard.navFrame, "BOTTOM", 0, -SUMMARY_MARGIN)
+    tableFrame:SetPoint("TOP",  MPT_Dashboard.navFrame, "BOTTOM", 0, -NAV_BOTTOM_MARGIN)
     tableFrame:SetPoint("LEFT", frame,                  "LEFT",   CONTENT_INSET, 0)
 
     createTableHeader(tableFrame, colX, nameW, function()

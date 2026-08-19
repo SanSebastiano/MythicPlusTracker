@@ -10,9 +10,7 @@ local function saveDebugState()
     MythicPlusTrackerDB.debugMode = addon.debugMode
 end
 
----Toggle debug mode on/off and save state
----@param enabled boolean|nil If provided, sets debug mode to this value. If nil, toggles current state
----@return void
+---@param enabled boolean|nil if nil, toggles the current state instead of setting it
 addon.setDebugMode = function(enabled)
     if enabled == nil then
         addon.debugMode = not addon.debugMode

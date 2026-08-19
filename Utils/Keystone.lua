@@ -33,7 +33,6 @@ function addon.Keystone:GetItemLink()
     return C_Container.GetContainerItemLink(bag, slot)
 end
 
----Returns the local player's currently owned keystone, or nils if none.
 ---@return number|nil mapID
 ---@return number|nil level
 ---@return string|nil dungeonName
@@ -73,7 +72,6 @@ local function getAnnounceChannel()
     return nil
 end
 
----Posts the local player's current keystone into the group's chat channel.
 ---Prints a local error instead of doing nothing silently if solo or if no
 ---keystone is owned.
 function addon.Keystone:AnnounceToGroup()

@@ -44,7 +44,6 @@ function addon.createThinBorder(frame, thickness, r, g, b, a)
     right:SetColorTexture(r, g, b, a)
 end
 
----A plain 1px horizontal separator line for table/list rows.
 function addon.createRowDivider(parent, y, alpha)
     local line = parent:CreateTexture(nil, "ARTWORK")
     line:SetPoint("TOPLEFT",  parent, "TOPLEFT",  0, y)
@@ -54,34 +53,28 @@ function addon.createRowDivider(parent, y, alpha)
     return line
 end
 
----Wires a UIPanelScrollBarTemplate slider + mousewheel scrolling to a ScrollFrame.
----Attaching our own OnValueChanged before the first SetValue() call avoids the
----template's built-in default handler firing first and calling SetVerticalScroll
----on a non-ScrollFrame (nil-call error).
+---Wires a modern MinimalScrollBar (the same Track/Thumb + Back/Forward-stepper
+---style as the Encounter Journal's "Journeys" tab) + mousewheel scrolling to a
+---ScrollFrame. ScrollUtil.InitScrollFrameWithScrollBar works directly with a
+---plain ScrollFrame/scrollChild (no WowScrollBoxList migration needed) and
+---installs OnVerticalScroll/OnScrollRangeChanged/OnMouseWheel itself.
 function addon.createTableScrollbar(outerFrame, scrollFrame, rowHeight)
-    local scrollBar = CreateFrame("Slider", nil, outerFrame, "UIPanelScrollBarTemplate")
-    scrollBar:SetPoint("TOPLEFT",    scrollFrame, "TOPRIGHT",    2, -16)
-    scrollBar:SetPoint("BOTTOMLEFT", scrollFrame, "BOTTOMRIGHT", 2,  16)
-    scrollBar:SetMinMaxValues(0, 0)
-    scrollBar:SetValueStep(rowHeight)
-
-    scrollBar:SetScript("OnValueChanged", function(self, value)
-        scrollFrame:SetVerticalScroll(value)
-    end)
-    scrollBar:SetValue(0)
-
-    scrollFrame:SetScript("OnScrollRangeChanged", function(self, _, yRange)
-        local current = self:GetVerticalScroll()
-        scrollBar:SetMinMaxValues(0, math.max(0, yRange))
-        scrollBar:SetValue(math.min(current, math.max(0, yRange)))
-    end)
+    local scrollBar = CreateFrame("EventFrame", nil, outerFrame, "MinimalScrollBar")
+    scrollBar:SetPoint("TOPRIGHT",    outerFrame, "TOPRIGHT",    0, 0)
+    scrollBar:SetPoint("BOTTOMRIGHT", outerFrame, "BOTTOMRIGHT", 0, 0)
+    scrollBar:SetHideIfUnscrollable(true)
 
     scrollFrame:EnableMouseWheel(true)
-    scrollFrame:SetScript("OnMouseWheel", function(self, delta)
-        local maxScroll = self:GetVerticalScrollRange()
-        local newValue = math.max(0, math.min(maxScroll, self:GetVerticalScroll() - delta * rowHeight * 3))
-        scrollBar:SetValue(newValue)
-    end)
+    ScrollUtil.InitScrollFrameWithScrollBar(scrollFrame, scrollBar)
+
+    -- Preserve the previous "3 rows per wheel notch" scroll feel (Init
+    -- defaults the pan extent to 30px, independent of this table's row height).
+    scrollFrame:SetPanExtent(rowHeight * 3)
+
+    -- scrollChild is already sized/populated by the caller before this runs,
+    -- so force one range recalculation now — otherwise OnScrollRangeChanged
+    -- never fires and the thumb stays full-size.
+    scrollFrame:UpdateScrollChildRect()
 
     return scrollBar
 end
@@ -101,14 +94,14 @@ end
 
 -- Section-header banner height for the Overview tab's Sidebar sections
 -- (WeeklyVault/TraitNodes/Currency). Matches the 46px title banners already
--- used in RunsStats.lua/GroupScores.lua — with headers now on only 3 of the
+-- used in RunsStats.lua/Statistics.lua — with headers now on only 3 of the
 -- 6 Overview sections (Affixes/Keystone stay header-less), the Sidebar's
 -- fixed 550px height has enough room for the full-size banner look.
 addon.SIDEBAR_SECTION_HEADER_HEIGHT = 46
 
 ---Section-header banner for the Sidebar's Overview tab: same visual language
 ---(CARD_TITLE_BACKGROUND + centered ARTIFACT-colored label) and size as the
----title banners in RunsStats.lua/GroupScores.lua.
+---title banners in RunsStats.lua/Statistics.lua.
 ---@param parent Frame
 ---@param y number top-left Y offset within parent
 ---@param width number
@@ -129,4 +122,27 @@ function addon.createSidebarSectionHeader(parent, y, width, text)
     label:SetText(text)
 
     return header
+end
+
+---Formats a GetServerTime() timestamp as a short localized "time ago" string
+---(e.g. "vor 5 Min."), for tooltips that show the freshness of cached/synced
+---data (Twinks/Guild keystone views). Returns TIME_UNKNOWN if the timestamp
+---is nil (e.g. nothing saved/synced yet this install).
+---@param serverTimestamp number|nil
+---@return string
+function addon.formatRelativeTime(serverTimestamp)
+    if not serverTimestamp then
+        return addon.locale["TIME_UNKNOWN"]
+    end
+
+    local elapsedSeconds = GetServerTime() - serverTimestamp
+    if elapsedSeconds < 60 then
+        return addon.locale["TIME_JUST_NOW"]
+    elseif elapsedSeconds < 3600 then
+        return string.format(addon.locale["TIME_MINUTES_AGO"], math.floor(elapsedSeconds / 60))
+    elseif elapsedSeconds < 86400 then
+        return string.format(addon.locale["TIME_HOURS_AGO"], math.floor(elapsedSeconds / 3600))
+    else
+        return string.format(addon.locale["TIME_DAYS_AGO"], math.floor(elapsedSeconds / 86400))
+    end
 end
