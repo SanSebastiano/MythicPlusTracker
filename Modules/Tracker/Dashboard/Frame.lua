@@ -58,9 +58,21 @@ local function create(mainFrame)
     end
 
     local tabCallbacks = {
-        [TAB_OVERVIEW]  = function() if not isMaxLevel() then return false end showContent(MPT_Dashboard.loadDungeons); MPT_Sidebar:showForTab(TAB_OVERVIEW) end,
-        [TAB_RUNS]      = function() if not isMaxLevel() then return false end showContent(MPT_Dashboard.loadRuns);     MPT_Sidebar:showForTab(TAB_RUNS) end,
-        [TAB_KEYSTONES] = function() if not isMaxLevel() then return false end showContent(MPT_Dashboard.loadKeystones); MPT_Sidebar:showForTab(TAB_KEYSTONES) end,
+        [TAB_OVERVIEW] = function()
+            if not isMaxLevel() then return false end
+            showContent(MPT_Dashboard.loadDungeons)
+            MPT_Sidebar:showForTab(TAB_OVERVIEW)
+        end,
+        [TAB_RUNS] = function()
+            if not isMaxLevel() then return false end
+            showContent(MPT_Dashboard.loadRuns)
+            MPT_Sidebar:showForTab(TAB_RUNS)
+        end,
+        [TAB_KEYSTONES] = function()
+            if not isMaxLevel() then return false end
+            showContent(MPT_Dashboard.loadKeystones)
+            MPT_Sidebar:showForTab(TAB_KEYSTONES)
+        end,
     }
 
     MPT_Dashboard:createNavigation(frame, tabCallbacks)
