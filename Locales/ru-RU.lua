@@ -108,6 +108,8 @@ local locale = {
     ["KEYSTONES_MODE_GROUP"]  = "Группа",
     ["KEYSTONES_MODE_ALTS"]   = "Твинки",
     ["KEYSTONES_ALTS_EMPTY"]  = "Твинки пока не сохранены.",
+    ["KEYSTONES_MODE_GUILD"]  = "Гильдия",
+    ["KEYSTONES_GUILD_EMPTY"] = "Участники гильдии пока не известны.",
     -- Settings panel
     ["SETTINGS_CATEGORY_NAME"]         = "Mythic Plus Tracker",
     ["SETTINGS_SECTION_GENERAL_LABEL"] = "Основное",

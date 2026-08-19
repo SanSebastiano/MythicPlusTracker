@@ -90,6 +90,7 @@ globals = {
     "C_Spell",
     "C_Traits",
     "C_DateAndTime",
+    "C_GuildInfo",
     "Enum",
 
     -- -----------------------------------------------------------------------
@@ -158,6 +159,9 @@ globals = {
     "GetMaxPlayerLevel",
     "IsInGroup",
     "IsInRaid",
+    "IsInGuild",
+    "GetNumGuildMembers",
+    "GetGuildRosterInfo",
     "GetNumGroupMembers",
     "LE_PARTY_CATEGORY_INSTANCE",
     "GetRaidRosterInfo",

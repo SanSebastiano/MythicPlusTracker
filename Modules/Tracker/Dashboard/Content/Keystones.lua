@@ -17,7 +17,7 @@ local ARTIFACT_R, ARTIFACT_G, ARTIFACT_B = addon.colorToRGB("ARTIFACT")
 local REFRESH_ICON_SIZE = 20 -- refresh button dimensions
 local REFRESH_ICON_PRESS_OFFSET = -2 -- pixels the icon shifts down while the button is held, like the nav tabs
 local REFRESH_COOLDOWN_SECONDS = 2 -- minimum time between refreshes, not shown to the player
-local MODE_DROPDOWN_W = 150  -- width of the Group/Alts mode dropdown
+local MODE_DROPDOWN_W = 150  -- width of the Group/Alts/Guild mode dropdown
 local MODE_DROPDOWN_H = 26   -- fixed height of WowStyle1DropdownTemplate
 local MODE_DROPDOWN_MARGIN = 6 -- gap between the mode dropdown and the table below it
 
@@ -28,16 +28,19 @@ local lastRefreshTime = 0
 
 local MODE_GROUP = "group"
 local MODE_ALTS  = "alts"
+local MODE_GUILD = "guild"
 
 local MODE_OPTIONS = {
     { mode = MODE_GROUP, localeKey = "KEYSTONES_MODE_GROUP" },
     { mode = MODE_ALTS,  localeKey = "KEYSTONES_MODE_ALTS" },
+    { mode = MODE_GUILD, localeKey = "KEYSTONES_MODE_GUILD" },
 }
 
 -- Sort state for the clickable column headers, shared across both Group and
--- Alts modes (same table layout, same header row). nil sortCol means "no
--- explicit sort yet": Group keeps roster order, Alts keeps its own default
--- (level desc, then name — see Utils/AltKeystones.lua:GetEntries()). Plain
+-- Alts/Guild modes (same table layout, same header row). nil sortCol means
+-- "no explicit sort yet": Group keeps roster order, Alts/Guild keep their
+-- own default (level desc, then name — see Utils/AltKeystones.lua and
+-- Utils/GuildKeys.lua's GetEntries()). Plain
 -- module-level locals, like Dungeons.lua's sortCol/sortDir — persists across
 -- re-renders within the session, reset only by /reload.
 local sortCol = nil
@@ -93,6 +96,8 @@ local CLASS_ICON_ATLAS_BY_ENGLISH_CLASS = {
 local function getMode()
     if MythicPlusTrackerDB.keystonesTabMode == MODE_ALTS then
         return MODE_ALTS
+    elseif MythicPlusTrackerDB.keystonesTabMode == MODE_GUILD then
+        return MODE_GUILD
     end
     return MODE_GROUP
 end
@@ -173,13 +178,13 @@ local function refreshGroupView()
 end
 
 ---Creates the icon-only refresh button, anchored directly to the left of the
----Group/Alts mode dropdown (in the row above the table). The scrollbar
+---Group/Alts/Guild mode dropdown (in the row above the table). The scrollbar
 ---gutter (Utils/UIHelpers.lua) is only 14px wide — too narrow for a 20px
 ---icon now that it hosts the slim MinimalScrollBar instead of the old, wider
 ---UIPanelScrollBarTemplate — so this button no longer lives there. Only
----relevant to the Group mode — the Alts view has nothing to live-request, it
----just reflects whatever each character last saved on login (see
----Utils/AltKeystones.lua).
+---relevant to the Group mode — the Alts/Guild views have nothing to
+---live-request, they just reflect whatever was last saved/received (see
+---Utils/AltKeystones.lua and Utils/GuildKeys.lua).
 ---@param dropdown Frame the mode dropdown returned by createModeDropdown
 local function createRefreshButton(dropdown)
     local button = CreateFrame("Button", nil, dropdown)
@@ -224,7 +229,7 @@ local function createRefreshButton(dropdown)
     end)
 end
 
----Creates the Group/Alts mode dropdown, right-aligned above the table.
+---Creates the Group/Alts/Guild mode dropdown, right-aligned above the table.
 ---Selecting an option persists it to MythicPlusTrackerDB.keystonesTabMode
 ---and re-renders both the Dashboard tab and the Sidebar (which mirrors the
 ---same mode, see Modules/Tracker/Sidebar/Content/Statistics.lua) in place.
@@ -290,7 +295,7 @@ local function resolveDungeonName(entry)
 end
 
 ---Sorts a row-entry array in place by the active header column, if any.
----Shared by both Group and Alts modes since both feed the same table layout
+---Shared by Group, Alts, and Guild modes since all feed the same table layout
 ---(both entry shapes expose .name/.mapID/.level/.score). No-op when no
 ---column has been clicked yet, preserving each mode's own default order.
 ---@param entries table
@@ -500,6 +505,22 @@ local function createScoreCell(parent, colX, rowY, score)
     end
 end
 
+---Renders the "no addon" fallback spanning the dungeon+level columns, used
+---whenever a member is known to have no MythicPlusTracker response at all
+---(as opposed to having the addon but no current key).
+---@param parent Frame
+---@param colX table
+---@param dungeonW number
+---@param rowY number
+local function createNoAddonCell(parent, colX, dungeonW, rowY)
+    local noAddonText = parent:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    noAddonText:SetSize(dungeonW + COL_GAP + COL_W.level, ROW_H)
+    noAddonText:SetPoint("TOPLEFT", parent, "TOPLEFT", colX["dungeon"], rowY)
+    noAddonText:SetJustifyH("LEFT")
+    noAddonText:SetJustifyV("MIDDLE")
+    noAddonText:SetText(addon.colors.POOR .. "– " .. addon.locale["KEYSTONES_NO_ADDON"] .. " –" .. addon.colors.RESET)
+end
+
 ---Renders one Group row from a normalized entry (see buildGroupEntries).
 ---entry.unitToken is still needed for the portrait render and the live role
 ---lookup — neither is precomputed since they don't factor into sorting.
@@ -531,12 +552,7 @@ local function createRow(parent, entry, colX, nameW, dungeonW, rowY, isLast)
         createDungeonAndLevelCell(parent, colX, dungeonW, rowY, entry.mapID, entry.level, addon.locale["KEYSTONES_NO_KEY"])
     else
         -- No response received at all: member likely does not run MythicPlusTracker.
-        local noAddonText = parent:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-        noAddonText:SetSize(dungeonW + COL_GAP + COL_W.level, ROW_H)
-        noAddonText:SetPoint("TOPLEFT", parent, "TOPLEFT", colX["dungeon"], rowY)
-        noAddonText:SetJustifyH("LEFT")
-        noAddonText:SetJustifyV("MIDDLE")
-        noAddonText:SetText(addon.colors.POOR .. "– " .. addon.locale["KEYSTONES_NO_ADDON"] .. " –" .. addon.colors.RESET)
+        createNoAddonCell(parent, colX, dungeonW, rowY)
     end
     createScoreCell(parent, colX, rowY, entry.score)
 
@@ -545,14 +561,22 @@ local function createRow(parent, entry, colX, nameW, dungeonW, rowY, isLast)
     end
 end
 
----Renders one saved alt/twink entry. Unlike Group rows, there is no live
----unit token to draw from (the character may be offline), so this has no
----portrait and no role icon — both require a real unit token.
+---Renders one saved alt/twink or guild entry. Unlike Group rows, there is
+---no live unit token to draw from (the character may be offline), so this
+---has no portrait and no role icon — both require a real unit token.
+---Alts entries never set hasAddon (implicitly always true — it's the local
+---account's own data); Guild entries can have hasAddon == false for online
+---guild members addon.GuildKeys:GetEntries() found via the live roster scan
+---but never heard a broadcast from, rendered like the Group tab's fallback.
 ---@param parent Frame
----@param altEntry table entry from addon.AltKeystones:GetEntries()
+---@param altEntry table entry from addon.AltKeystones:GetEntries() or addon.GuildKeys:GetEntries()
 local function createAltRow(parent, altEntry, colX, nameW, dungeonW, rowY, isLast)
     createNameAndClassCell(parent, colX, nameW, rowY, altEntry.name, altEntry.class)
-    createDungeonAndLevelCell(parent, colX, dungeonW, rowY, altEntry.mapID, altEntry.level, addon.locale["KEYSTONES_NO_KEY"])
+    if altEntry.hasAddon == false then
+        createNoAddonCell(parent, colX, dungeonW, rowY)
+    else
+        createDungeonAndLevelCell(parent, colX, dungeonW, rowY, altEntry.mapID, altEntry.level, addon.locale["KEYSTONES_NO_KEY"])
+    end
     createScoreCell(parent, colX, rowY, altEntry.score)
 
     if not isLast then
@@ -650,7 +674,7 @@ function MPT_Dashboard:loadKeystones(frame)
             local isLast = (rowIndex == #entries)
             createRow(scrollChild, entry, colX, nameW, dungeonW, rowY, isLast)
         end
-    else
+    elseif mode == MODE_ALTS then
         local altEntries = sortEntries(addon.AltKeystones:GetEntries())
         scrollChild:SetSize(scrollChildW, math.max(#altEntries, 1) * ROW_H)
 
@@ -666,6 +690,26 @@ function MPT_Dashboard:loadKeystones(frame)
                 local rowY   = -((rowIndex - 1) * ROW_H)
                 local isLast = (rowIndex == #altEntries)
                 createAltRow(scrollChild, altEntry, colX, nameW, dungeonW, rowY, isLast)
+            end
+        end
+    else -- MODE_GUILD
+        -- Reuses createAltRow: guild entries have the same shape (no live
+        -- unit token, so no portrait/role column) as Alts entries.
+        local guildEntries = sortEntries(addon.GuildKeys:GetEntries())
+        scrollChild:SetSize(scrollChildW, math.max(#guildEntries, 1) * ROW_H)
+
+        if #guildEntries == 0 then
+            local emptyText = scrollChild:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+            emptyText:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", 0, 0)
+            emptyText:SetSize(scrollChildW, ROW_H)
+            emptyText:SetJustifyH("CENTER")
+            emptyText:SetJustifyV("MIDDLE")
+            emptyText:SetText(addon.locale["KEYSTONES_GUILD_EMPTY"])
+        else
+            for rowIndex, guildEntry in ipairs(guildEntries) do
+                local rowY   = -((rowIndex - 1) * ROW_H)
+                local isLast = (rowIndex == #guildEntries)
+                createAltRow(scrollChild, guildEntry, colX, nameW, dungeonW, rowY, isLast)
             end
         end
     end

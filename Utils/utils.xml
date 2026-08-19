@@ -7,6 +7,8 @@
     <Script file='Keystone.lua'/>
     <Script file='AltKeystones.lua'/>
     <Script file='Communication.lua'/>
+    <Script file='GuildKeys.lua'/>
+    <Script file='GuildComm.lua'/>
     <Script file='DungeonTeleports.lua'/>
     <Script file='RunHistoryCache.lua'/>
     <Script file='UIHelpers.lua'/>

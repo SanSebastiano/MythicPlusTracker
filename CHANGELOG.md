@@ -2,10 +2,11 @@
 
 All notable changes to MythicPlusTracker are documented here.
 
-## [1.3.0] - 2026-08-16
+## [1.3.0] - Unreleased
 
 ### Added
 - **Twinks/Alts support in the Keystones tab.** A new dropdown above the table switches between the live Group view and a new Twinks view that lists every one of your other max-level characters' last-known keystone. Each max-level character saves its own keystone automatically on login and after finishing a dungeon; a Twink's keystone/level automatically resets to "no key" once the weekly reset has passed since it last logged in, so the list never shows stale data as current.
+- **Guild-wide keystones in the Keystones tab.** A new "Guild" dropdown option lists every guild member's last-known keystone, kept in sync automatically over guild-chat addon messages. Data spreads even to members you've never been online with directly, since whoever else happens to be online passes along what they've learned. Known members without a current key (e.g. after the weekly reset) show "No key", while currently online guild members who've never responded at all show "No addon", matching the Group view's distinction.
 - New "Score" column in the Keystones tab table, shown in both the Group and Twinks views.
 - The Keystones tab table's column headers (Player, Dungeon, Level, Score) are now clickable to sort the table, with an ascending/descending indicator — matching the Overview tab's existing sortable headers.
 - New Sidebar Statistics section for the Keystones tab: average score, average keystone level, how many currently hold a key, and the best-performing member/twink — automatically follows whichever mode (Group or Twinks) is selected in the Dashboard dropdown.

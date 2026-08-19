@@ -108,6 +108,8 @@ local locale = {
     ["KEYSTONES_MODE_GROUP"]  = "Gruppe",
     ["KEYSTONES_MODE_ALTS"]   = "Twinks",
     ["KEYSTONES_ALTS_EMPTY"]  = "Noch keine Twinks gespeichert.",
+    ["KEYSTONES_MODE_GUILD"]  = "Gilde",
+    ["KEYSTONES_GUILD_EMPTY"] = "Noch keine Gildenmitglieder bekannt.",
     -- Settings panel
     ["SETTINGS_CATEGORY_NAME"]         = "Mythic Plus Tracker",
     ["SETTINGS_SECTION_GENERAL_LABEL"] = "Allgemein",

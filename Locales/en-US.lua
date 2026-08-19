@@ -104,6 +104,8 @@ local locale = {
     ["KEYSTONES_MODE_GROUP"]  = "Group",
     ["KEYSTONES_MODE_ALTS"]   = "Alts",
     ["KEYSTONES_ALTS_EMPTY"]  = "No alts saved yet.",
+    ["KEYSTONES_MODE_GUILD"]  = "Guild",
+    ["KEYSTONES_GUILD_EMPTY"] = "No guild members known yet.",
     -- Settings panel
     ["SETTINGS_CATEGORY_NAME"]         = "Mythic Plus Tracker",
     ["SETTINGS_SECTION_GENERAL_LABEL"] = "General",
