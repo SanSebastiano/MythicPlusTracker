@@ -229,6 +229,37 @@ local function createRefreshButton(dropdown)
     end)
 end
 
+---Creates a static info icon in the same spot as createRefreshButton, for
+---modes where there's nothing to actively request (Alts/Guild — see the
+---comment above createRefreshButton). Unlike that button, this is a plain
+---Frame (no OnClick, no press animation, no highlight texture) so it doesn't
+---visually invite a click that would do nothing. getTooltipLines is called
+---fresh on every OnEnter so the displayed "last updated" timestamp is always
+---current, not just what it was when the tab was opened.
+---@param dropdown Frame the mode dropdown returned by createModeDropdown
+---@param getTooltipLines function returns an array of strings to show in the tooltip
+local function createInfoButton(dropdown, getTooltipLines)
+    local button = CreateFrame("Frame", nil, dropdown)
+    button:SetSize(REFRESH_ICON_SIZE, REFRESH_ICON_SIZE)
+    button:SetPoint("RIGHT", dropdown, "LEFT", -8, 0)
+    button:EnableMouse(true)
+
+    local icon = button:CreateTexture(nil, "ARTWORK")
+    icon:SetAllPoints(button)
+    icon:SetAtlas(addon.theme.KEYSTONES_INFO_ICON, false)
+
+    button:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        for _, line in ipairs(getTooltipLines()) do
+            GameTooltip:AddLine(line, 1, 1, 1, true)
+        end
+        GameTooltip:Show()
+    end)
+    button:SetScript("OnLeave", function()
+        GameTooltip:Hide()
+    end)
+end
+
 ---Creates the Group/Alts/Guild mode dropdown, right-aligned above the table.
 ---Selecting an option persists it to MythicPlusTrackerDB.keystonesTabMode
 ---and re-renders both the Dashboard tab and the Sidebar (which mirrors the
@@ -650,6 +681,22 @@ function MPT_Dashboard:loadKeystones(frame)
 
     if mode == MODE_GROUP then
         createRefreshButton(dropdown)
+    elseif mode == MODE_ALTS then
+        createInfoButton(dropdown, function()
+            return {
+                string.format(addon.locale["KEYSTONES_LAST_UPDATED"],
+                    addon.formatRelativeTime(addon.AltKeystones:GetLastRefreshedAt())),
+                addon.locale["KEYSTONES_ALTS_NEXT_UPDATE"],
+            }
+        end)
+    elseif mode == MODE_GUILD then
+        createInfoButton(dropdown, function()
+            return {
+                string.format(addon.locale["KEYSTONES_LAST_UPDATED"],
+                    addon.formatRelativeTime(addon.GuildKeys:GetLastRefreshedAt())),
+                addon.locale["KEYSTONES_GUILD_NEXT_UPDATE"],
+            }
+        end)
     end
 
     local scrollFrame = CreateFrame("ScrollFrame", nil, outerFrame)

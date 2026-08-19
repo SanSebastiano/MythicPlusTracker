@@ -6,6 +6,7 @@ local addonName, addon = ...
 -- different character still shows that character's last-known keystone in
 -- the Dashboard Keystones tab's "Alts" view.
 MythicPlusTrackerAltDB = MythicPlusTrackerAltDB or {}
+MythicPlusTrackerDB = MythicPlusTrackerDB or {}
 
 ---Realm-qualified key identifying the current character, matching the
 ---format used for group members in Utils/Communication.lua.
@@ -41,12 +42,22 @@ local function persistOwnKeystoneIfEligible()
         resetEpoch = C_DateAndTime.GetWeeklyResetStartTime(),
         savedAt    = GetServerTime(),
     }
+    MythicPlusTrackerDB.altKeystonesLastRefreshedAt = GetServerTime()
 
     addon.debugMessage("AltKeystones: saved own keystone (mapID=" .. tostring(mapID)
         .. ", level=" .. tostring(level) .. ")")
 end
 
 addon.AltKeystones = addon.AltKeystones or {}
+
+---Returns the server timestamp of the last time the local character's own
+---keystone was checked and (re-)saved into MythicPlusTrackerAltDB, or nil if
+---that hasn't happened yet (e.g. addon just installed, or character below
+---max level). Used by the Alts view's info tooltip.
+---@return number|nil
+function addon.AltKeystones:GetLastRefreshedAt()
+    return MythicPlusTrackerDB.altKeystonesLastRefreshedAt
+end
 
 ---Returns every saved alt entry, sorted by keystone level (highest first,
 ---no-key entries last) and then by name. Entries whose resetEpoch no longer
