@@ -15,7 +15,7 @@ addon.GuildKeys = addon.GuildKeys or {}
 ---members are returned by GetGuildRosterInfo without a realm suffix; cross-
 ---realm (connected-realm) guilds include one. Falls back to the local
 ---realm when none is present, matching the qualification pattern used for
----incoming addon-message senders (see Utils/Communication.lua:217-220).
+---incoming addon-message senders in Utils/Communication.lua's CHAT_MSG_ADDON handler.
 ---@param rawName string
 ---@return string name
 ---@return string realm

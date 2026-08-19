@@ -44,7 +44,6 @@ function addon.createThinBorder(frame, thickness, r, g, b, a)
     right:SetColorTexture(r, g, b, a)
 end
 
----A plain 1px horizontal separator line for table/list rows.
 function addon.createRowDivider(parent, y, alpha)
     local line = parent:CreateTexture(nil, "ARTWORK")
     line:SetPoint("TOPLEFT",  parent, "TOPLEFT",  0, y)

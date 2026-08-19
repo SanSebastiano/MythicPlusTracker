@@ -7,7 +7,7 @@ local CONTENT_X = 23
 local CONTENT_W = 254
 local INSET     = 10   -- left/right inset inside content rows, matches RunsStats.lua
 
-local SECTION_GAP           = 8  -- gap before the section's header
+local SECTION_GAP           = 8
 local HEADER_TO_CONTENT_GAP = 4  -- gap between header banner and its rows (matches WeeklyVault.lua)
 
 local ROW_H       = 22  -- matches RunsStats.lua's tier rows
