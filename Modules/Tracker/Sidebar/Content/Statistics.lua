@@ -22,6 +22,11 @@ local function isAltsMode()
     return MythicPlusTrackerDB.keystonesTabMode == "alts"
 end
 
+---@return boolean
+local function isGuildMode()
+    return MythicPlusTrackerDB.keystonesTabMode == "guild"
+end
+
 ---A thin 1px divider spanning the same inset content width as the rows
 ---themselves (CONTENT_X+INSET .. CONTENT_X+CONTENT_W-INSET) — same
 ---convention as the hand-built dividers in RunsStats.lua, not the full-width
@@ -224,6 +229,9 @@ local function loadStatistics(sidebar, cursor)
     if isAltsMode() then
         renderStatsSection(sidebar, cursor, addon.locale["KEYSTONES_MODE_ALTS"],
             addon.AltKeystones:GetEntries(), addon.locale["KEYSTONES_ALTS_EMPTY"])
+    elseif isGuildMode() then
+        renderStatsSection(sidebar, cursor, addon.locale["KEYSTONES_MODE_GUILD"],
+            addon.GuildKeys:GetEntries(), addon.locale["KEYSTONES_GUILD_EMPTY"])
     else
         if addon.Communication then
             addon.Communication:RequestGroupKeystones()
