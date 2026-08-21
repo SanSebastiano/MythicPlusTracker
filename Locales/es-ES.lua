@@ -74,7 +74,7 @@ local locale = {
     ["RUN_COL_SCORE"]     = "Puntuación",
     ["RUN_COL_DURATION"]  = "Tiempo",
     ["RUN_COL_DATE"]      = "Fecha",
-    ["RUN_COL_SEASON"]    = "Temporada",
+    ["RUN_COL_TIME_DELTA"] = "Tiempo +/-",
     ["RUN_TABLE_NO_RUNS"] = "Aún no se ha registrado ninguna mazmorra.",
     -- Runs table tooltips
     ["RUN_TOOLTIP_TIME_LIMIT"]    = "Límite de tiempo",

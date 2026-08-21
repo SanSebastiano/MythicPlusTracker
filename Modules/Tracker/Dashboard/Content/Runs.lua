@@ -18,7 +18,7 @@ local COL_W = {
     score     = 65,
     duration  = 50,
     date      = 90,
-    season    = 50,
+    timeDelta = 55,
 }
 
 local ARTIFACT_R, ARTIFACT_G, ARTIFACT_B = addon.colorToRGB("ARTIFACT")
@@ -69,11 +69,19 @@ local function formatDate(d)
         d.hour     or 0, d.minute or 0)
 end
 
-local function formatSeason(s)
-    if not s or s <= 0 then
+-- Delta between the dungeon's timer and how long the run actually took.
+-- Positive (green) means time to spare; negative (red) means overtime.
+local function formatTimeDelta(sec, timeLimit)
+    if not sec or sec <= 0 or not timeLimit or timeLimit <= 0 then
         return addon.colors.POOR .. "–" .. addon.colors.RESET
     end
-    return tostring(s)
+    local delta    = timeLimit - sec
+    local absDelta = math.abs(delta)
+    local str      = string.format("%d:%02d", math.floor(absDelta / 60), absDelta % 60)
+    if delta >= 0 then
+        return addon.colors.TIMER_SUCCESS .. "+" .. str .. addon.colors.RESET
+    end
+    return addon.colors.TIMER_DANGER .. "-" .. str .. addon.colors.RESET
 end
 
 local function addCellTooltip(parent, x, y, w, h, title, body)
@@ -99,8 +107,8 @@ local function createHeader(parent, colX, nameW)
         { key = "completed", localeKey = "RUN_COL_COMPLETED",w = COL_W.completed,j = "CENTER"},
         { key = "score",     localeKey = "RUN_COL_SCORE",   w = COL_W.score,     j = "RIGHT" },
         { key = "duration",  localeKey = "RUN_COL_DURATION",w = COL_W.duration,  j = "RIGHT" },
+        { key = "timeDelta", localeKey = "RUN_COL_TIME_DELTA", w = COL_W.timeDelta, j = "RIGHT" },
         { key = "date",      localeKey = "RUN_COL_DATE",    w = COL_W.date,      j = "RIGHT" },
-        { key = "season",    localeKey = "RUN_COL_SEASON",  w = COL_W.season,    j = "RIGHT" },
     }
 
     for _, def in ipairs(headerDefs) do
@@ -184,8 +192,8 @@ local function createRow(parent, run, colX, nameW, rowY, isLast, scoreDeltas)
     addon.createTableCell(parent, colX["date"], rowY, COL_W.date, ROW_H,
         formatDate(run.completionDate), "GameFontHighlight", "RIGHT", true)
 
-    addon.createTableCell(parent, colX["season"], rowY, COL_W.season, ROW_H,
-        formatSeason(run.season), "GameFontHighlight", "RIGHT")
+    addon.createTableCell(parent, colX["timeDelta"], rowY, COL_W.timeDelta, ROW_H,
+        formatTimeDelta(run.durationSec, timeLimit), "GameFontHighlight", "RIGHT")
 
     if not isLast then
         addon.createRowDivider(parent, rowY - ROW_H, 0.3)
@@ -228,13 +236,13 @@ function MPT_Dashboard:loadRuns(frame)
     local tableW       = DASHBOARD_W - CONTENT_INSET * 2
     local scrollChildW = tableW - SCROLL_BTN_SIZE - 4
     local fixedW   = COL_W.icon + COL_W.level + COL_W.completed + COL_W.score
-                   + COL_W.duration + COL_W.date + COL_W.season
+                   + COL_W.duration + COL_W.date + COL_W.timeDelta
     local numGaps  = 7
     local nameW    = scrollChildW - PADDING_X * 2 - fixedW - numGaps * COL_GAP
 
     local colX  = {}
     local cursor = PADDING_X
-    for _, key in ipairs({ "icon", "name", "level", "completed", "score", "duration", "date", "season" }) do
+    for _, key in ipairs({ "icon", "name", "level", "completed", "score", "duration", "timeDelta", "date" }) do
         colX[key] = cursor
         local w = (key == "name") and nameW or COL_W[key]
         cursor = cursor + w + COL_GAP

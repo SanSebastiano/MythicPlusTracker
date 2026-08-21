@@ -71,7 +71,7 @@ local locale = {
     ["RUN_COL_SCORE"]     = "Результат",
     ["RUN_COL_DURATION"]  = "Время",
     ["RUN_COL_DATE"]      = "Дата",
-    ["RUN_COL_SEASON"]    = "Сезон",
+    ["RUN_COL_TIME_DELTA"] = "Время +/-",
     ["RUN_TABLE_NO_RUNS"] = "Прохождений пока не зафиксировано.",
     -- Runs table tooltips
     ["RUN_TOOLTIP_TIME_LIMIT"]    = "Ограничение по времени",

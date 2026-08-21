@@ -74,7 +74,7 @@ local locale = {
     ["RUN_COL_SCORE"]     = "Score",
     ["RUN_COL_DURATION"]  = "Temps",
     ["RUN_COL_DATE"]      = "Date",
-    ["RUN_COL_SEASON"]    = "Saison",
+    ["RUN_COL_TIME_DELTA"] = "Temps +/-",
     ["RUN_TABLE_NO_RUNS"] = "Aucun donjon enregistré pour le moment.",
     -- Runs table tooltips
     ["RUN_TOOLTIP_TIME_LIMIT"]    = "Limite de temps",
