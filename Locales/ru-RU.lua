@@ -93,7 +93,7 @@ local locale = {
     ["SIDEBAR_STATS_AVG_SCORE"] = "Средний рейтинг",
     ["SIDEBAR_STATS_AVG_LEVEL"] = "Средний уровень",
     ["SIDEBAR_STATS_WITH_KEY"]  = "С ключом",
-    ["SIDEBAR_STATS_BEST"]      = "Лучший:",
+    ["SIDEBAR_STATS_BEST"]      = "Наивысший ключ:",
     -- Sidebar: Overview tab section headers
     ["SIDEBAR_TRAITNODES_HEADER"] = "Руны мощи",
     ["SIDEBAR_CURRENCY_HEADER"]   = "Валюты",

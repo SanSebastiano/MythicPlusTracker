@@ -93,7 +93,7 @@ local locale = {
     ["SIDEBAR_STATS_AVG_SCORE"] = "Ø Wertung",
     ["SIDEBAR_STATS_AVG_LEVEL"] = "Ø Stufe",
     ["SIDEBAR_STATS_WITH_KEY"]  = "Mit Schlüssel",
-    ["SIDEBAR_STATS_BEST"]      = "Bester:",
+    ["SIDEBAR_STATS_BEST"]      = "Höchster Key:",
     -- Sidebar: Overview tab section headers
     ["SIDEBAR_TRAITNODES_HEADER"] = "Runen der Macht",
     ["SIDEBAR_CURRENCY_HEADER"]   = "Währungen",

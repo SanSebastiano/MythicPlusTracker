@@ -89,7 +89,7 @@ local locale = {
     ["SIDEBAR_STATS_AVG_SCORE"] = "Avg Score",
     ["SIDEBAR_STATS_AVG_LEVEL"] = "Avg Level",
     ["SIDEBAR_STATS_WITH_KEY"]  = "With Key",
-    ["SIDEBAR_STATS_BEST"]      = "Best:",
+    ["SIDEBAR_STATS_BEST"]      = "Highest Key:",
     -- Sidebar: Overview tab section headers
     ["SIDEBAR_TRAITNODES_HEADER"] = "Runes of Power",
     ["SIDEBAR_CURRENCY_HEADER"]   = "Currencies",

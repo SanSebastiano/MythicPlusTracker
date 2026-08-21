@@ -96,7 +96,7 @@ local locale = {
     ["SIDEBAR_STATS_AVG_SCORE"] = "Score moyen",
     ["SIDEBAR_STATS_AVG_LEVEL"] = "Niveau moyen",
     ["SIDEBAR_STATS_WITH_KEY"]  = "Avec clé",
-    ["SIDEBAR_STATS_BEST"]      = "Meilleur :",
+    ["SIDEBAR_STATS_BEST"]      = "Clé la plus haute :",
     -- Keystones tab: group keystone overview
     ["KEYSTONES_COL_PLAYER"]  = "Joueur",
     ["KEYSTONES_COL_DUNGEON"] = "Donjon",
