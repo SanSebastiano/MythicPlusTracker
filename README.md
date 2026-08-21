@@ -3,7 +3,7 @@
 # Mythic Plus Tracker
 
 ![WoW Interface](https://img.shields.io/badge/WoW%20Interface-120100-blueviolet)
-![Version](https://img.shields.io/badge/Version-1.3.0-blue)
+![Version](https://img.shields.io/badge/Version-1.3.1-blue)
 [![License: CC BY-NC-ND 4.0](https://img.shields.io/badge/License-CC%20BY--NC--ND%204.0-lightgrey)](https://creativecommons.org/licenses/by-nc-nd/4.0/)
 
 </div>

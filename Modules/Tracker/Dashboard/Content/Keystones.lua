@@ -14,17 +14,21 @@ local NAV_BOTTOM_MARGIN = 8
 local SCROLL_BTN_SIZE = 10   -- gutter reserved for the scrollbar (MinimalScrollBar is 8px wide)
 local ROW_PADDING_X   = 5
 local ARTIFACT_R, ARTIFACT_G, ARTIFACT_B = addon.colorToRGB("ARTIFACT")
+local POOR_R, POOR_G, POOR_B = addon.colorToRGB("POOR")
 local REFRESH_ICON_SIZE = 20
 local REFRESH_ICON_PRESS_OFFSET = -2 -- pixels the icon shifts down while the button is held, like the nav tabs
 local REFRESH_COOLDOWN_SECONDS = 2 -- minimum time between refreshes, not shown to the player
+local GUILD_REFRESH_COOLDOWN_SECONDS = 30 -- longer than Group's: a guild is much bigger than a party/raid
 local MODE_DROPDOWN_W = 150
 local MODE_DROPDOWN_H = 26   -- fixed height of WowStyle1DropdownTemplate
 local MODE_DROPDOWN_MARGIN = 6
 
 -- Timestamp (GetTime()) of the last time the refresh button actually
--- triggered a refresh. Clicks within REFRESH_COOLDOWN_SECONDS of this are
--- silently ignored, with no visible feedback to the player.
+-- triggered a refresh. Clicks within REFRESH_COOLDOWN_SECONDS (or, for
+-- Guild, GUILD_REFRESH_COOLDOWN_SECONDS) of this are silently ignored, with
+-- no visible feedback to the player.
 local lastRefreshTime = 0
+local lastGuildRefreshTime = 0
 
 local MODE_GROUP = "group"
 local MODE_ALTS  = "alts"
@@ -177,15 +181,54 @@ local function refreshGroupView()
     end
 end
 
+---Same as refreshGroupView, but for the Guild mode's refresh button — see
+---the comment above createRefreshButton. Guild's own
+---addon.GuildComm:RequestGuildKeystones() call happens as part of the normal
+---render path (see the MODE_GUILD branch below), just like Group's, so it
+---isn't repeated here either.
+local function refreshGuildView()
+    local now = GetTime()
+    if now - lastGuildRefreshTime < GUILD_REFRESH_COOLDOWN_SECONDS then
+        return
+    end
+    lastGuildRefreshTime = now
+
+    if MPT_Dashboard and MPT_Dashboard.refreshKeystonesView then
+        MPT_Dashboard:refreshKeystonesView()
+    end
+
+    if MPT_Sidebar and MPT_Sidebar.showForTab then
+        MPT_Sidebar:showForTab(3)
+    end
+end
+
+---Adds a tooltip line whose "<Label>:" prefix (up to and including the first
+---colon) is colored POOR-gray, with the rest of the line left in the
+---default tooltip color. Used for the secondary "last updated"/"next
+---update" lines so only the label reads as muted, not the actual value.
+---@param text string
+local function addPoorLabelLine(text)
+    local prefix, rest = text:match("^([^:]+:)(.*)$")
+    if prefix then
+        GameTooltip:AddLine(addon.colors.POOR .. prefix .. addon.colors.RESET .. rest, 1, 1, 1, true)
+    else
+        GameTooltip:AddLine(text, POOR_R, POOR_G, POOR_B, true)
+    end
+end
+
 ---Creates the icon-only refresh button, anchored directly to the left of the
 ---Group/Alts/Guild mode dropdown (in the row above the table). The scrollbar
 ---gutter (Utils/UIHelpers.lua) is only 14px wide — too narrow for a 20px
 ---icon now that it hosts the slim MinimalScrollBar instead of the old, wider
----UIPanelScrollBarTemplate — so this button no longer lives there. Only
----relevant to Group mode — Alts/Guild have nothing to request live, and use
+---UIPanelScrollBarTemplate — so this button no longer lives there. Used by
+---both Group and Guild mode (each with their own onClick/cooldown and
+---tooltip text); Alts has nothing to actively request and uses
 ---createInfoButton below instead.
 ---@param dropdown Frame the mode dropdown returned by createModeDropdown
-local function createRefreshButton(dropdown)
+---@param onClick function called on click (expected to do its own cooldown check)
+---@param getLastRefreshedAt function returns the server timestamp of the last successful
+---request (or nil), called fresh on every OnEnter so the tooltip is always current
+local function createRefreshButton(dropdown, onClick, getLastRefreshedAt)
     local button = CreateFrame("Button", nil, dropdown)
     button:SetSize(REFRESH_ICON_SIZE, REFRESH_ICON_SIZE)
     button:SetPoint("RIGHT", dropdown, "LEFT", -8, 0)
@@ -202,7 +245,7 @@ local function createRefreshButton(dropdown)
     highlight:SetAlpha(0.5)
     button:SetHighlightTexture(highlight)
 
-    button:SetScript("OnClick", refreshGroupView)
+    button:SetScript("OnClick", onClick)
 
     -- Nudges the icon down while the button is held, mirroring the pushed
     -- look of the Dashboard nav tabs (whose SetFontString label shifts down
@@ -217,7 +260,9 @@ local function createRefreshButton(dropdown)
 
     button:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        GameTooltip:SetText(addon.locale["KEYSTONES_REFRESH_TOOLTIP"])
+        GameTooltip:SetText(addon.locale["KEYSTONES_REFRESH_TITLE"], ARTIFACT_R, ARTIFACT_G, ARTIFACT_B, 1)
+        addPoorLabelLine(string.format(addon.locale["KEYSTONES_LAST_UPDATED"],
+            addon.formatRelativeTime(getLastRefreshedAt())))
         GameTooltip:Show()
     end)
     button:SetScript("OnLeave", function()
@@ -229,12 +274,12 @@ local function createRefreshButton(dropdown)
 end
 
 ---Creates a static info icon in the same spot as createRefreshButton, for
----modes where there's nothing to actively request (Alts/Guild — see the
----comment above createRefreshButton). Unlike that button, this is a plain
----Frame (no OnClick, no press animation, no highlight texture) so it doesn't
----visually invite a click that would do nothing. getTooltipLines is called
----fresh on every OnEnter so the displayed "last updated" timestamp is always
----current, not just what it was when the tab was opened.
+---modes where there's nothing to actively request (Alts — see the comment
+---above createRefreshButton). Unlike that button, this is a plain Frame (no
+---OnClick, no press animation, no highlight texture) so it doesn't visually
+---invite a click that would do nothing. getTooltipLines is called fresh on
+---every OnEnter so the displayed "last updated" timestamp is always current,
+---not just what it was when the tab was opened.
 ---@param dropdown Frame the mode dropdown returned by createModeDropdown
 ---@param getTooltipLines function returns an array of strings to show in the tooltip
 local function createInfoButton(dropdown, getTooltipLines)
@@ -249,8 +294,12 @@ local function createInfoButton(dropdown, getTooltipLines)
 
     button:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        for _, line in ipairs(getTooltipLines()) do
-            GameTooltip:AddLine(line, 1, 1, 1, true)
+        GameTooltip:SetText(addon.locale["KEYSTONES_REFRESH_TITLE"], ARTIFACT_R, ARTIFACT_G, ARTIFACT_B, 1)
+        for i, line in ipairs(getTooltipLines()) do
+            if i > 1 then
+                GameTooltip:AddLine(" ")
+            end
+            addPoorLabelLine(line)
         end
         GameTooltip:Show()
     end)
@@ -668,7 +717,8 @@ function MPT_Dashboard:loadKeystones(frame)
     end)
 
     if mode == MODE_GROUP then
-        createRefreshButton(dropdown)
+        createRefreshButton(dropdown, refreshGroupView,
+            function() return addon.Communication and addon.Communication:GetLastRefreshedAt() end)
     elseif mode == MODE_ALTS then
         createInfoButton(dropdown, function()
             return {
@@ -678,13 +728,8 @@ function MPT_Dashboard:loadKeystones(frame)
             }
         end)
     elseif mode == MODE_GUILD then
-        createInfoButton(dropdown, function()
-            return {
-                string.format(addon.locale["KEYSTONES_LAST_UPDATED"],
-                    addon.formatRelativeTime(addon.GuildKeys:GetLastRefreshedAt())),
-                addon.locale["KEYSTONES_GUILD_NEXT_UPDATE"],
-            }
-        end)
+        createRefreshButton(dropdown, refreshGuildView,
+            function() return addon.GuildComm and addon.GuildComm:GetLastRefreshedAt() end)
     end
 
     local scrollFrame = CreateFrame("ScrollFrame", nil, outerFrame)
@@ -727,6 +772,10 @@ function MPT_Dashboard:loadKeystones(frame)
             end
         end
     else -- MODE_GUILD
+        if addon.GuildComm then
+            addon.GuildComm:RequestGuildKeystones()
+        end
+
         -- Reuses createAltRow: guild entries have the same shape (no live
         -- unit token, so no portrait/role column) as Alts entries.
         local guildEntries = sortEntries(addon.GuildKeys:GetEntries())

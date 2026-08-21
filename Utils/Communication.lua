@@ -154,6 +154,13 @@ addon.Communication = addon.Communication or {}
 local REQUEST_COOLDOWN_SECONDS = 2
 local lastRequestTime = 0
 
+-- Server timestamp of the last time a request actually went out (not
+-- skipped by cooldown). Session-only, unlike Utils/AltKeystones.lua's
+-- persisted timestamp — group keystone data itself is just an in-memory
+-- cache that's gone after /reload, so a timestamp surviving the reload
+-- would be misleading. Used by the refresh button's tooltip.
+local lastRefreshedAt = nil
+
 ---Calls within REQUEST_COOLDOWN_SECONDS of the previous one are silently
 ---ignored.
 function addon.Communication:RequestGroupKeystones()
@@ -163,9 +170,17 @@ function addon.Communication:RequestGroupKeystones()
         return
     end
     lastRequestTime = now
+    lastRefreshedAt = GetServerTime()
 
     sendKeystoneRequestMessage()
     broadcastOwnKeystoneStatus()
+end
+
+---Returns the server timestamp of the last time a group keystone request
+---actually went out this session, or nil if that hasn't happened yet.
+---@return number|nil
+function addon.Communication:GetLastRefreshedAt()
+    return lastRefreshedAt
 end
 
 ---@param unitToken string
