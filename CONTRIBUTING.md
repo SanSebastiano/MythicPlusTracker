@@ -27,6 +27,8 @@ Thank you for your interest in contributing! This document explains how to repor
 
 ## Code Style
 
+See [`AGENTS.md`](AGENTS.md) for the full picture (load order, SavedVariables, UI architecture, validation tooling). The essentials for a PR:
+
 - Every file starts with `local addonName, addon = ...` — use `addon` as the shared namespace.
 - Attach module globals with the `MPT_*` prefix (e.g. `MPT_MAIN`, `MPT_Dashboard`).
 - Never use `print()` directly — use the `addon.*Message()` helpers (`addonMessage`, `chatMessage`, `errorMessage`, etc.).

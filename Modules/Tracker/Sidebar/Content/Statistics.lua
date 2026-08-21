@@ -11,7 +11,8 @@ local SECTION_GAP           = 8
 local HEADER_TO_CONTENT_GAP = 4  -- gap between header banner and its rows (matches WeeklyVault.lua)
 
 local ROW_H       = 22  -- matches RunsStats.lua's tier rows
-local VALUE_W     = 90  -- wide enough for the "Best" row's "<Name> +<Level>" value
+local VALUE_W     = 130 -- wide enough for the "Best" row's "<Name> +<Level>" value,
+                        -- up to a max-length (12-char) realm name plus level suffix
 local VALUE_RIGHT = CONTENT_X + CONTENT_W - INSET
 local LABEL_W     = CONTENT_W - INSET * 2 - VALUE_W - 6
 
@@ -61,6 +62,7 @@ local function renderRow(sidebar, y, label, valueText)
     valueFS:SetSize(VALUE_W, ROW_H)
     valueFS:SetJustifyH("RIGHT")
     valueFS:SetJustifyV("MIDDLE")
+    valueFS:SetWordWrap(false)
     valueFS:SetText(valueText)
 end
 
@@ -230,6 +232,9 @@ local function loadStatistics(sidebar, cursor)
         renderStatsSection(sidebar, cursor, addon.locale["KEYSTONES_MODE_ALTS"],
             addon.AltKeystones:GetEntries(), addon.locale["KEYSTONES_ALTS_EMPTY"])
     elseif isGuildMode() then
+        if addon.GuildComm then
+            addon.GuildComm:RequestGuildKeystones()
+        end
         renderStatsSection(sidebar, cursor, addon.locale["KEYSTONES_MODE_GUILD"],
             addon.GuildKeys:GetEntries(), addon.locale["KEYSTONES_GUILD_EMPTY"])
     else
