@@ -1,7 +1,7 @@
 ## Interface: 120100
 ## Title: |cFFA335EEMythic|r |cFFFF8000Plus Tracker|r
 ## Author: SanSebastiano
-## Version: 1.3.0
+## Version: 1.3.1
 
 ## Notes: Tracks your Mythic+ dungeon runs, group members, deaths, and completion status
 ## Notes-deDE: Verfolgt die Mythic+-Dungeon-Runs, Gruppenmitglieder, Todesfälle und den Abschlussstatus
@@ -17,7 +17,7 @@
 ## Category-esES: Mazmorras y bandas
 ## Category-ruRU: Подземелья и рейды
 
-## SavedVariables: MythicPlusTrackerDB, MythicPlusTrackerAltDB, MythicPlusTrackerGuildDB
+## SavedVariables: MythicPlusTrackerDB, MythicPlusTrackerAltDB
 
 init.lua
 

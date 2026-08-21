@@ -125,11 +125,30 @@ local function createTableRow(child, mapID, colX, rowY, nameW, runLookup, isLast
     icon:SetPoint("TOPLEFT", child, "TOPLEFT", colX["icon"] + 2, rowY - (ROW_H - ICON_SIZE) / 2)
     icon:SetTexture(texture)
 
+    -- Soft blue pulse shown on hover when the teleport below is actually
+    -- usable — a portal-shimmer cue on top of the plain brightening, so a
+    -- clickable icon reads as different from a merely-brightened one.
+    -- Plain color texture (no external asset) blended additively.
+    local glow = child:CreateTexture(nil, "OVERLAY")
+    glow:SetAllPoints(icon)
+    glow:SetColorTexture(0.3, 0.6, 1, 1)
+    glow:SetBlendMode("ADD")
+    glow:Hide()
+
+    local glowAnim = glow:CreateAnimationGroup()
+    glowAnim:SetLooping("BOUNCE")
+    local glowFade = glowAnim:CreateAnimation("Alpha")
+    glowFade:SetFromAlpha(0.15)
+    glowFade:SetToAlpha(0.55)
+    glowFade:SetDuration(0.6)
+    glowFade:SetSmoothing("IN_OUT")
+
     -- Clicking the dungeon icon teleports the player via the matching known
     -- "Path of ..." spell, if one is known (see Utils/DungeonTeleports.lua).
     -- Uses a SecureActionButtonTemplate so the protected spell cast is
     -- allowed to run directly from the click.
     local teleport = addon.getDungeonTeleport(mapID)
+    local hasTeleport = teleport and C_SpellBook.IsSpellKnown(teleport.spellID)
     local teleportBtn = CreateFrame("Button", nil, child, "SecureActionButtonTemplate")
     teleportBtn:SetSize(ICON_SIZE, ICON_SIZE)
     -- Anchored with the same coordinates as `icon`, relative to `child` (a
@@ -137,14 +156,18 @@ local function createTableRow(child, mapID, colX, rowY, nameW, runLookup, isLast
     -- frames cannot be anchored to regions, only to other frames.
     teleportBtn:SetPoint("TOPLEFT", child, "TOPLEFT", colX["icon"] + 2, rowY - (ROW_H - ICON_SIZE) / 2)
     teleportBtn:RegisterForClicks("AnyUp", "AnyDown")
-    if teleport and C_SpellBook.IsSpellKnown(teleport.spellID) then
+    if hasTeleport then
         teleportBtn:SetAttribute("type", "spell")
         teleportBtn:SetAttribute("spell", teleport.spellID)
     end
     teleportBtn:SetScript("OnEnter", function(self)
         icon:SetVertexColor(1.15, 1.15, 1.15)
+        if hasTeleport then
+            glow:Show()
+            glowAnim:Play()
+        end
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        if teleport and C_SpellBook.IsSpellKnown(teleport.spellID) then
+        if hasTeleport then
             GameTooltip:SetSpellByID(teleport.spellID)
             GameTooltip:AddLine(addon.locale["DUNGEON_TELEPORT_TOOLTIP"], 0, 1, 0, true)
         else
@@ -155,6 +178,8 @@ local function createTableRow(child, mapID, colX, rowY, nameW, runLookup, isLast
     end)
     teleportBtn:SetScript("OnLeave", function()
         icon:SetVertexColor(1, 1, 1)
+        glowAnim:Stop()
+        glow:Hide()
         GameTooltip:Hide()
     end)
 
@@ -360,11 +385,4 @@ function MPT_Dashboard:loadDungeons(frame)
     end)
 
     renderRows(tableFrame, dungeons, colX, nameW, runLookup)
-
-    -- Teleport spell descriptions may still be loading asynchronously when
-    -- this table first renders (see Utils/DungeonTeleports.lua); refresh the
-    -- rows once the teleport lookup is ready so icons become clickable.
-    addon.onDungeonTeleportsReady(function()
-        renderRows(tableFrame, dungeons, colX, nameW, runLookup)
-    end)
 end

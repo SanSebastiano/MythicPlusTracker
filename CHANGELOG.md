@@ -2,7 +2,21 @@
 
 All notable changes to MythicPlusTracker are documented here.
 
-## [1.3.0] - Unreleased
+## [1.3.1] - 2026-08-21
+
+### Added
+- **Guild Sync refresh button.** The "Guild" dropdown option in the Keystones tab now has the same manual refresh button as the Group view, with a 30-second cooldown (silent, like the Group button).
+- **Time +/- column in the Runs tab.** The Season column has been replaced with a Time +/- column showing how far each run finished under (green) or over (red) the dungeon's timer, reusing the same delta logic already shown as a tooltip on the Dungeons tab's Best Time column. Column order was also adjusted so the new column sits between Time and Date.
+- **Dungeon teleport icons glow on hover** when the shown teleport is actually known, as an extra visual cue alongside the existing tooltip.
+
+### Changed
+- Reworked Guild Sync internally to match Group Sync's request/response model: guild keystones are requested live and no longer cached across sessions (the `MythicPlusTrackerGuildDB` SavedVariable has been removed) or relayed transitively between members who were never online together.
+- The Group/Guild refresh button's tooltip in the Keystones tab now shows a gold "Refresh" title with a "Last updated: ..." line below it (reusing the Alts view's existing relative-time formatting), instead of a static one-line description.
+- Replaced the Dungeons tab's unreliable dynamic teleport-spell discovery (spellbook scan + icon/description matching) with a fixed, verified per-season mapID → spell table — teleport icons now resolve correctly and instantly instead of intermittently failing to detect an owned teleport.
+- Tidied up the minimap button's tooltip: the addon name is now shown in its usual two-tone colors, each click/drag instruction's label is highlighted, and long lines wrap instead of stretching the tooltip wide.
+- Renamed the Sidebar Statistics "Best" row to "Highest Key" and widened its value column so a max-length (12-character) character name plus keystone level no longer wraps or looks misaligned.
+
+## [1.3.0] - 2026-08-19
 
 ### Added
 - **Twinks/Alts support in the Keystones tab.** A new dropdown above the table switches between the live Group view and a new Twinks view that lists every one of your other max-level characters' last-known keystone. Each max-level character saves its own keystone automatically on login and after finishing a dungeon; a Twink's keystone/level automatically resets to "no key" once the weekly reset has passed since it last logged in, so the list never shows stale data as current.
