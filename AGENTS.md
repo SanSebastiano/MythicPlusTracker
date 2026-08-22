@@ -54,7 +54,7 @@ All decorative Atlas texture names (frame backgrounds/borders, card headers, ico
 
 ## Debug Mode
 
-Toggle with `/mpt debug [on|off]`. State persists via `MythicPlusTrackerDB.debugMode`. `addon.isDebugMode` is truthy when active.
+Toggle with `/mpt debug [on|off]`. State persists via `MythicPlusTrackerDB.debugMode`. `addon.isDebugMode()` returns true when active — note it is a function, calling it without parentheses always yields a truthy reference.
 
 ## UI Architecture
 

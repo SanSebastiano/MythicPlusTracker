@@ -223,9 +223,7 @@ function MPT_MinimapButton:load()
     end)
 
     button:SetScript("OnClick", function(self, clickedButton, down)
-        if addon.isDebugMode then
-            addon.debugMessage("Pressed " ..  clickedButton .. (down and " down" or " up"))
-        end
+        addon.debugMessage("Pressed " ..  clickedButton .. (down and " down" or " up"))
 
         if clickedButton == "LeftButton" then
             MPT_MAIN:Show()
