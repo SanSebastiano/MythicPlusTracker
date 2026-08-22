@@ -1,32 +1,32 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 
-    <Include file='Tracker\MainFrame.lua'/>
+    <Script file='Tracker\MainFrame.lua'/>
 
-    <Include file='Tracker\Dashboard\init.lua'/>
-    <Include file='Tracker\Dashboard\Navigation.lua'/>
-    <Include file='Tracker\Dashboard\Frame.lua'/>
-    <Include file='Tracker\Dashboard\Content\NotMaxLevel.lua'/>
-    <Include file='Tracker\Dashboard\Content\Dungeons.lua'/>
-    <Include file='Tracker\Dashboard\Content\Runs.lua'/>
-    <Include file='Tracker\Dashboard\Content\Keystones.lua'/>
+    <Script file='Tracker\Dashboard\init.lua'/>
+    <Script file='Tracker\Dashboard\Navigation.lua'/>
+    <Script file='Tracker\Dashboard\Frame.lua'/>
+    <Script file='Tracker\Dashboard\Content\NotMaxLevel.lua'/>
+    <Script file='Tracker\Dashboard\Content\Dungeons.lua'/>
+    <Script file='Tracker\Dashboard\Content\Runs.lua'/>
+    <Script file='Tracker\Dashboard\Content\Keystones.lua'/>
 
-    <Include file='Tracker\Sidebar\init.lua'/>
-    <Include file='Tracker\Sidebar\Content\WeeklyVault.lua'/>
-    <Include file='Tracker\Sidebar\Content\TraitNodes.lua'/>
-    <Include file='Tracker\Sidebar\Content\Currency.lua'/>
-    <Include file='Tracker\Sidebar\Content\Keystone.lua'/>
-    <Include file='Tracker\Sidebar\Content\Score.lua'/>
-    <Include file='Tracker\Sidebar\Content\Affixes.lua'/>
-    <Include file='Tracker\Sidebar\Content\RunsStats.lua'/>
-    <Include file='Tracker\Sidebar\Content\Statistics.lua'/>
-    <Include file='Tracker\Sidebar\Frame.lua'/>
+    <Script file='Tracker\Sidebar\init.lua'/>
+    <Script file='Tracker\Sidebar\Content\WeeklyVault.lua'/>
+    <Script file='Tracker\Sidebar\Content\TraitNodes.lua'/>
+    <Script file='Tracker\Sidebar\Content\Currency.lua'/>
+    <Script file='Tracker\Sidebar\Content\Keystone.lua'/>
+    <Script file='Tracker\Sidebar\Content\Score.lua'/>
+    <Script file='Tracker\Sidebar\Content\Affixes.lua'/>
+    <Script file='Tracker\Sidebar\Content\RunsStats.lua'/>
+    <Script file='Tracker\Sidebar\Content\Statistics.lua'/>
+    <Script file='Tracker\Sidebar\Frame.lua'/>
 
-    <Include file='Tracker\MinimapButton.lua'/>
+    <Script file='Tracker\MinimapButton.lua'/>
 
-    <Include file='Tracker\init.lua'/>
+    <Script file='Tracker\init.lua'/>
 
-    <Include file='Settings\init.lua'/>
-    <Include file='Settings\Frame.lua'/>
+    <Script file='Settings\init.lua'/>
+    <Script file='Settings\Frame.lua'/>
 
     <Script file='WelcomeMessage\init.lua'/>
 </Ui>
