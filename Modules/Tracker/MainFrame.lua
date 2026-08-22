@@ -55,13 +55,6 @@ local function create()
         saveFramePosition(self)
     end)
 
-    frame:SetScript("OnShow", function()
-        addon.showTracker = true
-    end)
-    frame:SetScript("OnHide", function()
-        addon.showTracker = false
-    end)
-
     return frame
 end
 
@@ -88,18 +81,4 @@ function MPT_MAIN:Show()
     MPT_Sidebar:getFrame(mainFrame)
 
     mainFrame:Show()
-end
-
-function MPT_MAIN:Hide()
-    if frame then
-        frame:Hide()
-    end
-end
-
-function MPT_MAIN:Toggle()
-    if frame and frame:IsShown() then
-        self:Hide()
-    else
-        self:Show()
-    end
 end

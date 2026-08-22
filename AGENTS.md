@@ -16,7 +16,6 @@ Locales/locales.xml       → populates addon.locale (en-US, de-DE, fr-FR, es-ES
 Utils/utils.xml           → addon.colors, addon.*Message helpers, Theme, DebugSystem,
                              Keystone/AltKeystones/GuildKeys, Communication/GuildComm,
                              DungeonTeleports, RunHistoryCache, UIHelpers
-MythicPlusTracker.lua     → main MPT namespace, registers ADDON_LOADED / PLAYER_LOGIN
 Command/commands.xml      → registers /mpt and /mythicplustracker slash commands
 Modules/modules.xml       → all UI modules (MainFrame → Dashboard → Sidebar →
                              MinimapButton → Tracker/init → Settings → WelcomeMessage)
