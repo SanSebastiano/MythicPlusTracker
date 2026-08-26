@@ -53,6 +53,27 @@ local sortState = addon.TableSortService:new({
 
 local ARTIFACT_R, ARTIFACT_G, ARTIFACT_B = addon.colorToRGB("ARTIFACT")
 
+-- From this keystone level upwards a run only counts as the dungeon's best if
+-- it was completed in time. Below it an over-time run still counts, because it
+-- still awards score. Blizzard game rule — re-check it each season/patch.
+local LEVEL_REQUIRING_TIMED_COMPLETION = 12
+
+---Whether a run is eligible to be a dungeon's best run at all.
+---run.completed is true only for in-time completions, which is also what drives
+---the Runs tab's check/cross icon.
+---@param run table entry from addon.RunHistoryService:getRuns()
+---@return boolean
+local function countsTowardBest(run)
+    return run.level < LEVEL_REQUIRING_TIMED_COMPLETION or run.completed == true
+end
+
+---Per-dungeon totals plus the single run that counts as that dungeon's best.
+---"Best" is the highest-scoring eligible run, so bestLevel/bestTime/bestScore
+---always describe the same run — previously they could come from three
+---different ones, which is how an over-time key ended up shown as the best
+---level with its own (over the limit) duration next to it.
+---@param runHistory table
+---@return table lookup keyed by mapChallengeModeID
 local function buildRunLookup(runHistory)
     local lookup = {}
 
@@ -67,13 +88,11 @@ local function buildRunLookup(runHistory)
         e.runs = e.runs + 1
         if run.completed then e.success = e.success + 1 end
 
-        if run.level > e.bestLevel then
+        local runScore = run.runScore or 0
+        if countsTowardBest(run) and runScore > e.bestScore then
+            e.bestScore = runScore
             e.bestLevel = run.level
             e.bestTime  = run.durationSec or 0
-        end
-
-        if run.score and run.score > e.bestScore then
-            e.bestScore = run.score
         end
     end
 
