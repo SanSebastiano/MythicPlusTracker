@@ -1,5 +1,15 @@
 local addonName, addon = ...
 
+---Formats a duration as "m:ss". Callers own the surrounding presentation:
+---the empty/zero placeholder, the colouring, and the sign of a delta — this
+---returns the bare number, never a sign, so "+"/"-" callers can prepend their
+---own after taking math.abs().
+---@param seconds number
+---@return string
+function addon.formatMinutesSeconds(seconds)
+    return string.format("%d:%02d", math.floor(seconds / 60), seconds % 60)
+end
+
 ---Formats a GetServerTime() timestamp as a short localized "time ago" string
 ---(e.g. "vor 5 Min."), for tooltips that show the freshness of cached/synced
 ---data (Twinks/Guild keystone views). Returns TIME_UNKNOWN if the timestamp
