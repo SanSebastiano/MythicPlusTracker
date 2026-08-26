@@ -24,6 +24,22 @@ Modules/modules.xml       → Tracker module (Services → MainFrame → Dashboa
 
 Read `Modules/modules.xml` before adding a new UI file — its order is load-bearing. If you add a new file anywhere, register it in the correct `.xml`/`.toc` file **at the right position**.
 
+## Directory Layout
+
+Three layers, each with one rule for what belongs in it. `CODING_GUIDELINES.md` §3.4 is normative; this is the map.
+
+| Layer | Contains | Test for "does it belong here?" |
+|---|---|---|
+| `Core/` | Colors, Theme, Messages, Debug, Time, Widgets | Cross-cutting infrastructure with no domain knowledge. A second addon window would still need it. |
+| `Services/` | `KeystoneService` | Domain services called from **more than one** module. Today only `Command/` + `Modules/` share one. |
+| `Modules/<Module>/` | Tracker (+ its `Services/`), Settings, WelcomeMessage | A user-facing feature. Services used by only this module live in its own `Services/` subfolder. |
+
+`Modules/Tracker/` is **one** module: Dashboard and Sidebar are two panels of the same window, so a service used by both stays Tracker-local (`Modules/Tracker/Services/`).
+
+Naming inside a module: `*Service` owns state or a lifecycle, `*Widgets` builds frames, `*Catalog` is a constant table, `*Page` is a Dashboard content page, `*Card` is a Sidebar card. The module table is declared in the file of the same name (`Dashboard.lua` → `MPT_Dashboard`) and extended by the rest.
+
+There is exactly one `init.lua`, at the repository root — it is the namespace bootstrap, nothing else.
+
 ## Namespace & Global Pattern
 
 Every `.lua` file starts with `local addonName, addon = ...`
@@ -81,6 +97,7 @@ Don't hand-roll checks this repo already automates — use these (also wired int
 | Lint all Lua | `luacheck .` (config: `.luacheckrc`, Lua 5.1, `max_line_length = 160`, WoW globals whitelisted) | `.github/skills/addon-linter/SKILL.md` |
 | Locale key consistency | `bash Tools/locale-validator.sh` | `.github/skills/locale-validator/SKILL.md` |
 | `.toc`/`.xml` file references exist | `bash Tools/toc-validator.sh` | `.github/skills/toc-validator/SKILL.md` |
+| Every `.lua` file is registered | `bash Tools/registration-validator.sh` | `.github/skills/registration-validator/SKILL.md` |
 | Look up a WoW API signature | see skill | `.github/skills/wow-api-lookup/SKILL.md` (authoritative source: https://warcraft.wiki.gg/wiki/World_of_Warcraft_API) |
 
 If `luacheck` flags a genuine WoW API global as undefined, add it to the `globals` table in `.luacheckrc` rather than suppressing the warning.

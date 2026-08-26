@@ -25,6 +25,18 @@ Thank you for your interest in contributing! This document explains how to repor
 
 ---
 
+## Project Structure
+
+Three layers, each with one rule:
+
+- **`Core/`** — cross-cutting infrastructure (colors, theme, messages, debug, time, shared widgets). No domain knowledge.
+- **`Services/`** — domain services used by more than one module.
+- **`Modules/<Module>/`** — one user-facing feature each. Services used by only that module live in its own `Services/` subfolder.
+
+Name by role: `*Service` owns state or a lifecycle, `*Widgets` builds frames, `*Catalog` is a constant table, `*Page` is a Dashboard content page, `*Card` is a Sidebar card. Don't use `Handler`, `System`, `Cache`, `Helpers`, or `Utils` — they describe an implementation or a grab bag, not a role.
+
+New files must be registered in the matching `.xml` manifest at the right position — `bash Tools/registration-validator.sh` catches the ones you forget.
+
 ## Code Style
 
 See [`AGENTS.md`](AGENTS.md) for the full picture (load order, SavedVariables, UI architecture, validation tooling). The essentials for a PR:

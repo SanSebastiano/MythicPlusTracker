@@ -13,6 +13,7 @@
    3.1 General Naming
    3.2 Function Names
    3.3 Namespace And Module Names
+   3.4 Layer And Role Suffixes
 4. Lua Language Baseline
    4.1 Locals Over Globals
    4.2 The Two Sanctioned Global Surfaces
@@ -153,6 +154,21 @@
 3.3.2: Module-level UI roots MUST use the `MPT_<Name>` prefix (`MPT_Tracker`, `MPT_Dashboard`, `MPT_Sidebar`), pre-declared in the module's entry file as documented in `AGENTS.md`.
 
 3.3.3: A namespace or module table MUST NOT be created for a single trivial helper function. Add the function to the closest existing relevant module instead.
+
+
+### 3.4 Layer And Role Suffixes
+
+3.4.1: The suffix `Service` MUST identify a module that owns domain state or a lifecycle of its own — an event frame, a cache, SavedVariables persistence, or addon-message traffic — and that does not build frames itself. Catalogs, pure formatters, and stateless facades MUST NOT carry it.
+
+3.4.2: A module table MUST be declared in the file of the same name (`Dashboard.lua` declares `MPT_Dashboard`, `GuildKeystoneService.lua` declares `addon.GuildKeystoneService`) and extended by the module's remaining files.
+
+3.4.3: A service called only from files of a single module MUST live under `Modules/<Module>/Services/`. It moves to the repository-root `Services/` only once a second module actually calls it.
+
+3.4.4: The remaining role suffixes are: `*Widgets` for frame-building helpers, `*Catalog` for constant data tables inside a module, `*Page` for Dashboard content pages, and `*Card` for Sidebar cards. Cross-cutting infrastructure under `Core/` carries none of these.
+
+3.4.5: The words `Handler`, `System`, `Cache`, `Helpers`, and `Utils`, as well as abbreviations such as `Comm` or `Stats`, MUST NOT appear in file or table names. They describe an implementation or a grab bag, not a role.
+
+3.4.6: For the purpose of 3.4.3, `Modules/Tracker/` is one module. Dashboard and Sidebar are two panels of the same window, so a service consumed by both is Tracker-local, not addon-wide.
 
 ## 4. Lua Language Baseline
 
