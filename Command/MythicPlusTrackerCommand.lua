@@ -47,7 +47,7 @@ local function handleSlashCommand(msg)
         addon.setDebugMode(false)
 
     elseif command == "show" then
-        MPT_MAIN:Show()
+        MPT_Tracker:Show()
 
     elseif command == "settings" or command == "options" then
         MPT_Settings:Open()

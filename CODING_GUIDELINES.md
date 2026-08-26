@@ -150,7 +150,7 @@
 
 3.3.1: Shared addon state and utilities MUST live on the `addon` table (`local addonName, addon = ...`), never as bare globals.
 
-3.3.2: Module-level UI roots MUST use the `MPT_<Name>` prefix (`MPT_MAIN`, `MPT_Dashboard`, `MPT_Sidebar`), pre-declared in the module's `init.lua` as documented in `AGENTS.md`.
+3.3.2: Module-level UI roots MUST use the `MPT_<Name>` prefix (`MPT_Tracker`, `MPT_Dashboard`, `MPT_Sidebar`), pre-declared in the module's entry file as documented in `AGENTS.md`.
 
 3.3.3: A namespace or module table MUST NOT be created for a single trivial helper function. Add the function to the closest existing relevant module instead.
 

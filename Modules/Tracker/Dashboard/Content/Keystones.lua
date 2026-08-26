@@ -160,7 +160,7 @@ end
 
 ---Requests fresh group keystone data and re-renders both the Keystones tab
 ---and the Sidebar group scores view (which always mirrors this tab). Both
----MPT_Dashboard:refreshKeystonesView() and MPT_Sidebar:showForTab(3) trigger
+---MPT_Dashboard:refreshKeystonesView() and MPT_Sidebar:showForTab(MPT_Tracker.TABS.KEYSTONES) trigger
 ---their own addon.Communication:RequestGroupKeystones() call as part of
 ---their normal render path, so no separate request is issued here.
 ---Calls within REFRESH_COOLDOWN_SECONDS of the previous refresh are silently
@@ -177,7 +177,7 @@ local function refreshGroupView()
     end
 
     if MPT_Sidebar and MPT_Sidebar.showForTab then
-        MPT_Sidebar:showForTab(3)
+        MPT_Sidebar:showForTab(MPT_Tracker.TABS.KEYSTONES)
     end
 end
 
@@ -198,7 +198,7 @@ local function refreshGuildView()
     end
 
     if MPT_Sidebar and MPT_Sidebar.showForTab then
-        MPT_Sidebar:showForTab(3)
+        MPT_Sidebar:showForTab(MPT_Tracker.TABS.KEYSTONES)
     end
 end
 
@@ -338,7 +338,7 @@ local function createModeDropdown(frame)
                     dropdown:SetText(label)
                     MPT_Dashboard:refreshKeystonesView()
                     if MPT_Sidebar and MPT_Sidebar.showForTab then
-                        MPT_Sidebar:showForTab(3)
+                        MPT_Sidebar:showForTab(MPT_Tracker.TABS.KEYSTONES)
                     end
                 end)
         end

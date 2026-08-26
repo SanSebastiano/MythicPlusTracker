@@ -70,9 +70,9 @@ end
 
 function MPT_Sidebar:showForTab(tabIndex)
     if not frame then return end
-    if tabIndex == 2 then
+    if tabIndex == MPT_Tracker.TABS.RUNS then
         rebuildContent(renderRunsContent)
-    elseif tabIndex == 3 then
+    elseif tabIndex == MPT_Tracker.TABS.KEYSTONES then
         rebuildContent(renderKeystonesContent)
     else
         rebuildContent(renderDefaultContent)

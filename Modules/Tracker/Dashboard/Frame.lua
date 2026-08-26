@@ -5,10 +5,6 @@ MythicPlusTrackerDB = MythicPlusTrackerDB or {}
 local frame
 local contentWrapper
 
-local TAB_OVERVIEW  = 1
-local TAB_RUNS       = 2
-local TAB_KEYSTONES = 3
-
 local activeContent = nil
 
 local function showContent(loader, ...)
@@ -52,26 +48,26 @@ local function create(mainFrame)
 
     local function getDefaultTabIndex()
         if MythicPlusTrackerDB.dashboardDefaultTabInGroup and IsInGroup() then
-            return TAB_KEYSTONES
+            return MPT_Tracker.TABS.KEYSTONES
         end
-        return TAB_OVERVIEW
+        return MPT_Tracker.TABS.OVERVIEW
     end
 
     local tabCallbacks = {
-        [TAB_OVERVIEW] = function()
+        [MPT_Tracker.TABS.OVERVIEW] = function()
             if not isMaxLevel() then return false end
             showContent(MPT_Dashboard.loadDungeons)
-            MPT_Sidebar:showForTab(TAB_OVERVIEW)
+            MPT_Sidebar:showForTab(MPT_Tracker.TABS.OVERVIEW)
         end,
-        [TAB_RUNS] = function()
+        [MPT_Tracker.TABS.RUNS] = function()
             if not isMaxLevel() then return false end
             showContent(MPT_Dashboard.loadRuns)
-            MPT_Sidebar:showForTab(TAB_RUNS)
+            MPT_Sidebar:showForTab(MPT_Tracker.TABS.RUNS)
         end,
-        [TAB_KEYSTONES] = function()
+        [MPT_Tracker.TABS.KEYSTONES] = function()
             if not isMaxLevel() then return false end
             showContent(MPT_Dashboard.loadKeystones)
-            MPT_Sidebar:showForTab(TAB_KEYSTONES)
+            MPT_Sidebar:showForTab(MPT_Tracker.TABS.KEYSTONES)
         end,
     }
 
@@ -87,7 +83,7 @@ local function create(mainFrame)
         addon.debugMessage("Dashboard Frame OnShow")
 
         if not isMaxLevel() then
-            MPT_Dashboard:setActiveNavTab(TAB_OVERVIEW)
+            MPT_Dashboard:setActiveNavTab(MPT_Tracker.TABS.OVERVIEW)
             MPT_Dashboard:loadNotMaxLevel(contentWrapper)
             return
         end
@@ -95,12 +91,12 @@ local function create(mainFrame)
         local defaultTab = getDefaultTabIndex()
         MPT_Dashboard:setActiveNavTab(defaultTab)
 
-        if defaultTab == TAB_KEYSTONES then
+        if defaultTab == MPT_Tracker.TABS.KEYSTONES then
             showContent(MPT_Dashboard.loadKeystones)
-            MPT_Sidebar:showForTab(TAB_KEYSTONES)
+            MPT_Sidebar:showForTab(MPT_Tracker.TABS.KEYSTONES)
         else
             showContent(MPT_Dashboard.loadDungeons)
-            MPT_Sidebar:showForTab(TAB_OVERVIEW)
+            MPT_Sidebar:showForTab(MPT_Tracker.TABS.OVERVIEW)
         end
     end)
 

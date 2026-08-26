@@ -226,7 +226,7 @@ function MPT_MinimapButton:load()
         addon.debugMessage("Pressed " ..  clickedButton .. (down and " down" or " up"))
 
         if clickedButton == "LeftButton" then
-            MPT_MAIN:Show()
+            MPT_Tracker:Show()
 
         elseif clickedButton == "RightButton" then
             if WeeklyRewardsFrame then
@@ -274,3 +274,5 @@ function MPT_MinimapButton:load()
         GameTooltip:Hide()
     end)
 end
+
+MPT_MinimapButton:load()

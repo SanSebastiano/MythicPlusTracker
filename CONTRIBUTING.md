@@ -30,7 +30,7 @@ Thank you for your interest in contributing! This document explains how to repor
 See [`AGENTS.md`](AGENTS.md) for the full picture (load order, SavedVariables, UI architecture, validation tooling). The essentials for a PR:
 
 - Every file starts with `local addonName, addon = ...` — use `addon` as the shared namespace.
-- Attach module globals with the `MPT_*` prefix (e.g. `MPT_MAIN`, `MPT_Dashboard`).
+- Attach module globals with the `MPT_*` prefix (e.g. `MPT_Tracker`, `MPT_Dashboard`).
 - Never use `print()` directly — use the `addon.*Message()` helpers (`addonMessage`, `chatMessage`, `errorMessage`, etc.).
 - Never hardcode color escape codes — use `addon.colors.*` and always close with `addon.colors.RESET`.
 - New files must be registered in the correct `.xml` or `.toc` file **at the correct load-order position**.

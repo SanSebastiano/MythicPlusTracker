@@ -1,7 +1,5 @@
 local addonName, addon = ...
 
-MPT_MAIN = {}
-
 MythicPlusTrackerDB = MythicPlusTrackerDB or {}
 
 local frame
@@ -58,11 +56,11 @@ local function create()
     return frame
 end
 
-function MPT_MAIN:getFrame()
+function MPT_Tracker:getFrame()
     return create()
 end
 
-function MPT_MAIN:Show()
+function MPT_Tracker:Show()
     if InCombatLockdown() then
         local now = GetTime()
         if now - lastCombatWarningTime > 5 then

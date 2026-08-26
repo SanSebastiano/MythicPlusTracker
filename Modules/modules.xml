@@ -1,5 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 
+    <Script file='Tracker\Tracker.lua'/>
     <Script file='Tracker\MainFrame.lua'/>
 
     <Script file='Tracker\Dashboard\init.lua'/>
@@ -22,8 +23,6 @@
     <Script file='Tracker\Sidebar\Frame.lua'/>
 
     <Script file='Tracker\MinimapButton.lua'/>
-
-    <Script file='Tracker\init.lua'/>
 
     <Script file='Settings\init.lua'/>
     <Script file='Settings\Frame.lua'/>

@@ -17,8 +17,8 @@ Utils/utils.xml           → addon.colors, addon.*Message helpers, Theme, Debug
                              Keystone/AltKeystones/GuildKeys, Communication/GuildComm,
                              DungeonTeleports, RunHistoryCache, UIHelpers
 Command/commands.xml      → registers /mpt and /mythicplustracker slash commands
-Modules/modules.xml       → all UI modules (MainFrame → Dashboard → Sidebar →
-                             MinimapButton → Tracker/init → Settings → WelcomeMessage)
+Modules/modules.xml       → all UI modules (Tracker → MainFrame → Dashboard →
+                             Sidebar → MinimapButton → Settings → WelcomeMessage)
 ```
 
 Read `Modules/modules.xml` before adding a new UI file — its order is load-bearing. If you add a new file anywhere, register it in the correct `.xml`/`.toc` file **at the right position**.
@@ -28,7 +28,7 @@ Read `Modules/modules.xml` before adding a new UI file — its order is load-bea
 Every `.lua` file starts with `local addonName, addon = ...`
 
 - `addon` is the shared namespace — attach utilities and state to it.
-- Module globals use the `MPT_*` prefix (e.g. `MPT_MAIN`, `MPT_Dashboard`, `MPT_Sidebar`), pre-declared as empty tables in each module's `init.lua` and extended by subsequent files.
+- Module globals use the `MPT_*` prefix (e.g. `MPT_Tracker`, `MPT_Dashboard`, `MPT_Sidebar`), pre-declared as empty tables in the module's entry file (`Tracker/Tracker.lua`, elsewhere still `init.lua`) and extended by subsequent files.
 - `_G["MPT"] = addon` makes the shared table globally accessible as `MPT`.
 - No abbreviations in file/variable/function names (e.g. `Communication.lua`/`addon.Communication`, not `Comm.lua`/`addon.Comm`).
 
@@ -59,7 +59,7 @@ Toggle with `/mpt debug [on|off]`. State persists via `MythicPlusTrackerDB.debug
 ## UI Architecture
 
 - **Sidebar** (`MPT_Sidebar`, `Modules/Tracker/Sidebar/`, anchored `TOPLEFT` of MainFrame, 300×550): always visible, always shows the same content — M+ score, affixes, keystone, weekly vault, currencies, run stats. Does **not** change when switching Dashboard tabs.
-- **MainFrame** (`MPT_MAIN`, `Modules/Tracker/MainFrame.lua`, root, 1100×550, draggable): outer container. Carries a border texture (`ui-frame-midnight-border`) that overlaps inward at the edges/corners — child content must respect this inset.
+- **MainFrame** (`MPT_Tracker`, `Modules/Tracker/MainFrame.lua`, root, 1100×550, draggable): outer container. Carries a border texture (`ui-frame-midnight-border`) that overlaps inward at the edges/corners — child content must respect this inset.
 - **Dashboard** (`MPT_Dashboard`, `Modules/Tracker/Dashboard/`, anchored `TOPRIGHT` of MainFrame, 800×550): right-hand content region. On the three main pages (Overview/Runs/Keystones) it always shows a header tab row, a divider, and content inset from the border below that.
   > Future detail pages (Key detail, Run detail) will render inside the MainFrame area *without* the header nav/divider.
 
