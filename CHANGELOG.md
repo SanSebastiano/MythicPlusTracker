@@ -2,7 +2,7 @@
 
 All notable changes to MythicPlusTracker are documented here.
 
-## [1.4.0] - Unreleased
+## [1.4.0] - 2026-08-26
 
 ### Added
 - `Tools/registration-validator.sh`, wired into CI: it catches `.lua` files that exist but aren't referenced from any `.toc`/`.xml` manifest. That failure mode produces no error and no warning in-game — the file simply never runs, and whatever it defined is silently missing.

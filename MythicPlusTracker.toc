@@ -1,13 +1,13 @@
 ## Interface: 120100
 ## Title: |cFFA335EEMythic|r |cFFFF8000Plus Tracker|r
 ## Author: SanSebastiano
-## Version: 1.3.1
+## Version: 1.4.0
 
-## Notes: Track Mythic+ (M+) keystones, dungeon runs, score, group members, deaths, and completion status — your at-a-glance mythic plus overview.
-## Notes-deDE: Verfolgt deine Mythic+ (M+) Schlüsselsteine, Dungeon-Runs, Score, Gruppenmitglieder, Todesfälle und den Abschlussstatus – dein Überblick für Mythic Plus.
-## Notes-frFR: Suit vos clés Mythique+ (M+), donjons, score, membres du groupe, morts et statut de complétion – votre aperçu Mythique+ en un clin d'œil.
-## Notes-esES: Rastrea tus llaves Míticas+ (M+), mazmorras, puntuación, miembros del grupo, muertes y estado de finalización – tu resumen de Mítica+ de un vistazo.
-## Notes-ruRU: Отслеживает ваши ключи Мифического+ (M+), подземелья, рейтинг, участников группы, смерти и статус завершения – ваш обзор Мифический+ на одном экране.
+## Notes: Track Mythic+ (M+) keystones, dungeon runs, score, group members, and completion status — your at-a-glance mythic plus overview.
+## Notes-deDE: Verfolgt deine Mythic+ (M+) Schlüsselsteine, Dungeon-Runs, Score, Gruppenmitglieder und den Abschlussstatus – dein Überblick für Mythic Plus.
+## Notes-frFR: Suit vos clés Mythique+ (M+), donjons, score, membres du groupe et statut de complétion – votre aperçu Mythique+ en un clin d'œil.
+## Notes-esES: Rastrea tus llaves Míticas+ (M+), mazmorras, puntuación, miembros del grupo y estado de finalización – tu resumen de Mítica+ de un vistazo.
+## Notes-ruRU: Отслеживает ваши ключи Мифического+ (M+), подземелья, рейтинг, участников группы и статус завершения – ваш обзор Мифический+ на одном экране.
 
 ## IconTexture: Interface\AddOns\MythicPlusTracker\mplus-icon-64.png
 
