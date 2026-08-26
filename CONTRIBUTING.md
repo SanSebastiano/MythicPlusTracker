@@ -34,7 +34,7 @@ See [`AGENTS.md`](AGENTS.md) for the full picture (load order, SavedVariables, U
 - Never use `print()` directly — use the `addon.*Message()` helpers (`addonMessage`, `chatMessage`, `errorMessage`, etc.).
 - Never hardcode color escape codes — use `addon.colors.*` and always close with `addon.colors.RESET`.
 - New files must be registered in the correct `.xml` or `.toc` file **at the correct load-order position**.
-- Always spell out variable, function, and file names in full — avoid abbreviations (e.g. `Communication.lua`/`addon.Communication`, not `Comm.lua`/`addon.Comm`).
+- Always spell out variable, function, and file names in full — avoid abbreviations (e.g. `GuildKeystoneService.lua`/`addon.GuildKeystoneService`, not `GuildComm.lua`/`addon.GuildComm`).
 - Only comment code that needs clarification — explain non-obvious business logic or WoW API quirks, not what the code is already saying. Avoid section-divider banners, redundant labels, or dead commented-out code.
 - Run `luacheck .` before submitting a PR to catch syntax errors and unused/undefined globals. The repo's `.luacheckrc` is preconfigured with the WoW API globals used by this addon.
 

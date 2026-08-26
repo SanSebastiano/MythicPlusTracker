@@ -17,12 +17,9 @@ Core/core.xml             → cross-cutting infrastructure: addon.colors, addon.
                              addon.*Message helpers, debug mode, time formatting,
                              shared widgets
 Services/services.xml     → addon-wide domain services: addon.KeystoneService
-Utils/utils.xml           → module-local domain services, still to move into Modules/:
-                             AltKeystones/GuildKeys, Communication/GuildComm,
-                             DungeonTeleports, RunHistoryCache
 Command/commands.xml      → registers /mpt and /mythicplustracker slash commands
-Modules/modules.xml       → all UI modules (Tracker → MainFrame → Dashboard →
-                             Sidebar → MinimapButton → Settings → WelcomeMessage)
+Modules/modules.xml       → Tracker module (Services → MainFrame → Dashboard →
+                             Sidebar → MinimapButton), Settings, WelcomeMessage
 ```
 
 Read `Modules/modules.xml` before adding a new UI file — its order is load-bearing. If you add a new file anywhere, register it in the correct `.xml`/`.toc` file **at the right position**.
@@ -34,7 +31,7 @@ Every `.lua` file starts with `local addonName, addon = ...`
 - `addon` is the shared namespace — attach utilities and state to it.
 - Module globals use the `MPT_*` prefix (e.g. `MPT_Tracker`, `MPT_Dashboard`, `MPT_Sidebar`), pre-declared as empty tables in the module's entry file (`Tracker/Tracker.lua`, `Dashboard/Dashboard.lua`, `Sidebar/Sidebar.lua`, `Settings/Settings.lua`) and extended by subsequent files.
 - `_G["MPT"] = addon` makes the shared table globally accessible as `MPT`.
-- No abbreviations in file/variable/function names (e.g. `Communication.lua`/`addon.Communication`, not `Comm.lua`/`addon.Comm`).
+- No abbreviations in file/variable/function names (e.g. `GuildKeystoneService.lua`/`addon.GuildKeystoneService`, not `GuildComm.lua`/`addon.GuildComm`).
 
 ## SavedVariables
 

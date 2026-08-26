@@ -132,7 +132,7 @@
 
 3.1.1: Names MUST be descriptive, domain-specific, and unambiguous.
 
-3.1.2: Abbreviations MUST NOT be used in file names, table names, or function names (for example `Communication.lua`/`addon.Communication`, not `Comm.lua`/`addon.Comm`). This matches existing practice documented in `AGENTS.md`.
+3.1.2: Abbreviations MUST NOT be used in file names, table names, or function names (for example `GuildKeystoneService.lua`/`addon.GuildKeystoneService`, not `GuildComm.lua`/`addon.GuildComm`). This matches existing practice documented in `AGENTS.md`.
 
 3.1.3: Generic variable names such as `data`, `tbl`, `result`, `tmp`, `val`, `obj` MUST NOT be used when a domain-specific name is possible (`keystoneInfo`, `runEntry`, `sidebarFrame`).
 

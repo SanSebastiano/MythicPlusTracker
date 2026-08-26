@@ -24,7 +24,6 @@ init.lua
 Locales\locales.xml
 Core\core.xml
 Services\services.xml
-Utils\utils.xml
 
 Command\commands.xml
 Modules\modules.xml

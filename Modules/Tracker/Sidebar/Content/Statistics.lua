@@ -232,11 +232,11 @@ function MPT_Sidebar:loadStatistics(sidebar, cursor)
         renderStatsSection(sidebar, cursor, addon.locale["KEYSTONES_MODE_ALTS"],
             addon.AltKeystoneService:getEntries(), addon.locale["KEYSTONES_ALTS_EMPTY"])
     elseif isGuildMode() then
-        if addon.GuildComm then
-            addon.GuildComm:RequestGuildKeystones()
+        if addon.GuildKeystoneService then
+            addon.GuildKeystoneService:requestKeystones()
         end
         renderStatsSection(sidebar, cursor, addon.locale["KEYSTONES_MODE_GUILD"],
-            addon.GuildKeys:GetEntries(), addon.locale["KEYSTONES_GUILD_EMPTY"])
+            addon.GuildKeystoneService:getEntries(), addon.locale["KEYSTONES_GUILD_EMPTY"])
     else
         if addon.GroupKeystoneService then
             addon.GroupKeystoneService:requestKeystones()

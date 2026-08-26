@@ -44,7 +44,7 @@ local MODE_OPTIONS = {
 -- Alts/Guild modes (same table layout, same header row). nil sortCol means
 -- "no explicit sort yet": Group keeps roster order, Alts/Guild keep their
 -- own default (level desc, then name — see Modules/Tracker/Services/AltKeystoneService.lua and
--- Utils/GuildKeys.lua's GetEntries()). Plain
+-- GuildKeystoneService:getEntries()). Plain
 -- module-level locals, like Dungeons.lua's sortCol/sortDir — persists across
 -- re-renders within the session, reset only by /reload.
 local sortCol = nil
@@ -183,7 +183,7 @@ end
 
 ---Same as refreshGroupView, but for the Guild mode's refresh button — see
 ---the comment above createRefreshButton. Guild's own
----addon.GuildComm:RequestGuildKeystones() call happens as part of the normal
+---addon.GuildKeystoneService:requestKeystones() call happens as part of the normal
 ---render path (see the MODE_GUILD branch below), just like Group's, so it
 ---isn't repeated here either.
 local function refreshGuildView()
@@ -637,7 +637,7 @@ end
 ---here, so no portrait or role icon. altEntry.hasAddon == false renders
 ---"Kein Addon" instead of a keystone.
 ---@param parent Frame
----@param altEntry table entry from addon.AltKeystoneService:getEntries() or addon.GuildKeys:GetEntries()
+---@param altEntry table entry from addon.AltKeystoneService:getEntries() or addon.GuildKeystoneService:getEntries()
 local function createAltRow(parent, altEntry, colX, nameW, dungeonW, rowY, isLast)
     createNameAndClassCell(parent, colX, nameW, rowY, altEntry.name, altEntry.class)
     if altEntry.hasAddon == false then
@@ -729,7 +729,7 @@ function MPT_Dashboard:loadKeystones(frame)
         end)
     elseif mode == MODE_GUILD then
         createRefreshButton(dropdown, refreshGuildView,
-            function() return addon.GuildComm and addon.GuildComm:GetLastRefreshedAt() end)
+            function() return addon.GuildKeystoneService and addon.GuildKeystoneService:getLastRefreshedAt() end)
     end
 
     local scrollFrame = CreateFrame("ScrollFrame", nil, outerFrame)
@@ -772,13 +772,13 @@ function MPT_Dashboard:loadKeystones(frame)
             end
         end
     else -- MODE_GUILD
-        if addon.GuildComm then
-            addon.GuildComm:RequestGuildKeystones()
+        if addon.GuildKeystoneService then
+            addon.GuildKeystoneService:requestKeystones()
         end
 
         -- Reuses createAltRow: guild entries have the same shape (no live
         -- unit token, so no portrait/role column) as Alts entries.
-        local guildEntries = sortEntries(addon.GuildKeys:GetEntries())
+        local guildEntries = sortEntries(addon.GuildKeystoneService:getEntries())
         scrollChild:SetSize(scrollChildW, math.max(#guildEntries, 1) * ROW_H)
 
         if #guildEntries == 0 then

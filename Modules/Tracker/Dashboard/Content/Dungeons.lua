@@ -144,7 +144,7 @@ local function createTableRow(child, mapID, colX, rowY, nameW, runLookup, isLast
     glowFade:SetSmoothing("IN_OUT")
 
     -- Clicking the dungeon icon teleports the player via the matching known
-    -- "Path of ..." spell, if one is known (see Utils/DungeonTeleports.lua).
+    -- "Path of ..." spell, if one is known (see Dashboard/DungeonTeleportCatalog.lua).
     -- Uses a SecureActionButtonTemplate so the protected spell cast is
     -- allowed to run directly from the click.
     local teleport = addon.getDungeonTeleport(mapID)

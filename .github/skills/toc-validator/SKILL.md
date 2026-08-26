@@ -38,7 +38,6 @@ init.lua                → addon namespace
 Locales/locales.xml     → addon.locale populated
 Core/core.xml           → colors, theme, messages, debug, time, widgets
 Services/services.xml   → addon-wide domain services
-Utils/utils.xml         → module-local domain services
 Command/commands.xml    → slash commands
 Modules/modules.xml     → all UI modules
 ```
