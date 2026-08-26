@@ -14,10 +14,11 @@ Files load in the exact order declared in `.toc` and `.xml` files. **Load order 
 init.lua                  → defines _G["MPT"] = addon, addon.locale = {}
 Locales/locales.xml       → populates addon.locale (en-US, de-DE, fr-FR, es-ES, ru-RU)
 Core/core.xml             → cross-cutting infrastructure: addon.colors, addon.theme,
-                             addon.*Message helpers, debug mode
+                             addon.*Message helpers, debug mode, time formatting,
+                             shared widgets
 Utils/utils.xml           → domain services: Keystone/AltKeystones/GuildKeys,
                              Communication/GuildComm, DungeonTeleports,
-                             RunHistoryCache, UIHelpers
+                             RunHistoryCache
 Command/commands.xml      → registers /mpt and /mythicplustracker slash commands
 Modules/modules.xml       → all UI modules (Tracker → MainFrame → Dashboard →
                              Sidebar → MinimapButton → Settings → WelcomeMessage)

@@ -4,6 +4,7 @@
     <Script file='Tracker\MainFrame.lua'/>
 
     <Script file='Tracker\Dashboard\init.lua'/>
+    <Script file='Tracker\Dashboard\TableWidgets.lua'/>
     <Script file='Tracker\Dashboard\Navigation.lua'/>
     <Script file='Tracker\Dashboard\Frame.lua'/>
     <Script file='Tracker\Dashboard\Content\NotMaxLevel.lua'/>
@@ -12,6 +13,7 @@
     <Script file='Tracker\Dashboard\Content\Keystones.lua'/>
 
     <Script file='Tracker\Sidebar\init.lua'/>
+    <Script file='Tracker\Sidebar\CardWidgets.lua'/>
     <Script file='Tracker\Sidebar\Content\WeeklyVault.lua'/>
     <Script file='Tracker\Sidebar\Content\TraitNodes.lua'/>
     <Script file='Tracker\Sidebar\Content\Currency.lua'/>

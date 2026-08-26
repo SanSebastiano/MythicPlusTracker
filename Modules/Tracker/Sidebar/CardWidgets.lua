@@ -1,18 +1,5 @@
 local addonName, addon = ...
 
----Creates a single FontString table cell, shared by the Dashboard table views
----(Dungeons/Runs/Keystones) to avoid re-implementing the same cell layout per file.
-function addon.createTableCell(parent, x, y, w, h, text, font, justifyH, wordWrap)
-    local fs = parent:CreateFontString(nil, "OVERLAY", font or "GameFontHighlight")
-    fs:SetSize(w, h)
-    fs:SetPoint("TOPLEFT", parent, "TOPLEFT", x, y)
-    fs:SetJustifyH(justifyH or "LEFT")
-    fs:SetJustifyV("MIDDLE")
-    if wordWrap then fs:SetWordWrap(true) end
-    fs:SetText(text)
-    return fs
-end
-
 ---Draws a thin 4-sided border exactly along a frame's own edges, anchored
 ---(not size-based), so it stays pixel-accurate even if the frame is resized
 ---later. Use for floating panels/popups whose size varies at runtime, where
@@ -42,41 +29,6 @@ function addon.createThinBorder(frame, thickness, r, g, b, a)
     right:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
     right:SetWidth(thickness)
     right:SetColorTexture(r, g, b, a)
-end
-
-function addon.createRowDivider(parent, y, alpha)
-    local line = parent:CreateTexture(nil, "ARTWORK")
-    line:SetPoint("TOPLEFT",  parent, "TOPLEFT",  0, y)
-    line:SetPoint("TOPRIGHT", parent, "TOPRIGHT", 0, y)
-    line:SetHeight(1)
-    line:SetColorTexture(0.45, 0.45, 0.65, alpha or 0.3)
-    return line
-end
-
----Wires a modern MinimalScrollBar (the same Track/Thumb + Back/Forward-stepper
----style as the Encounter Journal's "Journeys" tab) + mousewheel scrolling to a
----ScrollFrame. ScrollUtil.InitScrollFrameWithScrollBar works directly with a
----plain ScrollFrame/scrollChild (no WowScrollBoxList migration needed) and
----installs OnVerticalScroll/OnScrollRangeChanged/OnMouseWheel itself.
-function addon.createTableScrollbar(outerFrame, scrollFrame, rowHeight)
-    local scrollBar = CreateFrame("EventFrame", nil, outerFrame, "MinimalScrollBar")
-    scrollBar:SetPoint("TOPRIGHT",    outerFrame, "TOPRIGHT",    0, 0)
-    scrollBar:SetPoint("BOTTOMRIGHT", outerFrame, "BOTTOMRIGHT", 0, 0)
-    scrollBar:SetHideIfUnscrollable(true)
-
-    scrollFrame:EnableMouseWheel(true)
-    ScrollUtil.InitScrollFrameWithScrollBar(scrollFrame, scrollBar)
-
-    -- Preserve the previous "3 rows per wheel notch" scroll feel (Init
-    -- defaults the pan extent to 30px, independent of this table's row height).
-    scrollFrame:SetPanExtent(rowHeight * 3)
-
-    -- scrollChild is already sized/populated by the caller before this runs,
-    -- so force one range recalculation now — otherwise OnScrollRangeChanged
-    -- never fires and the thumb stays full-size.
-    scrollFrame:UpdateScrollChildRect()
-
-    return scrollBar
 end
 
 ---Minimal vertical layout cursor for stacking Sidebar cards. Each content
@@ -122,27 +74,4 @@ function addon.createSidebarSectionHeader(parent, y, width, text)
     label:SetText(text)
 
     return header
-end
-
----Formats a GetServerTime() timestamp as a short localized "time ago" string
----(e.g. "vor 5 Min."), for tooltips that show the freshness of cached/synced
----data (Twinks/Guild keystone views). Returns TIME_UNKNOWN if the timestamp
----is nil (e.g. nothing saved/synced yet this install).
----@param serverTimestamp number|nil
----@return string
-function addon.formatRelativeTime(serverTimestamp)
-    if not serverTimestamp then
-        return addon.locale["TIME_UNKNOWN"]
-    end
-
-    local elapsedSeconds = GetServerTime() - serverTimestamp
-    if elapsedSeconds < 60 then
-        return addon.locale["TIME_JUST_NOW"]
-    elseif elapsedSeconds < 3600 then
-        return string.format(addon.locale["TIME_MINUTES_AGO"], math.floor(elapsedSeconds / 60))
-    elseif elapsedSeconds < 86400 then
-        return string.format(addon.locale["TIME_HOURS_AGO"], math.floor(elapsedSeconds / 3600))
-    else
-        return string.format(addon.locale["TIME_DAYS_AGO"], math.floor(elapsedSeconds / 86400))
-    end
 end

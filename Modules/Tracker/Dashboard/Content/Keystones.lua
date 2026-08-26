@@ -218,7 +218,7 @@ end
 
 ---Creates the icon-only refresh button, anchored directly to the left of the
 ---Group/Alts/Guild mode dropdown (in the row above the table). The scrollbar
----gutter (Utils/UIHelpers.lua) is only 14px wide — too narrow for a 20px
+---gutter (Dashboard/TableWidgets.lua) is only 14px wide — too narrow for a 20px
 ---icon now that it hosts the slim MinimalScrollBar instead of the old, wider
 ---UIPanelScrollBarTemplate — so this button no longer lives there. Used by
 ---both Group and Guild mode (each with their own onClick/cooldown and

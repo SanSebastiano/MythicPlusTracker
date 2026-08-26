@@ -5,7 +5,7 @@ local contentWrapper
 
 -- Starting Y for the first card (Score). Every subsequent card reads its own
 -- anchor from the cursor and advances it by its own gap + height, so no card
--- needs to know any other card's size (see Utils/UIHelpers.lua).
+-- needs to know any other card's size (see Sidebar/CardWidgets.lua).
 local FIRST_CARD_Y = -30
 
 local function renderDefaultContent(wrapper, cursor)

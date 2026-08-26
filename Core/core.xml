@@ -4,4 +4,6 @@
     <Script file='Theme.lua'/>
     <Script file='Messages.lua'/>
     <Script file='Debug.lua'/>
+    <Script file='Time.lua'/>
+    <Script file='Widgets.lua'/>
 </Ui>
