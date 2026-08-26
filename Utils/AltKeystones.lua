@@ -29,7 +29,7 @@ local function persistOwnKeystoneIfEligible()
         return
     end
 
-    local mapID, level = addon.Keystone:GetOwned()
+    local mapID, level = addon.KeystoneService:getOwned()
     local _, englishClass = UnitClass("player")
 
     MythicPlusTrackerAltDB[getCharacterKey()] = {

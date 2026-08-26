@@ -110,7 +110,7 @@
 
 ### 2.2 Separation Of Concerns
 
-2.2.1: Domain logic MUST live in the relevant module table (for example `addon.Keystone`, `addon.Communication`), not in event handlers, frame scripts, or slash-command dispatch.
+2.2.1: Domain logic MUST live in the relevant module table (for example `addon.KeystoneService`, `addon.Communication`), not in event handlers, frame scripts, or slash-command dispatch.
 
 2.2.2: Event handlers and `OnEvent`/`OnClick`/`OnUpdate` scripts MUST translate WoW callbacks into calls to named module functions. They MUST NOT contain multi-step business logic inline.
 

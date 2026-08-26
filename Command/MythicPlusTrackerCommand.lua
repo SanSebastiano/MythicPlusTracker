@@ -53,7 +53,7 @@ local function handleSlashCommand(msg)
         MPT_Settings:Open()
 
     elseif command == "announce" then
-        addon.Keystone:AnnounceToGroup()
+        addon.KeystoneService:announceToGroup()
 
     elseif command == "help" or command == "" then
         addon.chatMessage(" ")

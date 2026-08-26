@@ -37,7 +37,8 @@ The WoW client loads files in the exact order they appear in `.toc` and `.xml`:
 init.lua                → addon namespace
 Locales/locales.xml     → addon.locale populated
 Core/core.xml           → colors, theme, messages, debug, time, widgets
-Utils/utils.xml         → domain services
+Services/services.xml   → addon-wide domain services
+Utils/utils.xml         → module-local domain services
 Command/commands.xml    → slash commands
 Modules/modules.xml     → all UI modules
 ```

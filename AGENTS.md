@@ -16,9 +16,10 @@ Locales/locales.xml       → populates addon.locale (en-US, de-DE, fr-FR, es-ES
 Core/core.xml             → cross-cutting infrastructure: addon.colors, addon.theme,
                              addon.*Message helpers, debug mode, time formatting,
                              shared widgets
-Utils/utils.xml           → domain services: Keystone/AltKeystones/GuildKeys,
-                             Communication/GuildComm, DungeonTeleports,
-                             RunHistoryCache
+Services/services.xml     → addon-wide domain services: addon.KeystoneService
+Utils/utils.xml           → module-local domain services, still to move into Modules/:
+                             AltKeystones/GuildKeys, Communication/GuildComm,
+                             DungeonTeleports, RunHistoryCache
 Command/commands.xml      → registers /mpt and /mythicplustracker slash commands
 Modules/modules.xml       → all UI modules (Tracker → MainFrame → Dashboard →
                              Sidebar → MinimapButton → Settings → WelcomeMessage)

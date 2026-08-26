@@ -1,6 +1,5 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 
-    <Script file='Keystone.lua'/>
     <Script file='AltKeystones.lua'/>
     <Script file='Communication.lua'/>
     <Script file='GuildKeys.lua'/>

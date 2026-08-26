@@ -13,7 +13,7 @@ function MPT_Sidebar:loadKeystone(sidebar, cursor)
     frame:SetSize(254, KEYSTONE_HEIGHT)
     frame:SetPoint("TOPLEFT", sidebar, "TOPLEFT", 23, y)
 
-    local mapID, level, name, texture = addon.Keystone:GetOwned()
+    local mapID, level, name, texture = addon.KeystoneService:getOwned()
 
     if not mapID then
         local noKeyText = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
@@ -46,7 +46,7 @@ function MPT_Sidebar:loadKeystone(sidebar, cursor)
     tooltipButton:SetSize(frame:GetWidth() - 37, 32)
     tooltipButton:SetPoint("LEFT", icon, "RIGHT", 6, 0)
     tooltipButton:SetScript("OnEnter", function(self)
-        local bag, slot = addon.Keystone:FindInBags()
+        local bag, slot = addon.KeystoneService:findInBags()
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
         if bag then
             GameTooltip:SetBagItem(bag, slot)

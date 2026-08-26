@@ -28,7 +28,7 @@ The addon currently only ever *displays* scores; there is no predictive or compa
 
 ## C. Chat & Announce
 
-- **Bulk-announce group keys** `medium` — a button that posts *all* currently known keystones in the group (`addon.groupKeystones`) at once, instead of just your own (`/mpt announce` already exists, see `Utils/Keystone.lua`). Needs throttle-safe multi-message sending, since the client silently drops `SendChatMessage` calls fired too close together.
+- **Bulk-announce group keys** `medium` — a button that posts *all* currently known keystones in the group (`addon.groupKeystones`) at once, instead of just your own (`/mpt announce` already exists, see `Services/KeystoneService.lua`). Needs throttle-safe multi-message sending, since the client silently drops `SendChatMessage` calls fired too close together.
 - **Bulk-announce alt keys** `medium` — same for `MythicPlusTrackerAltDB`, e.g. to show the group which twink could bring a useful key.
 - **Auto-announce on run completion** `medium` — opt-in, posts a short summary ("+18 X, timed, 3:02 to spare") after `CHALLENGE_MODE_COMPLETED` via `C_ChallengeMode.GetChallengeCompletionInfo()`. Must default to OFF.
 - **Announce to guild** `low` — Guild Sync is silent today; there's no visible guild-chat post of your own key.
