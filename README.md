@@ -8,7 +8,7 @@
 
 </div>
 
-A World of Warcraft retail addon that gives you a clear, at-a-glance overview of your Mythic+ progress — dungeons, score, keystone, group, and Weekly Vault — all in one compact UI.
+A World of Warcraft retail addon that gives you a clear, at-a-glance overview of your Mythic+ (M+) / Mythic Plus progress — keystones, dungeons, score, group, and Weekly Vault — all in one compact UI.
 
 ## Features
 
