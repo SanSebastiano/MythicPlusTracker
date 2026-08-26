@@ -40,17 +40,6 @@ local MODE_OPTIONS = {
     { mode = MODES.GUILD, localeKey = "KEYSTONES_MODE_GUILD" },
 }
 
--- Sort state for the clickable column headers, shared across both Group and
--- Alts/Guild modes (same table layout, same header row). nil sortCol means
--- "no explicit sort yet": Group keeps roster order, Alts/Guild keep their
--- own default (level desc, then name — see Modules/Tracker/Services/AltKeystoneService.lua and
--- GuildKeystoneService:getEntries()). Plain
--- module-level locals, like DungeonsPage.lua's sortCol/sortDir — persists across
--- re-renders within the session, reset only by /reload.
-local sortCol = nil
-local sortDir = "asc"
-local headerCells = {} -- [colKey] = FontString, updated when sort changes
-
 local HEADER_LOCALE = {
     name    = "KEYSTONES_COL_PLAYER",
     dungeon = "KEYSTONES_COL_DUNGEON",
@@ -64,6 +53,14 @@ local SORT_DEFAULT_DIR = {
     level   = "desc",
     score   = "desc",
 }
+
+-- No initial column: until a header is clicked, each mode keeps its provider's
+-- own order (Group the roster order, Alts/Guild level-desc-then-name). Own
+-- instance, so sorting this table never disturbs the Overview table's sort.
+local sortState = addon.TableSortService:new({
+    defaultDirections = SORT_DEFAULT_DIR,
+    headerLocaleKeys  = HEADER_LOCALE,
+})
 
 -- Fixed column widths sized to fit their content (name/dungeon columns are dynamic)
 local COL_W = {
@@ -307,16 +304,6 @@ local function createModeDropdown(frame)
     return dropdown
 end
 
-local function updateHeaderIndicators()
-    for colKey, fs in pairs(headerCells) do
-        local localeKey = HEADER_LOCALE[colKey]
-        local label = addon.locale[localeKey] or localeKey
-        local indicator = (colKey == sortCol) and (sortDir == "asc" and " ^" or " v") or ""
-        fs:SetText(label .. indicator)
-        fs:SetTextColor(ARTIFACT_R, ARTIFACT_G, ARTIFACT_B, 1)
-    end
-end
-
 ---Resolves the dungeon name for a normalized row entry, used only for
 ---sorting by the "Dungeon" column. Group entries (from KeystoneEntryService)
 ---already carry a cached dungeonName; Alts entries (from
@@ -338,27 +325,30 @@ end
 ---@param entries table
 ---@return table entries
 local function sortEntries(entries)
-    if not sortCol or #entries == 0 then
+    local sortColumn = sortState:getColumn()
+    if not sortColumn or #entries == 0 then
         return entries
     end
 
+    local ascending = sortState:isAscending()
+
     table.sort(entries, function(a, b)
-        if sortCol == "name" then
+        if sortColumn == "name" then
             local an, bn = a.name or "", b.name or ""
-            if sortDir == "asc" then return an < bn end
+            if ascending then return an < bn end
             return an > bn
-        elseif sortCol == "dungeon" then
+        elseif sortColumn == "dungeon" then
             local ad, bd = resolveDungeonName(a), resolveDungeonName(b)
             if (ad == nil) ~= (bd == nil) then return ad ~= nil end
             ad, bd = ad or "", bd or ""
-            if sortDir == "asc" then return ad < bd end
+            if ascending then return ad < bd end
             return ad > bd
         else -- "level" or "score": numeric, push unknown (nil/0) entries last regardless of direction
-            local va = a[sortCol] or 0
-            local vb = b[sortCol] or 0
+            local va = a[sortColumn] or 0
+            local vb = b[sortColumn] or 0
             if (va == 0) ~= (vb == 0) then return va ~= 0 end
-            if sortDir == "desc" then return va > vb end
-            return va < vb
+            if ascending then return va < vb end
+            return va > vb
         end
     end)
 
@@ -366,7 +356,7 @@ local function sortEntries(entries)
 end
 
 local function createHeader(parent, colX, nameW, dungeonW, onSort)
-    wipe(headerCells)
+    sortState:forgetHeaderCells()
 
     local headerDefs = {
         { key = "name",    w = nameW,        j = "LEFT"  },
@@ -376,39 +366,10 @@ local function createHeader(parent, colX, nameW, dungeonW, onSort)
     }
 
     for _, def in ipairs(headerDefs) do
-        local btn = CreateFrame("Button", nil, parent)
-        btn:SetSize(def.w, HEADER_H)
-        btn:SetPoint("TOPLEFT", parent, "TOPLEFT", colX[def.key], 0)
-
-        local fs = btn:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-        fs:SetSize(def.w, HEADER_H)
-        fs:SetPoint("TOPLEFT", btn, "TOPLEFT", 0, 0)
-        fs:SetJustifyH(def.j)
-        fs:SetJustifyV("MIDDLE")
-        fs:SetWordWrap(false)
-
-        headerCells[def.key] = fs
-
-        btn:SetScript("OnClick", function()
-            if sortCol == def.key then
-                sortDir = sortDir == "asc" and "desc" or "asc"
-            else
-                sortCol = def.key
-                sortDir = SORT_DEFAULT_DIR[def.key] or "asc"
-            end
-            updateHeaderIndicators()
-            onSort()
-        end)
-
-        btn:SetScript("OnEnter", function()
-            fs:SetTextColor(1, 1, 1, 1)
-        end)
-        btn:SetScript("OnLeave", function()
-            fs:SetTextColor(ARTIFACT_R, ARTIFACT_G, ARTIFACT_B, 1)
-        end)
+        addon.createSortableHeaderButton(parent, colX[def.key], def.w, HEADER_H, def.j, def.key, sortState, onSort)
     end
 
-    updateHeaderIndicators()
+    sortState:updateIndicators()
     addon.createRowDivider(parent, -HEADER_H, 0.5)
 end
 

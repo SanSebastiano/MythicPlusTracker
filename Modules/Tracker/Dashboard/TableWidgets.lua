@@ -13,6 +13,51 @@ function addon.createTableCell(parent, x, y, w, h, text, font, justifyH, wordWra
     return fs
 end
 
+---Creates one clickable column header for a sortable Dashboard table: the
+---button, its label, the hover highlight, and the wiring that flips the sort
+---state and re-renders. The label text itself is written by
+---sortState:updateIndicators(), which the caller runs once after building all
+---headers.
+---@param parent Frame
+---@param x number top-left X offset within parent
+---@param width number
+---@param height number
+---@param justifyH string|nil defaults to "LEFT"
+---@param columnKey string key into the sort state's direction/locale tables
+---@param sortState table an addon.TableSortService instance
+---@param onSort function called after the sort state changed
+---@return Button
+function addon.createSortableHeaderButton(parent, x, width, height, justifyH, columnKey, sortState, onSort)
+    local artifactR, artifactG, artifactB = addon.colorToRGB("ARTIFACT")
+
+    local button = CreateFrame("Button", nil, parent)
+    button:SetSize(width, height)
+    button:SetPoint("TOPLEFT", parent, "TOPLEFT", x, 0)
+
+    local label = button:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    label:SetSize(width, height)
+    label:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
+    label:SetJustifyH(justifyH or "LEFT")
+    label:SetJustifyV("MIDDLE")
+    label:SetWordWrap(false)
+
+    sortState:registerHeaderCell(columnKey, label)
+
+    button:SetScript("OnClick", function()
+        sortState:toggleColumn(columnKey)
+        onSort()
+    end)
+
+    button:SetScript("OnEnter", function()
+        label:SetTextColor(1, 1, 1, 1)
+    end)
+    button:SetScript("OnLeave", function()
+        label:SetTextColor(artifactR, artifactG, artifactB, 1)
+    end)
+
+    return button
+end
+
 ---Wires a modern MinimalScrollBar (the same Track/Thumb + Back/Forward-stepper
 ---style as the Encounter Journal's "Journeys" tab) + mousewheel scrolling to a
 ---ScrollFrame. ScrollUtil.InitScrollFrameWithScrollBar works directly with a
