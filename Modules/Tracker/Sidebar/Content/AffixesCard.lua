@@ -4,6 +4,9 @@ local ICON_SIZE  = 28
 local ICON_GAP   = 8
 local AFFIXES_GAP = 10   -- gap after the previous card (Score)
 
+local CONTENT_X = MPT_Sidebar.LAYOUT.CONTENT_X
+local CONTENT_W = MPT_Sidebar.LAYOUT.CONTENT_W
+
 function MPT_Sidebar:loadAffixes(sidebar, cursor)
     addon.debugMessage("Loading sidebar: affixes...")
 
@@ -15,8 +18,8 @@ function MPT_Sidebar:loadAffixes(sidebar, cursor)
     local affixes = C_MythicPlus.GetCurrentAffixes() or {}
     if #affixes == 0 then
         local noAffixText = sidebar:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-        noAffixText:SetSize(254, ICON_SIZE)
-        noAffixText:SetPoint("TOPLEFT", sidebar, "TOPLEFT", 23, y)
+        noAffixText:SetSize(CONTENT_W, ICON_SIZE)
+        noAffixText:SetPoint("TOPLEFT", sidebar, "TOPLEFT", CONTENT_X, y)
         noAffixText:SetJustifyH("CENTER")
         noAffixText:SetJustifyV("MIDDLE")
         noAffixText:SetText(addon.colors.POOR .. addon.locale["SIDEBAR_NO_AFFIXES"] .. addon.colors.RESET)
@@ -25,7 +28,7 @@ function MPT_Sidebar:loadAffixes(sidebar, cursor)
 
     local n       = #affixes
     local totalW  = n * ICON_SIZE + (n - 1) * ICON_GAP
-    local startX  = 23 + math.floor((254 - totalW) / 2)
+    local startX  = CONTENT_X + math.floor((CONTENT_W - totalW) / 2)
 
     local container = CreateFrame("Frame", nil, sidebar)
     container:SetSize(totalW, ICON_SIZE)

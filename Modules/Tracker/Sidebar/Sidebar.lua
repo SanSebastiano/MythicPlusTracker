@@ -2,13 +2,24 @@ local addonName, addon = ...
 
 MPT_Sidebar = {}
 
+-- Geometry every card has to agree with. FIRST_CARD_Y is the anchor for the
+-- first card (Score); every subsequent card reads its own anchor from the
+-- layout cursor and advances it by its own gap + height, so no card needs to
+-- know any other card's size (see Sidebar/CardWidgets.lua). The per-card gaps
+-- deliberately stay local to each card — that is the point of the cursor.
+MPT_Sidebar.LAYOUT = {
+    WIDTH                 = 300,
+    HEIGHT                = 550,
+    CONTENT_X             = 23,
+    CONTENT_W             = 254,
+    HEADER_TO_CONTENT_GAP = 4,   -- between a section's header banner and its rows
+    FIRST_CARD_Y          = -30,
+}
+
 local frame
 local contentWrapper
 
--- Starting Y for the first card (Score). Every subsequent card reads its own
--- anchor from the cursor and advances it by its own gap + height, so no card
--- needs to know any other card's size (see Sidebar/CardWidgets.lua).
-local FIRST_CARD_Y = -30
+local FIRST_CARD_Y = MPT_Sidebar.LAYOUT.FIRST_CARD_Y
 
 local function renderDefaultContent(wrapper, cursor)
     MPT_Sidebar:loadScore(wrapper, cursor)
@@ -42,7 +53,7 @@ local function create(mainFrame)
 
     frame = CreateFrame("Frame", nil, mainFrame)
 
-    frame:SetSize(300, 550)
+    frame:SetSize(MPT_Sidebar.LAYOUT.WIDTH, MPT_Sidebar.LAYOUT.HEIGHT)
     frame:SetPoint("TOPLEFT", mainFrame)
 
     local background = frame:CreateTexture(nil, "BACKGROUND")

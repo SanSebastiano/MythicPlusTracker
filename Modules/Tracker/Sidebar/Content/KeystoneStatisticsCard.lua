@@ -3,12 +3,12 @@ local addonName, addon = ...
 MythicPlusTrackerDB = MythicPlusTrackerDB or {}
 
 -- Same left/width convention as the Score card and the other Sidebar cards.
-local CONTENT_X = 23
-local CONTENT_W = 254
+local CONTENT_X = MPT_Sidebar.LAYOUT.CONTENT_X
+local CONTENT_W = MPT_Sidebar.LAYOUT.CONTENT_W
 local INSET     = 10   -- left/right inset inside content rows, matches RunStatisticsCard.lua
 
 local SECTION_GAP           = 8
-local HEADER_TO_CONTENT_GAP = 4  -- gap between header banner and its rows (matches WeeklyVaultCard.lua)
+local HEADER_TO_CONTENT_GAP = MPT_Sidebar.LAYOUT.HEADER_TO_CONTENT_GAP
 
 local ROW_H       = 22  -- matches RunStatisticsCard.lua's tier rows
 local VALUE_W     = 130 -- wide enough for the "Best" row's "<Name> +<Level>" value,

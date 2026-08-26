@@ -2,6 +2,16 @@ local addonName, addon = ...
 
 MPT_Dashboard = {}
 
+-- Geometry every content page has to agree with. These used to be copied into
+-- each page with a "-- matches Frame.lua" comment standing in for a shared
+-- constant; the pages now read them from here.
+MPT_Dashboard.LAYOUT = {
+    WIDTH             = 800,
+    HEIGHT            = 550,
+    CONTENT_INSET     = 20,  -- aligns with the divider bar's left/right caps
+    NAV_BOTTOM_MARGIN = 8,
+}
+
 MythicPlusTrackerDB = MythicPlusTrackerDB or {}
 
 local frame
@@ -27,7 +37,7 @@ local function create(mainFrame)
 
     frame = CreateFrame("Frame", nil, mainFrame)
 
-    frame:SetSize(800, 550)
+    frame:SetSize(MPT_Dashboard.LAYOUT.WIDTH, MPT_Dashboard.LAYOUT.HEIGHT)
     frame:SetPoint("TOPRIGHT", mainFrame)
 
     local bg = frame:CreateTexture(nil, "BACKGROUND")

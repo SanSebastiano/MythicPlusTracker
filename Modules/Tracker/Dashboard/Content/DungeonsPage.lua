@@ -6,9 +6,9 @@ local HEADER_H   = 30
 local COL_GAP    = 8
 local ICON_SIZE  = 36
 
-local NAV_BOTTOM_MARGIN = 8
-local DASHBOARD_W       = 800  -- dashboard frame width (fixed in Frame.lua)
-local CONTENT_INSET     = 20   -- aligns with the divider bar left/right caps
+local NAV_BOTTOM_MARGIN = MPT_Dashboard.LAYOUT.NAV_BOTTOM_MARGIN
+local DASHBOARD_W       = MPT_Dashboard.LAYOUT.WIDTH
+local CONTENT_INSET     = MPT_Dashboard.LAYOUT.CONTENT_INSET
 
 -- Fixed column widths (name column is computed dynamically)
 local COL_W = {

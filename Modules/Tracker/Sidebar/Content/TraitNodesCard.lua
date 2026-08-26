@@ -6,10 +6,10 @@ local TRAIT_SYSTEM_ID = 48
 local BUTTON_SIZE  = 40
 local BUTTON_GAP   = 8
 local TRAITNODES_GAP = 20   -- gap after the previous card (WeeklyVault)
-local HEADER_TO_CONTENT_GAP = 4
+local HEADER_TO_CONTENT_GAP = MPT_Sidebar.LAYOUT.HEADER_TO_CONTENT_GAP
 
 local POPUP_MIN_W   = 190
-local POPUP_MAX_W   = 300  -- matches the Sidebar's own width, a sensible cap for a floating popup
+local POPUP_MAX_W   = MPT_Sidebar.LAYOUT.WIDTH  -- a sensible cap for a floating popup
 local POPUP_ROW_H   = 28
 local POPUP_PAD     = 6
 local POPUP_ICON    = 22
@@ -412,7 +412,7 @@ function MPT_Sidebar:loadTraitNodes(sidebar, cursor)
     local contentY = headerY - addon.SIDEBAR_SECTION_HEADER_HEIGHT - HEADER_TO_CONTENT_GAP
     cursor:advance(TRAITNODES_GAP + addon.SIDEBAR_SECTION_HEADER_HEIGHT + HEADER_TO_CONTENT_GAP + BUTTON_SIZE)
 
-    addon.createSidebarSectionHeader(sidebar, headerY, 254, addon.locale["SIDEBAR_TRAITNODES_HEADER"])
+    addon.createSidebarSectionHeader(sidebar, headerY, MPT_Sidebar.LAYOUT.CONTENT_W, addon.locale["SIDEBAR_TRAITNODES_HEADER"])
 
     local configID, treeID = getConfigAndTree()
     if not configID or not treeID then

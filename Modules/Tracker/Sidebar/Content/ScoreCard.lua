@@ -1,5 +1,6 @@
 local addonName, addon = ...
 
+local CONTENT_W = MPT_Sidebar.LAYOUT.CONTENT_W
 local SCORE_HEIGHT = 80
 
 function MPT_Sidebar:loadScore(sidebar, cursor)
@@ -14,8 +15,8 @@ function MPT_Sidebar:loadScore(sidebar, cursor)
         sidebar
     )
 
-    frame:SetSize(254, SCORE_HEIGHT)
-    frame:SetPoint("TOPLEFT", sidebar, "TOPLEFT", 23, y)
+    frame:SetSize(CONTENT_W, SCORE_HEIGHT)
+    frame:SetPoint("TOPLEFT", sidebar, "TOPLEFT", MPT_Sidebar.LAYOUT.CONTENT_X, y)
 
     local background = frame:CreateTexture(nil, "OVERLAY")
     background:SetAllPoints()
