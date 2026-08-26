@@ -1,5 +1,7 @@
 local addonName, addon = ...
 
+MPT_Sidebar = {}
+
 local frame
 local contentWrapper
 

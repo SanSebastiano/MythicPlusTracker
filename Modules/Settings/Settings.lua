@@ -1,5 +1,7 @@
 local addonName, addon = ...
 
+MPT_Settings = {}
+
 MythicPlusTrackerDB = MythicPlusTrackerDB or {}
 
 local function createSettingsPanel()

@@ -31,7 +31,7 @@ Read `Modules/modules.xml` before adding a new UI file — its order is load-bea
 Every `.lua` file starts with `local addonName, addon = ...`
 
 - `addon` is the shared namespace — attach utilities and state to it.
-- Module globals use the `MPT_*` prefix (e.g. `MPT_Tracker`, `MPT_Dashboard`, `MPT_Sidebar`), pre-declared as empty tables in the module's entry file (`Tracker/Tracker.lua`, elsewhere still `init.lua`) and extended by subsequent files.
+- Module globals use the `MPT_*` prefix (e.g. `MPT_Tracker`, `MPT_Dashboard`, `MPT_Sidebar`), pre-declared as empty tables in the module's entry file (`Tracker/Tracker.lua`, `Dashboard/Dashboard.lua`, `Sidebar/Sidebar.lua`, `Settings/Settings.lua`) and extended by subsequent files.
 - `_G["MPT"] = addon` makes the shared table globally accessible as `MPT`.
 - No abbreviations in file/variable/function names (e.g. `Communication.lua`/`addon.Communication`, not `Comm.lua`/`addon.Comm`).
 
