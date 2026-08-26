@@ -22,7 +22,7 @@ local TIERS = {
 function MPT_Sidebar:loadRunsStats(sidebar, cursor)
     addon.debugMessage("Loading sidebar: runs stats...")
 
-    local runHistory = addon.getRunHistory()
+    local runHistory = addon.RunHistoryService:getRuns()
 
     local bestRun = nil
     for _, run in ipairs(runHistory) do

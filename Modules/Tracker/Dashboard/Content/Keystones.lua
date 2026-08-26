@@ -637,7 +637,7 @@ end
 ---here, so no portrait or role icon. altEntry.hasAddon == false renders
 ---"Kein Addon" instead of a keystone.
 ---@param parent Frame
----@param altEntry table entry from addon.AltKeystones:GetEntries() or addon.GuildKeys:GetEntries()
+---@param altEntry table entry from addon.AltKeystoneService:getEntries() or addon.GuildKeys:GetEntries()
 local function createAltRow(parent, altEntry, colX, nameW, dungeonW, rowY, isLast)
     createNameAndClassCell(parent, colX, nameW, rowY, altEntry.name, altEntry.class)
     if altEntry.hasAddon == false then
@@ -723,7 +723,7 @@ function MPT_Dashboard:loadKeystones(frame)
         createInfoButton(dropdown, function()
             return {
                 string.format(addon.locale["KEYSTONES_LAST_UPDATED"],
-                    addon.formatRelativeTime(addon.AltKeystones:GetLastRefreshedAt())),
+                    addon.formatRelativeTime(addon.AltKeystoneService:getLastRefreshedAt())),
                 addon.locale["KEYSTONES_ALTS_NEXT_UPDATE"],
             }
         end)
@@ -754,7 +754,7 @@ function MPT_Dashboard:loadKeystones(frame)
             createRow(scrollChild, entry, colX, nameW, dungeonW, rowY, isLast)
         end
     elseif mode == MODE_ALTS then
-        local altEntries = sortEntries(addon.AltKeystones:GetEntries())
+        local altEntries = sortEntries(addon.AltKeystoneService:getEntries())
         scrollChild:SetSize(scrollChildW, math.max(#altEntries, 1) * ROW_H)
 
         if #altEntries == 0 then

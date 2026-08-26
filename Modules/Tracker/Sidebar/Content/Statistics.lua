@@ -85,7 +85,7 @@ end
 
 ---Aggregates a list of normalized {name, class, mapID, level, score} entries
 ---(the shared shape produced by buildGroupStatEntries() and, already,
----addon.AltKeystones:GetEntries()) into the numbers this panel shows.
+---addon.AltKeystoneService:getEntries()) into the numbers this panel shows.
 ---Averages only ever consider entries with a known value, so a member
 ---without the addon (nil score) can't drag the average toward zero.
 ---"Best" ranks by level first, score as the tiebreaker.
@@ -230,7 +230,7 @@ function MPT_Sidebar:loadStatistics(sidebar, cursor)
 
     if isAltsMode() then
         renderStatsSection(sidebar, cursor, addon.locale["KEYSTONES_MODE_ALTS"],
-            addon.AltKeystones:GetEntries(), addon.locale["KEYSTONES_ALTS_EMPTY"])
+            addon.AltKeystoneService:getEntries(), addon.locale["KEYSTONES_ALTS_EMPTY"])
     elseif isGuildMode() then
         if addon.GuildComm then
             addon.GuildComm:RequestGuildKeystones()

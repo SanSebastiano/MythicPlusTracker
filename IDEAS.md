@@ -14,9 +14,9 @@ The addon currently only ever *displays* scores; there is no predictive or compa
 - **Weakest dungeon / best next run** `medium` — rank dungeons by potential score gain so the addon can answer "which key is worth the most to me right now?" Builds directly on score projection.
 - **Target score tracker** `low-medium` — set a goal ("I want 3000") and show what's still missing, per dungeon.
 - **Per-affix performance breakdown** `medium` — `C_MythicPlus.GetSeasonBestAffixScoreInfoForMap` is the **single biggest completely unused M+ API block**: it returns the best run per affix category per dungeon (`level`, `durationSec`, `score`). This is what reveals which half of a dungeon's score is dragging you down, and it's also the data foundation for accurate score projection.
-- **Weekly statistics panel** `low-medium` — how much score was gained each week, how many keys completed. `addon.getRunHistory()` already returns `completionDate`/`runScore`/`thisWeek` per run; bucketing by weekly-reset boundaries reuses the pattern in `Utils/AltKeystones.lua` (`C_DateAndTime.GetWeeklyResetStartTime()`). No sync needed.
+- **Weekly statistics panel** `low-medium` — how much score was gained each week, how many keys completed. `addon.RunHistoryService:getRuns()` already returns `completionDate`/`runScore`/`thisWeek` per run; bucketing by weekly-reset boundaries reuses the pattern in `Modules/Tracker/Services/AltKeystoneService.lua` (`C_DateAndTime.GetWeeklyResetStartTime()`). No sync needed.
 - **Score/key trend graph** `medium` — a small multi-week sparkline instead of just the current week. Same bucketing. For anything beyond the current season, see the season archive in section H.
-- **Personal bests / trends per dungeon** `low-medium` — extends `Utils/RunHistoryCache.lua`, which already has the raw data.
+- **Personal bests / trends per dungeon** `low-medium` — extends `Modules/Tracker/Services/RunHistoryService.lua`, which already has the raw data.
 
 ## B. Great Vault
 

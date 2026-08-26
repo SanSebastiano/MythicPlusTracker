@@ -2,10 +2,13 @@
 
     <Script file='Tracker\Tracker.lua'/>
     <Script file='Tracker\MainFrame.lua'/>
+    <Script file='Tracker\Services\AltKeystoneService.lua'/>
+    <Script file='Tracker\Services\RunHistoryService.lua'/>
 
     <Script file='Tracker\Dashboard\Dashboard.lua'/>
     <Script file='Tracker\Dashboard\DashboardNavigation.lua'/>
     <Script file='Tracker\Dashboard\TableWidgets.lua'/>
+    <Script file='Tracker\Dashboard\DungeonTeleportCatalog.lua'/>
     <Script file='Tracker\Dashboard\Content\NotMaxLevel.lua'/>
     <Script file='Tracker\Dashboard\Content\Dungeons.lua'/>
     <Script file='Tracker\Dashboard\Content\Runs.lua'/>

@@ -351,7 +351,7 @@ function MPT_Dashboard:loadDungeons(frame)
     local dungeons = C_ChallengeMode.GetMapTable()
     if not dungeons then return end
 
-    local runHistory = addon.getRunHistory()
+    local runHistory = addon.RunHistoryService:getRuns()
     local runLookup  = buildRunLookup(runHistory)
 
     local tableW = DASHBOARD_W - CONTENT_INSET * 2
