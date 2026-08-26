@@ -47,7 +47,7 @@ local function buildSlot(container, activity, slotIndex, BlizzardMixin)
 
     -- Gold when unlocked (matches the gold section header above), a duller
     -- gray while still locked/in-progress — same state-color language as the
-    -- Trait Nodes "available" highlight (see TraitNodes.lua).
+    -- Trait Nodes "available" highlight (see TraitNodesCard.lua).
     local borderR, borderG, borderB = addon.colorToRGB(unlocked and "ARTIFACT" or "POOR")
     addon.createThinBorder(slot, 1, borderR, borderG, borderB, unlocked and 0.8 or 0.5)
 

@@ -203,7 +203,7 @@ end
 function MPT_Dashboard:loadRuns(frame)
     -- Sort a shallow copy — addon.RunHistoryService:getRuns() returns a cached, shared
     -- reference, and sorting it in place would silently reorder it for
-    -- other consumers (e.g. Dungeons.lua, RunsStats.lua) too.
+    -- other consumers (e.g. DungeonsPage.lua, RunStatisticsCard.lua) too.
     local runHistory = {}
     for i, run in ipairs(addon.RunHistoryService:getRuns()) do
         runHistory[i] = run

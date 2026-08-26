@@ -21,12 +21,12 @@ end
 
 local function renderRunsContent(wrapper, cursor)
     MPT_Sidebar:loadScore(wrapper, cursor)
-    MPT_Sidebar:loadRunsStats(wrapper, cursor)
+    MPT_Sidebar:loadRunStatistics(wrapper, cursor)
 end
 
 local function renderKeystonesContent(wrapper, cursor)
     MPT_Sidebar:loadScore(wrapper, cursor)
-    MPT_Sidebar:loadStatistics(wrapper, cursor)
+    MPT_Sidebar:loadKeystoneStatistics(wrapper, cursor)
 end
 
 local function rebuildContent(renderFn)

@@ -45,7 +45,7 @@ local MODE_OPTIONS = {
 -- "no explicit sort yet": Group keeps roster order, Alts/Guild keep their
 -- own default (level desc, then name — see Modules/Tracker/Services/AltKeystoneService.lua and
 -- GuildKeystoneService:getEntries()). Plain
--- module-level locals, like Dungeons.lua's sortCol/sortDir — persists across
+-- module-level locals, like DungeonsPage.lua's sortCol/sortDir — persists across
 -- re-renders within the session, reset only by /reload.
 local sortCol = nil
 local sortDir = "asc"
@@ -311,7 +311,7 @@ end
 ---Creates the Group/Alts/Guild mode dropdown, right-aligned above the table.
 ---Selecting an option persists it to MythicPlusTrackerDB.keystonesTabMode
 ---and re-renders both the Dashboard tab and the Sidebar (which mirrors the
----same mode, see Modules/Tracker/Sidebar/Content/Statistics.lua) in place.
+---same mode, see Modules/Tracker/Sidebar/Content/KeystoneStatisticsCard.lua) in place.
 ---@param frame Frame the tab's content panel
 local function createModeDropdown(frame)
     local function labelFor(mode)

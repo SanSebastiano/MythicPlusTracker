@@ -46,14 +46,14 @@ end
 
 -- Section-header banner height for the Overview tab's Sidebar sections
 -- (WeeklyVault/TraitNodes/Currency). Matches the 46px title banners already
--- used in RunsStats.lua/Statistics.lua — with headers now on only 3 of the
+-- used in RunStatisticsCard.lua/KeystoneStatisticsCard.lua — with headers now on only 3 of the
 -- 6 Overview sections (Affixes/Keystone stay header-less), the Sidebar's
 -- fixed 550px height has enough room for the full-size banner look.
 addon.SIDEBAR_SECTION_HEADER_HEIGHT = 46
 
 ---Section-header banner for the Sidebar's Overview tab: same visual language
 ---(CARD_TITLE_BACKGROUND + centered ARTIFACT-colored label) and size as the
----title banners in RunsStats.lua/Statistics.lua.
+---title banners in RunStatisticsCard.lua/KeystoneStatisticsCard.lua.
 ---@param parent Frame
 ---@param y number top-left Y offset within parent
 ---@param width number
