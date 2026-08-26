@@ -8,7 +8,7 @@ local locale = {
     ["COMBAT_LOCKDOWN_WARNING"] = "The tracker window cannot be opened while in combat.",
     -- Minimap Button
     ["MINIMAP_BUTTON_NAME"] = "Mythic Plus Tracker",
-    ["MINIMAP_BUTTON_CLICK_LEFT"] = "Left Click: Toggle Dashboard",
+    ["MINIMAP_BUTTON_CLICK_LEFT"] = "Left Click: Open Dashboard",
     ["MINIMAP_BUTTON_CLICK_RIGHT"] = "Right Click: Open Great Vault",
     ["MINIMAP_BUTTON_DRAG"] = "Drag: Move along minimap edge (Shift+Drag: Move freely)",
     ["MINIMAP_BUTTON_DRAG_NORMAL"] = "Drag: Move along minimap edge",
