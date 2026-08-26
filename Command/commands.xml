@@ -1,4 +1,4 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 
-    <Script file='MythicPlusTrackerCommand.lua'/>
+    <Script file='SlashCommand.lua'/>
 </Ui>

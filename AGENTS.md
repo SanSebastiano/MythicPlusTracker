@@ -70,7 +70,7 @@ Strings live in `Locales/*.lua` (`en-US` is the reference; `de-DE`, `fr-FR`, `es
 
 ## Slash Commands
 
-Registered as `/mpt` and `/mythicplustracker`. Handler: `Command/MythicPlusTrackerCommand.lua`. Add new commands with `elseif command == "..."` and update the help text block.
+Registered as `/mpt` and `/mythicplustracker`. Handler: `Command/SlashCommand.lua`. Add new commands with `elseif command == "..."` and update `showHelp()`.
 
 ## Validation Tooling
 
