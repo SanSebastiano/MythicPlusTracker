@@ -97,7 +97,7 @@ The addon plays **no sounds at all**, shows no toasts or alerts, and contains ex
 
 ## K. Other Unused APIs & External Integration
 
-No concrete idea behind these yet, just noting what's available and untouched: `C_MythicPlus.GetCurrentSeasonValues`, `GetEndOfRunGearSequenceLevel`, `GetLastWeeklyBestInformation`, `GetSeasonBestMythicRatingFromThisExpansion`, `GetWeeklyBestForMap`, `GetRewardLevelFromKeystoneLevel`, `IsMythicPlusActive`; `C_ChallengeMode.GetLeaverPenaltyWarningTimeLeft`, `GetMapScoreInfo`, `CanUseKeystoneInCurrentMap`, and `GetDungeonScoreRarityColor`/`GetSpecificDungeonScoreRarityColor` (ready-made Blizzard color scales, possibly usable alongside `Utils/ColorHandler.lua`).
+No concrete idea behind these yet, just noting what's available and untouched: `C_MythicPlus.GetCurrentSeasonValues`, `GetEndOfRunGearSequenceLevel`, `GetLastWeeklyBestInformation`, `GetSeasonBestMythicRatingFromThisExpansion`, `GetWeeklyBestForMap`, `GetRewardLevelFromKeystoneLevel`, `IsMythicPlusActive`; `C_ChallengeMode.GetLeaverPenaltyWarningTimeLeft`, `GetMapScoreInfo`, `CanUseKeystoneInCurrentMap`, and `GetDungeonScoreRarityColor`/`GetSpecificDungeonScoreRarityColor` (ready-made Blizzard color scales, possibly usable alongside `Core/Colors.lua`).
 
 - **Group Finder integration** `high` — auto-list your key with a level filter, or browse matching groups (`C_LFGList`). Needs its own deeper API research.
 - **Weekly reset countdown** `low` — e.g. as a minimap tooltip line. A LibDataBroker display would mean a new dependency (conflicts with "no external libraries"); a plain tooltip line does not.

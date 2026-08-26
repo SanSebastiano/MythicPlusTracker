@@ -52,7 +52,7 @@ See [`AGENTS.md`](AGENTS.md) for the full picture (load order, SavedVariables, U
 
 ## Re-skinning the UI (Theme)
 
-All decorative WoW Atlas textures used across the UI (frame backgrounds/borders, card title backgrounds, icon backgrounds, tab-bar decorations, sidebar dividers, minimap icon/border, and a few status icons) are cataloged in a single file: `Utils/Theme.lua`.
+All decorative WoW Atlas textures used across the UI (frame backgrounds/borders, card title backgrounds, icon backgrounds, tab-bar decorations, sidebar dividers, minimap icon/border, and a few status icons) are cataloged in a single file: `Core/Theme.lua`.
 
 To re-skin the addon, edit the atlas name values in that file — the same principle as translating a locale file, just swap the values, not the keys. Dynamic, data-driven icons (e.g. class/role icons in the Keystones tab) are **not** part of the theme catalog, since they depend on game data rather than a visual skin choice.
 

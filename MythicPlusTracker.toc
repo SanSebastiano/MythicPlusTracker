@@ -22,6 +22,7 @@
 init.lua
 
 Locales\locales.xml
+Core\core.xml
 Utils\utils.xml
 
 Command\commands.xml

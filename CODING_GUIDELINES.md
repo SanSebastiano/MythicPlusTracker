@@ -364,7 +364,7 @@
 
 14.1.1: `print()` MUST NOT be used directly for any user-facing or debug output.
 
-14.1.2: All output MUST go through the `addon.*Message()` helpers in `Utils/MessageHandler.lua` (`chatMessage`, `addonMessage`, `errorMessage`, `successMessage`, `warningMessage`, `infoMessage`, `debugMessage`), matching the existing rule in `AGENTS.md`.
+14.1.2: All output MUST go through the `addon.*Message()` helpers in `Core/Messages.lua` (`chatMessage`, `addonMessage`, `errorMessage`, `successMessage`, `warningMessage`, `infoMessage`, `debugMessage`), matching the existing rule in `AGENTS.md`.
 
 14.1.3: The helper MUST match the severity of the message: `errorMessage` for failures, `warningMessage` for recoverable unexpected states, `successMessage`/`infoMessage` for normal outcomes, `debugMessage` for diagnostics gated behind debug mode.
 
@@ -390,9 +390,9 @@
 
 ### 15.2 Colors And Atlas Textures
 
-15.2.1: Raw `|cFF...` color escape codes MUST NOT be hardcoded in UI or logic files. Use `addon.colors.*` from `Utils/ColorHandler.lua` and close with `addon.colors.RESET`.
+15.2.1: Raw `|cFF...` color escape codes MUST NOT be hardcoded in UI or logic files. Use `addon.colors.*` from `Core/Colors.lua` and close with `addon.colors.RESET`.
 
-15.2.2: Atlas texture names MUST NOT be hardcoded inline. New decorative textures MUST be added to `Utils/Theme.lua` and referenced from there, so re-skinning stays a one-file change.
+15.2.2: Atlas texture names MUST NOT be hardcoded inline. New decorative textures MUST be added to `Core/Theme.lua` and referenced from there, so re-skinning stays a one-file change.
 
 ## 16. Localization
 
@@ -422,9 +422,9 @@
 
 ## 18. Banned Patterns
 
-18.1: `print()` for any output MUST NOT be introduced. Use the `Utils/MessageHandler.lua` helpers.
+18.1: `print()` for any output MUST NOT be introduced. Use the `Core/Messages.lua` helpers.
 
-18.2: Hardcoded `|cFF...` color codes or hardcoded atlas texture names MUST NOT be introduced. Use `addon.colors.*` and `Utils/Theme.lua`.
+18.2: Hardcoded `|cFF...` color codes or hardcoded atlas texture names MUST NOT be introduced. Use `addon.colors.*` and `Core/Theme.lua`.
 
 18.3: New top-level globals outside `MPT`, the two SavedVariables tables, and module-declared `MPT_<Name>` UI roots MUST NOT be introduced.
 
