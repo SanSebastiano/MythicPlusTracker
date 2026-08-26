@@ -103,7 +103,7 @@ local function buildSlot(container, activity, slotIndex, BlizzardMixin)
     end)
 end
 
-local function loadWeeklyVault(sidebar, cursor)
+function MPT_Sidebar:loadWeeklyVault(sidebar, cursor)
     addon.debugMessage("Loading sidebar: weekly vault...")
 
     local headerY = cursor:current() - WEEKLYVAULT_GAP
@@ -131,5 +131,3 @@ local function loadWeeklyVault(sidebar, cursor)
         buildSlot(container, bySlot[i], i, BlizzardMixin)
     end
 end
-
-MPT_Sidebar.getWeeklyVault = loadWeeklyVault

@@ -55,7 +55,7 @@ local function loadCurrency(frame, currencyId, index)
     end)
 end
 
-local function loadBar(sidebar, cursor)
+function MPT_Sidebar:loadCurrencies(sidebar, cursor)
     addon.debugMessage("Loading sidebar: currencies...")
 
     local headerY = cursor:current() - CURRENCY_GAP
@@ -74,5 +74,3 @@ local function loadBar(sidebar, cursor)
         loadCurrency(frame, currencyId, index)
     end
 end
-
-MPT_Sidebar.getCurrencies = loadBar

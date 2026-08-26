@@ -225,7 +225,7 @@ local function renderStatsSection(sidebar, cursor, headerText, entries, emptyTex
     cursor:advance(SECTION_GAP + addon.SIDEBAR_SECTION_HEADER_HEIGHT + HEADER_TO_CONTENT_GAP + (#rows * ROW_H))
 end
 
-local function loadStatistics(sidebar, cursor)
+function MPT_Sidebar:loadStatistics(sidebar, cursor)
     addon.debugMessage("Loading sidebar: statistics...")
 
     if isAltsMode() then
@@ -244,5 +244,3 @@ local function loadStatistics(sidebar, cursor)
         renderStatsSection(sidebar, cursor, addon.locale["SIDEBAR_GROUP_HEADER"], buildGroupStatEntries(), nil)
     end
 end
-
-MPT_Sidebar.loadStatistics = loadStatistics

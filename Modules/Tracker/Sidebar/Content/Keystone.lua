@@ -3,7 +3,7 @@ local addonName, addon = ...
 local KEYSTONE_HEIGHT = 50
 local KEYSTONE_GAP = 7   -- gap after the previous card (Affixes)
 
-local function loadKeystone(sidebar, cursor)
+function MPT_Sidebar:loadKeystone(sidebar, cursor)
     addon.debugMessage("Loading sidebar: keystone...")
 
     local y = cursor:current() - KEYSTONE_GAP
@@ -60,5 +60,3 @@ local function loadKeystone(sidebar, cursor)
         GameTooltip:Hide()
     end)
 end
-
-MPT_Sidebar.getKeystone = loadKeystone

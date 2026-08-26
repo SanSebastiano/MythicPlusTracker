@@ -9,22 +9,22 @@ local contentWrapper
 local FIRST_CARD_Y = -30
 
 local function renderDefaultContent(wrapper, cursor)
-    MPT_Sidebar.getScore(wrapper, cursor)
-    MPT_Sidebar.getAffixes(wrapper, cursor)
-    MPT_Sidebar.getKeystone(wrapper, cursor)
-    MPT_Sidebar.getWeeklyVault(wrapper, cursor)
-    MPT_Sidebar.getTraitNodes(wrapper, cursor)
-    MPT_Sidebar.getCurrencies(wrapper, cursor)
+    MPT_Sidebar:loadScore(wrapper, cursor)
+    MPT_Sidebar:loadAffixes(wrapper, cursor)
+    MPT_Sidebar:loadKeystone(wrapper, cursor)
+    MPT_Sidebar:loadWeeklyVault(wrapper, cursor)
+    MPT_Sidebar:loadTraitNodes(wrapper, cursor)
+    MPT_Sidebar:loadCurrencies(wrapper, cursor)
 end
 
 local function renderRunsContent(wrapper, cursor)
-    MPT_Sidebar.getScore(wrapper, cursor)
-    MPT_Sidebar.loadRunsStats(wrapper, cursor)
+    MPT_Sidebar:loadScore(wrapper, cursor)
+    MPT_Sidebar:loadRunsStats(wrapper, cursor)
 end
 
 local function renderKeystonesContent(wrapper, cursor)
-    MPT_Sidebar.getScore(wrapper, cursor)
-    MPT_Sidebar.loadStatistics(wrapper, cursor)
+    MPT_Sidebar:loadScore(wrapper, cursor)
+    MPT_Sidebar:loadStatistics(wrapper, cursor)
 end
 
 local function rebuildContent(renderFn)

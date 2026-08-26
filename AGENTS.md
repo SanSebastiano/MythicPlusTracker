@@ -61,7 +61,7 @@ Toggle with `/mpt debug [on|off]`. State persists via `MythicPlusTrackerDB.debug
 
 ## UI Architecture
 
-- **Sidebar** (`MPT_Sidebar`, `Modules/Tracker/Sidebar/`, anchored `TOPLEFT` of MainFrame, 300×550): always visible, always shows the same content — M+ score, affixes, keystone, weekly vault, currencies, run stats. Does **not** change when switching Dashboard tabs.
+- **Sidebar** (`MPT_Sidebar`, `Modules/Tracker/Sidebar/`, anchored `TOPLEFT` of MainFrame, 300×550): always visible, but its cards mirror the active Dashboard tab via `MPT_Sidebar:showForTab(MPT_Tracker.TABS.*)` — Overview stacks score, affixes, keystone, weekly vault, trait nodes and currencies; Runs shows score plus run statistics; Keystones shows score plus keystone statistics. Cards are stacked through a layout cursor (`Sidebar/CardWidgets.lua`), so no card needs to know another's size.
 - **MainFrame** (`MPT_Tracker`, `Modules/Tracker/MainFrame.lua`, root, 1100×550, draggable): outer container. Carries a border texture (`ui-frame-midnight-border`) that overlaps inward at the edges/corners — child content must respect this inset.
 - **Dashboard** (`MPT_Dashboard`, `Modules/Tracker/Dashboard/`, anchored `TOPRIGHT` of MainFrame, 800×550): right-hand content region. On the three main pages (Overview/Runs/Keystones) it always shows a header tab row, a divider, and content inset from the border below that.
   > Future detail pages (Key detail, Run detail) will render inside the MainFrame area *without* the header nav/divider.
