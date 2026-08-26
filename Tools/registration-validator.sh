@@ -22,6 +22,17 @@ if [ ! -f "$TOC" ]; then
     exit 1
 fi
 
+# Manifest paths use Windows separators (Tracker\Sidebar\Sidebar.lua) and are
+# converted below. Windows realpath normalises backslashes on its own, so a
+# broken conversion would still pass on a Windows checkout and only surface on
+# Linux CI — this guard makes that failure mode loud on every platform.
+backslash_probe='a\b'
+if [ "${backslash_probe//\\//}" != "a/b" ]; then
+    echo "ERROR: backslash-to-slash conversion is broken in this script."
+    echo "       Manifest paths would not resolve. Check the \${var//\\\\//} expansions."
+    exit 1
+fi
+
 echo "=== Registration Validator ==="
 echo ""
 
@@ -36,7 +47,7 @@ while IFS= read -r line; do
     line="${line%$'\r'}"
     [[ -z "$line" || "$line" =~ ^## ]] && continue
 
-    filepath="${line//\//}"
+    filepath="${line//\\//}"
     realpath -m --relative-to="$REPO_ROOT" "$REPO_ROOT/$filepath" >> "$registered"
 done < "$TOC"
 
@@ -48,7 +59,7 @@ while IFS= read -r xml_file; do
     xml_dir="$(dirname "$xml_file")"
 
     while IFS= read -r ref; do
-        ref="${ref//\//}"
+        ref="${ref//\\//}"
         realpath -m --relative-to="$REPO_ROOT" "$xml_dir/$ref" >> "$registered"
     done < <(grep -oP "(?<=file=['\"])[^'\"]+(?=['\"])" "$xml_file" 2>/dev/null)
 done < <(find "$REPO_ROOT" -name "*.xml" -not -path "*/.git/*" -not -path "*/.idea/*" | sort)
