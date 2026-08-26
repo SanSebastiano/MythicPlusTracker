@@ -14,7 +14,6 @@ local NAV_BOTTOM_MARGIN = 8
 local SCROLL_BTN_SIZE = 10   -- gutter reserved for the scrollbar (MinimalScrollBar is 8px wide)
 local ROW_PADDING_X   = 5
 local ARTIFACT_R, ARTIFACT_G, ARTIFACT_B = addon.colorToRGB("ARTIFACT")
-local POOR_R, POOR_G, POOR_B = addon.colorToRGB("POOR")
 local REFRESH_ICON_SIZE = 20
 local REFRESH_ICON_PRESS_OFFSET = -2 -- pixels the icon shifts down while the button is held, like the nav tabs
 local REFRESH_COOLDOWN_SECONDS = 2 -- minimum time between refreshes, not shown to the player
@@ -159,18 +158,11 @@ local function refreshGuildView()
     end
 end
 
----Adds a tooltip line whose "<Label>:" prefix (up to and including the first
----colon) is colored POOR-gray, with the rest of the line left in the
----default tooltip color. Used for the secondary "last updated"/"next
----update" lines so only the label reads as muted, not the actual value.
+---The secondary "last updated"/"next update" tooltip lines: label muted, value
+---in the default colour. See addon.addTooltipLabelLine.
 ---@param text string
 local function addPoorLabelLine(text)
-    local prefix, rest = text:match("^([^:]+:)(.*)$")
-    if prefix then
-        GameTooltip:AddLine(addon.colors.POOR .. prefix .. addon.colors.RESET .. rest, 1, 1, 1, true)
-    else
-        GameTooltip:AddLine(text, POOR_R, POOR_G, POOR_B, true)
-    end
+    addon.addTooltipLabelLine(text, "POOR", "POOR")
 end
 
 ---Creates the icon-only refresh button, anchored directly to the left of the
