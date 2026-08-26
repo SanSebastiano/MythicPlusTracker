@@ -21,8 +21,8 @@ All notable changes to MythicPlusTracker are documented here.
 - Removed dead code: the never-used `MythicPlusTracker.lua` core file, an always-true debug guard in the minimap button, and a window-visibility flag nothing ever read.
 
 ### Fixed
+- **The Overview tab showed keys that weren't timed.** Runs at keystone level 12 or above were counted as a dungeon's best even when they weren't completed in time, along with their over-the-limit duration in the Best Time column. Those runs no longer count; below level 12 an over-time run still does, since it still awards score. Of the eligible runs the highest-scoring one wins, so Level, Score and Best Time always describe the same run instead of potentially three different ones.
 - The minimap button's tooltip promised that left-clicking would *toggle* the dashboard, but a click only ever opened it — a second click never closed it. The tooltip now says "open", in all five languages.
-- The developer-only `/mpt test` command printed straight to the chat frame instead of going through the addon's own message helpers, with its diagnostic logic inlined in the slash-command dispatch.
 - `Tools/toc-validator.sh` reported 13 false "MISSING" entries on Windows checkouts because it didn't strip the CR from CRLF line endings, which left the repository's main structural check effectively unusable locally while passing in CI.
 
 ## [1.3.1] - 2026-08-21
