@@ -38,11 +38,6 @@ local lastRefreshedAt = nil
 -- on /reload, never persisted.
 addon.guildKeystones = addon.guildKeystones or {}
 
----@return boolean
-local function isMaxLevel()
-    return UnitLevel("player") >= GetMaxPlayerLevel()
-end
-
 ---Splits a guild roster name into character name + realm. Same-realm guild
 ---members are returned by GetGuildRosterInfo without a realm suffix; cross-
 ---realm (connected-realm) guilds include one. Falls back to the local realm
@@ -65,7 +60,7 @@ end
 ---matching AltKeystoneService.lua's rule for what counts as a meaningful
 ---keystone owner.
 local function broadcastOwnKeystoneStatus()
-    if not IsInGuild() or not isMaxLevel() then
+    if not IsInGuild() or not addon.Player:isMaxLevel() then
         return
     end
 
@@ -179,7 +174,7 @@ end
 ---currently-played character, which stays in the list like any other member.
 ---@return table entries
 function addon.GuildKeystoneService:getEntries()
-    local currentCharacterKey = UnitName("player") .. "-" .. GetNormalizedRealmName()
+    local currentCharacterKey = addon.Player:getCharacterKey()
 
     local ownOtherAltKeys = {}
     for key in pairs(MythicPlusTrackerAltDB) do
@@ -249,10 +244,7 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
             return
         end
 
-        local senderFullPlayerName = senderName
-        if senderFullPlayerName and not string.find(senderFullPlayerName, "-", 1, true) then
-            senderFullPlayerName = senderFullPlayerName .. "-" .. GetNormalizedRealmName()
-        end
+        local senderFullPlayerName = addon.Player:qualifyRealm(senderName)
         if senderFullPlayerName then
             handleIncomingMessage(message, senderFullPlayerName)
         end

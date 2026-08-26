@@ -44,10 +44,6 @@ local function create(mainFrame)
     border:SetAllPoints(borderFrame)
     border:SetAtlas(addon.theme.FRAME_BORDER, false)
 
-    local function isMaxLevel()
-        return UnitLevel("player") >= GetMaxPlayerLevel()
-    end
-
     local function getDefaultTabIndex()
         if MythicPlusTrackerDB.dashboardDefaultTabInGroup and IsInGroup() then
             return MPT_Tracker.TABS.KEYSTONES
@@ -57,17 +53,17 @@ local function create(mainFrame)
 
     local tabCallbacks = {
         [MPT_Tracker.TABS.OVERVIEW] = function()
-            if not isMaxLevel() then return false end
+            if not addon.Player:isMaxLevel() then return false end
             showContent(MPT_Dashboard.loadDungeons)
             MPT_Sidebar:showForTab(MPT_Tracker.TABS.OVERVIEW)
         end,
         [MPT_Tracker.TABS.RUNS] = function()
-            if not isMaxLevel() then return false end
+            if not addon.Player:isMaxLevel() then return false end
             showContent(MPT_Dashboard.loadRuns)
             MPT_Sidebar:showForTab(MPT_Tracker.TABS.RUNS)
         end,
         [MPT_Tracker.TABS.KEYSTONES] = function()
-            if not isMaxLevel() then return false end
+            if not addon.Player:isMaxLevel() then return false end
             showContent(MPT_Dashboard.loadKeystones)
             MPT_Sidebar:showForTab(MPT_Tracker.TABS.KEYSTONES)
         end,
@@ -84,7 +80,7 @@ local function create(mainFrame)
 
         addon.debugMessage("Dashboard Frame OnShow")
 
-        if not isMaxLevel() then
+        if not addon.Player:isMaxLevel() then
             MPT_Dashboard:setActiveNavTab(MPT_Tracker.TABS.OVERVIEW)
             MPT_Dashboard:loadNotMaxLevel(contentWrapper)
             return

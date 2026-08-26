@@ -35,7 +35,7 @@ local function resolveFullPlayerName(unitToken)
         return nil
     end
     if not realm or realm == "" then
-        realm = GetNormalizedRealmName()
+        return addon.Player:qualifyRealm(name)
     end
     return name .. "-" .. realm
 end
@@ -219,10 +219,7 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
         addon.debugMessage("GroupKeystoneService: CHAT_MSG_ADDON prefix='" .. tostring(prefix)
             .. "' message='" .. tostring(message) .. "' sender='" .. tostring(senderName) .. "'")
 
-        local senderFullPlayerName = senderName
-        if senderFullPlayerName and not string.find(senderFullPlayerName, "-", 1, true) then
-            senderFullPlayerName = senderFullPlayerName .. "-" .. GetNormalizedRealmName()
-        end
+        local senderFullPlayerName = addon.Player:qualifyRealm(senderName)
         if senderFullPlayerName then
             handleIncomingMessage(message, senderFullPlayerName)
         end
