@@ -13,6 +13,7 @@
    3.1 General Naming
    3.2 Function Names
    3.3 Namespace And Module Names
+   3.4 Layer And Role Suffixes
 4. Lua Language Baseline
    4.1 Locals Over Globals
    4.2 The Two Sanctioned Global Surfaces
@@ -110,7 +111,7 @@
 
 ### 2.2 Separation Of Concerns
 
-2.2.1: Domain logic MUST live in the relevant module table (for example `addon.Keystone`, `addon.Communication`), not in event handlers, frame scripts, or slash-command dispatch.
+2.2.1: Domain logic MUST live in the relevant module table (for example `addon.KeystoneService`, `addon.GroupKeystoneService`), not in event handlers, frame scripts, or slash-command dispatch.
 
 2.2.2: Event handlers and `OnEvent`/`OnClick`/`OnUpdate` scripts MUST translate WoW callbacks into calls to named module functions. They MUST NOT contain multi-step business logic inline.
 
@@ -132,7 +133,7 @@
 
 3.1.1: Names MUST be descriptive, domain-specific, and unambiguous.
 
-3.1.2: Abbreviations MUST NOT be used in file names, table names, or function names (for example `Communication.lua`/`addon.Communication`, not `Comm.lua`/`addon.Comm`). This matches existing practice documented in `AGENTS.md`.
+3.1.2: Abbreviations MUST NOT be used in file names, table names, or function names (for example `GuildKeystoneService.lua`/`addon.GuildKeystoneService`, not `GuildComm.lua`/`addon.GuildComm`). This matches existing practice documented in `AGENTS.md`.
 
 3.1.3: Generic variable names such as `data`, `tbl`, `result`, `tmp`, `val`, `obj` MUST NOT be used when a domain-specific name is possible (`keystoneInfo`, `runEntry`, `sidebarFrame`).
 
@@ -150,9 +151,24 @@
 
 3.3.1: Shared addon state and utilities MUST live on the `addon` table (`local addonName, addon = ...`), never as bare globals.
 
-3.3.2: Module-level UI roots MUST use the `MPT_<Name>` prefix (`MPT_MAIN`, `MPT_Dashboard`, `MPT_Sidebar`), pre-declared in the module's `init.lua` as documented in `AGENTS.md`.
+3.3.2: Module-level UI roots MUST use the `MPT_<Name>` prefix (`MPT_Tracker`, `MPT_Dashboard`, `MPT_Sidebar`), pre-declared in the module's entry file as documented in `AGENTS.md`.
 
 3.3.3: A namespace or module table MUST NOT be created for a single trivial helper function. Add the function to the closest existing relevant module instead.
+
+
+### 3.4 Layer And Role Suffixes
+
+3.4.1: The suffix `Service` MUST identify a module that owns domain state or a lifecycle of its own — an event frame, a cache, SavedVariables persistence, or addon-message traffic — and that does not build frames itself. Catalogs, pure formatters, and stateless facades MUST NOT carry it.
+
+3.4.2: A module table MUST be declared in the file of the same name (`Dashboard.lua` declares `MPT_Dashboard`, `GuildKeystoneService.lua` declares `addon.GuildKeystoneService`) and extended by the module's remaining files.
+
+3.4.3: A service called only from files of a single module MUST live under `Modules/<Module>/Services/`. It moves to the repository-root `Services/` only once a second module actually calls it.
+
+3.4.4: The remaining role suffixes are: `*Widgets` for frame-building helpers, `*Catalog` for constant data tables inside a module, `*Page` for Dashboard content pages, and `*Card` for Sidebar cards. Cross-cutting infrastructure under `Core/` carries none of these.
+
+3.4.5: The words `Handler`, `System`, `Cache`, `Helpers`, and `Utils`, as well as abbreviations such as `Comm` or `Stats`, MUST NOT appear in file or table names. They describe an implementation or a grab bag, not a role.
+
+3.4.6: For the purpose of 3.4.3, `Modules/Tracker/` is one module. Dashboard and Sidebar are two panels of the same window, so a service consumed by both is Tracker-local, not addon-wide.
 
 ## 4. Lua Language Baseline
 
@@ -244,7 +260,7 @@
 
 7.1.1: Repeated technical strings MUST be represented as constants: WoW event names used more than once, slash-command literals, locale keys, addon-message prefixes/types, atlas texture names, and color-table keys.
 
-7.1.2: Constants that are part of an external contract (an addon-message protocol byte, a SavedVariables field name relied on elsewhere) SHOULD be grouped together near the code that owns that contract (for example the constants at the top of `Utils/Communication.lua`).
+7.1.2: Constants that are part of an external contract (an addon-message protocol byte, a SavedVariables field name relied on elsewhere) SHOULD be grouped together near the code that owns that contract (for example the constants at the top of `Modules/Tracker/Services/GroupKeystoneService.lua`).
 
 7.1.3: Magic strings MUST NOT be duplicated across modules, event handlers, commands, and UI files. Reference the constant instead.
 
@@ -318,7 +334,7 @@
 
 ### 11.2 Throttling
 
-11.2.1: Work triggered by high-frequency events (`GROUP_ROSTER_UPDATE`, `CHAT_MSG_ADDON`, `COMBAT_LOG_EVENT_UNFILTERED`) that results in outbound requests or expensive recomputation MUST be throttled with an explicit cooldown constant, following the existing pattern in `Utils/Communication.lua` (`REQUEST_COOLDOWN_SECONDS`).
+11.2.1: Work triggered by high-frequency events (`GROUP_ROSTER_UPDATE`, `CHAT_MSG_ADDON`, `COMBAT_LOG_EVENT_UNFILTERED`) that results in outbound requests or expensive recomputation MUST be throttled with an explicit cooldown constant, following the existing pattern in `Modules/Tracker/Services/GroupKeystoneService.lua` (`REQUEST_COOLDOWN_SECONDS`).
 
 11.2.2: A throttle/cooldown constant MUST be a named constant (section 7.1), not a bare inline number.
 
@@ -364,7 +380,7 @@
 
 14.1.1: `print()` MUST NOT be used directly for any user-facing or debug output.
 
-14.1.2: All output MUST go through the `addon.*Message()` helpers in `Utils/MessageHandler.lua` (`chatMessage`, `addonMessage`, `errorMessage`, `successMessage`, `warningMessage`, `infoMessage`, `debugMessage`), matching the existing rule in `AGENTS.md`.
+14.1.2: All output MUST go through the `addon.*Message()` helpers in `Core/Messages.lua` (`chatMessage`, `addonMessage`, `errorMessage`, `successMessage`, `warningMessage`, `infoMessage`, `debugMessage`), matching the existing rule in `AGENTS.md`.
 
 14.1.3: The helper MUST match the severity of the message: `errorMessage` for failures, `warningMessage` for recoverable unexpected states, `successMessage`/`infoMessage` for normal outcomes, `debugMessage` for diagnostics gated behind debug mode.
 
@@ -390,9 +406,9 @@
 
 ### 15.2 Colors And Atlas Textures
 
-15.2.1: Raw `|cFF...` color escape codes MUST NOT be hardcoded in UI or logic files. Use `addon.colors.*` from `Utils/ColorHandler.lua` and close with `addon.colors.RESET`.
+15.2.1: Raw `|cFF...` color escape codes MUST NOT be hardcoded in UI or logic files. Use `addon.colors.*` from `Core/Colors.lua` and close with `addon.colors.RESET`.
 
-15.2.2: Atlas texture names MUST NOT be hardcoded inline. New decorative textures MUST be added to `Utils/Theme.lua` and referenced from there, so re-skinning stays a one-file change.
+15.2.2: Atlas texture names MUST NOT be hardcoded inline. New decorative textures MUST be added to `Core/Theme.lua` and referenced from there, so re-skinning stays a one-file change.
 
 ## 16. Localization
 
@@ -422,9 +438,9 @@
 
 ## 18. Banned Patterns
 
-18.1: `print()` for any output MUST NOT be introduced. Use the `Utils/MessageHandler.lua` helpers.
+18.1: `print()` for any output MUST NOT be introduced. Use the `Core/Messages.lua` helpers.
 
-18.2: Hardcoded `|cFF...` color codes or hardcoded atlas texture names MUST NOT be introduced. Use `addon.colors.*` and `Utils/Theme.lua`.
+18.2: Hardcoded `|cFF...` color codes or hardcoded atlas texture names MUST NOT be introduced. Use `addon.colors.*` and `Core/Theme.lua`.
 
 18.3: New top-level globals outside `MPT`, the two SavedVariables tables, and module-declared `MPT_<Name>` UI roots MUST NOT be introduced.
 

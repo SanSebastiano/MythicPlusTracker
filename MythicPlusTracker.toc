@@ -22,8 +22,8 @@
 init.lua
 
 Locales\locales.xml
-Utils\utils.xml
+Core\core.xml
+Services\services.xml
 
-MythicPlusTracker.lua
 Command\commands.xml
 Modules\modules.xml

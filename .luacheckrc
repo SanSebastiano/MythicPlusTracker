@@ -49,8 +49,10 @@ globals = {
     -- Addon-specific module globals (MPT_* pattern)
     -- -----------------------------------------------------------------------
     "MPT_Dashboard",
-    "MPT_MAIN",
+    "MPT_MinimapButton",
+    "MPT_Settings",
     "MPT_Sidebar",
+    "MPT_Tracker",
 
     -- -----------------------------------------------------------------------
     -- WoW Addon loading system
@@ -64,8 +66,6 @@ globals = {
     -- WoW slash command system
     -- -----------------------------------------------------------------------
     "SlashCmdList",
-    "SLASH_MPT1",
-    "SLASH_MPT2",
     "SLASH_MYTHICPLUSTRACKER1",
     "SLASH_MYTHICPLUSTRACKER2",
 

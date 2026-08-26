@@ -19,10 +19,10 @@ local TIERS = {
     { label = "2 – 3",   min = 2,  max = 3         },
 }
 
-local function loadRunsStats(sidebar, cursor)
+function MPT_Sidebar:loadRunStatistics(sidebar, cursor)
     addon.debugMessage("Loading sidebar: runs stats...")
 
-    local runHistory = addon.getRunHistory()
+    local runHistory = addon.RunHistoryService:getRuns()
 
     local bestRun = nil
     for _, run in ipairs(runHistory) do
@@ -207,5 +207,3 @@ local function loadRunsStats(sidebar, cursor)
         sectionY = sectionY - ROW_H
     end
 end
-
-MPT_Sidebar.loadRunsStats = loadRunsStats

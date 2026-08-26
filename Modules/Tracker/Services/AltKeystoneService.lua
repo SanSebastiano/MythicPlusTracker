@@ -9,7 +9,7 @@ MythicPlusTrackerAltDB = MythicPlusTrackerAltDB or {}
 MythicPlusTrackerDB = MythicPlusTrackerDB or {}
 
 ---Realm-qualified key identifying the current character, matching the
----format used for group members in Utils/Communication.lua.
+---format used for group members in Modules/Tracker/Services/GroupKeystoneService.lua.
 ---@return string
 local function getCharacterKey()
     return UnitName("player") .. "-" .. GetNormalizedRealmName()
@@ -29,7 +29,7 @@ local function persistOwnKeystoneIfEligible()
         return
     end
 
-    local mapID, level = addon.Keystone:GetOwned()
+    local mapID, level = addon.KeystoneService:getOwned()
     local _, englishClass = UnitClass("player")
 
     MythicPlusTrackerAltDB[getCharacterKey()] = {
@@ -48,14 +48,14 @@ local function persistOwnKeystoneIfEligible()
         .. ", level=" .. tostring(level) .. ")")
 end
 
-addon.AltKeystones = addon.AltKeystones or {}
+addon.AltKeystoneService = addon.AltKeystoneService or {}
 
 ---Returns the server timestamp of the last time the local character's own
 ---keystone was checked and (re-)saved into MythicPlusTrackerAltDB, or nil if
 ---that hasn't happened yet (e.g. addon just installed, or character below
 ---max level). Used by the Alts view's info tooltip.
 ---@return number|nil
-function addon.AltKeystones:GetLastRefreshedAt()
+function addon.AltKeystoneService:getLastRefreshedAt()
     return MythicPlusTrackerDB.altKeystonesLastRefreshedAt
 end
 
@@ -66,7 +66,7 @@ end
 ---character still appears in the list, showing the existing "no key"
 ---fallback, without the leftover pre-reset level being misleading.
 ---@return table entries
-function addon.AltKeystones:GetEntries()
+function addon.AltKeystoneService:getEntries()
     local currentResetEpoch = C_DateAndTime.GetWeeklyResetStartTime()
 
     local entries = {}

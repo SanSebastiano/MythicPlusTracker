@@ -5,12 +5,12 @@ MythicPlusTrackerDB = MythicPlusTrackerDB or {}
 -- Same left/width convention as the Score card and the other Sidebar cards.
 local CONTENT_X = 23
 local CONTENT_W = 254
-local INSET     = 10   -- left/right inset inside content rows, matches RunsStats.lua
+local INSET     = 10   -- left/right inset inside content rows, matches RunStatisticsCard.lua
 
 local SECTION_GAP           = 8
-local HEADER_TO_CONTENT_GAP = 4  -- gap between header banner and its rows (matches WeeklyVault.lua)
+local HEADER_TO_CONTENT_GAP = 4  -- gap between header banner and its rows (matches WeeklyVaultCard.lua)
 
-local ROW_H       = 22  -- matches RunsStats.lua's tier rows
+local ROW_H       = 22  -- matches RunStatisticsCard.lua's tier rows
 local VALUE_W     = 130 -- wide enough for the "Best" row's "<Name> +<Level>" value,
                         -- up to a max-length (12-char) realm name plus level suffix
 local VALUE_RIGHT = CONTENT_X + CONTENT_W - INSET
@@ -30,7 +30,7 @@ end
 
 ---A thin 1px divider spanning the same inset content width as the rows
 ---themselves (CONTENT_X+INSET .. CONTENT_X+CONTENT_W-INSET) — same
----convention as the hand-built dividers in RunsStats.lua, not the full-width
+---convention as the hand-built dividers in RunStatisticsCard.lua, not the full-width
 ---addon.createRowDivider (that one spans the whole 300px sidebar frame).
 ---@param sidebar Frame
 ---@param y number
@@ -43,7 +43,7 @@ local function sectionDivider(sidebar, y, alpha)
     div:SetColorTexture(0.45, 0.45, 0.65, alpha)
 end
 
----One label/value table row, styled like RunsStats.lua's tier rows.
+---One label/value table row, styled like RunStatisticsCard.lua's tier rows.
 ---@param sidebar Frame
 ---@param y number
 ---@param label string
@@ -85,7 +85,7 @@ end
 
 ---Aggregates a list of normalized {name, class, mapID, level, score} entries
 ---(the shared shape produced by buildGroupStatEntries() and, already,
----addon.AltKeystones:GetEntries()) into the numbers this panel shows.
+---addon.AltKeystoneService:getEntries()) into the numbers this panel shows.
 ---Averages only ever consider entries with a known value, so a member
 ---without the addon (nil score) can't drag the average toward zero.
 ---"Best" ranks by level first, score as the tiebreaker.
@@ -121,14 +121,14 @@ end
 
 ---Builds the Group's normalized entry list from the live roster. The local
 ---player's own keystone/score is always known (read directly via the API,
----like Modules/Tracker/Dashboard/Content/Keystones.lua's getKnownKeystoneForUnit),
+---like Modules/Tracker/Dashboard/Content/KeystonesPage.lua's getKnownKeystoneForUnit),
 ---so the Group section always has at least one entry — no "not in a group"
 ---fallback is needed here, unlike the old GroupScores.lua which excluded
 ---the player entirely.
 ---@return table entries
 local function buildGroupStatEntries()
     local entries = {}
-    local unitTokens = addon.Communication and addon.Communication:GetGroupUnitTokens() or { "player" }
+    local unitTokens = addon.GroupKeystoneService and addon.GroupKeystoneService:getGroupUnitTokens() or { "player" }
 
     for _, unitToken in ipairs(unitTokens) do
         if UnitExists(unitToken) then
@@ -141,7 +141,7 @@ local function buildGroupStatEntries()
                 level = C_MythicPlus.GetOwnedKeystoneLevel()
                 score = C_ChallengeMode.GetOverallDungeonScore()
             else
-                local fullPlayerName = addon.Communication:GetFullPlayerName(unitToken)
+                local fullPlayerName = addon.GroupKeystoneService:getFullPlayerName(unitToken)
                 local data = fullPlayerName and addon.groupKeystones[fullPlayerName]
                 if data and data.hasAddon then
                     mapID, level, score = data.mapID, data.level, data.score
@@ -158,7 +158,7 @@ end
 ---Renders the single "Gruppe"/"Twinks" section matching whichever mode is
 ---currently active in the Keystones tab's dropdown: header banner, then
 ---either the empty-state fallback text or the three stat rows + "Best" row,
----styled like RunsStats.lua's tier table rather than the old tile boxes.
+---styled like RunStatisticsCard.lua's tier table rather than the old tile boxes.
 ---@param sidebar Frame
 ---@param cursor table addon.createLayoutCursor
 ---@param headerText string
@@ -202,7 +202,7 @@ local function renderStatsSection(sidebar, cursor, headerText, entries, emptyTex
     end
 
     -- Same "colored if any, POOR dash-tier if none" convention as the
-    -- Success column in RunsStats.lua (wonColor = won > 0 and ARTIFACT or POOR).
+    -- Success column in RunStatisticsCard.lua (wonColor = won > 0 and ARTIFACT or POOR).
     local withKeyColor = stats.withKey > 0 and addon.colors.ARTIFACT or addon.colors.POOR
     local withKeyText = withKeyColor .. stats.withKey .. "/" .. stats.total .. addon.colors.RESET
 
@@ -225,24 +225,22 @@ local function renderStatsSection(sidebar, cursor, headerText, entries, emptyTex
     cursor:advance(SECTION_GAP + addon.SIDEBAR_SECTION_HEADER_HEIGHT + HEADER_TO_CONTENT_GAP + (#rows * ROW_H))
 end
 
-local function loadStatistics(sidebar, cursor)
+function MPT_Sidebar:loadKeystoneStatistics(sidebar, cursor)
     addon.debugMessage("Loading sidebar: statistics...")
 
     if isAltsMode() then
         renderStatsSection(sidebar, cursor, addon.locale["KEYSTONES_MODE_ALTS"],
-            addon.AltKeystones:GetEntries(), addon.locale["KEYSTONES_ALTS_EMPTY"])
+            addon.AltKeystoneService:getEntries(), addon.locale["KEYSTONES_ALTS_EMPTY"])
     elseif isGuildMode() then
-        if addon.GuildComm then
-            addon.GuildComm:RequestGuildKeystones()
+        if addon.GuildKeystoneService then
+            addon.GuildKeystoneService:requestKeystones()
         end
         renderStatsSection(sidebar, cursor, addon.locale["KEYSTONES_MODE_GUILD"],
-            addon.GuildKeys:GetEntries(), addon.locale["KEYSTONES_GUILD_EMPTY"])
+            addon.GuildKeystoneService:getEntries(), addon.locale["KEYSTONES_GUILD_EMPTY"])
     else
-        if addon.Communication then
-            addon.Communication:RequestGroupKeystones()
+        if addon.GroupKeystoneService then
+            addon.GroupKeystoneService:requestKeystones()
         end
         renderStatsSection(sidebar, cursor, addon.locale["SIDEBAR_GROUP_HEADER"], buildGroupStatEntries(), nil)
     end
 end
-
-MPT_Sidebar.loadStatistics = loadStatistics

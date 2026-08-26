@@ -1,30 +1,32 @@
 local addonName, addon = ...
 
+MPT_Sidebar = {}
+
 local frame
 local contentWrapper
 
 -- Starting Y for the first card (Score). Every subsequent card reads its own
 -- anchor from the cursor and advances it by its own gap + height, so no card
--- needs to know any other card's size (see Utils/UIHelpers.lua).
+-- needs to know any other card's size (see Sidebar/CardWidgets.lua).
 local FIRST_CARD_Y = -30
 
 local function renderDefaultContent(wrapper, cursor)
-    MPT_Sidebar.getScore(wrapper, cursor)
-    MPT_Sidebar.getAffixes(wrapper, cursor)
-    MPT_Sidebar.getKeystone(wrapper, cursor)
-    MPT_Sidebar.getWeeklyVault(wrapper, cursor)
-    MPT_Sidebar.getTraitNodes(wrapper, cursor)
-    MPT_Sidebar.getCurrencies(wrapper, cursor)
+    MPT_Sidebar:loadScore(wrapper, cursor)
+    MPT_Sidebar:loadAffixes(wrapper, cursor)
+    MPT_Sidebar:loadKeystone(wrapper, cursor)
+    MPT_Sidebar:loadWeeklyVault(wrapper, cursor)
+    MPT_Sidebar:loadTraitNodes(wrapper, cursor)
+    MPT_Sidebar:loadCurrencies(wrapper, cursor)
 end
 
 local function renderRunsContent(wrapper, cursor)
-    MPT_Sidebar.getScore(wrapper, cursor)
-    MPT_Sidebar.loadRunsStats(wrapper, cursor)
+    MPT_Sidebar:loadScore(wrapper, cursor)
+    MPT_Sidebar:loadRunStatistics(wrapper, cursor)
 end
 
 local function renderKeystonesContent(wrapper, cursor)
-    MPT_Sidebar.getScore(wrapper, cursor)
-    MPT_Sidebar.loadStatistics(wrapper, cursor)
+    MPT_Sidebar:loadScore(wrapper, cursor)
+    MPT_Sidebar:loadKeystoneStatistics(wrapper, cursor)
 end
 
 local function rebuildContent(renderFn)
@@ -70,9 +72,9 @@ end
 
 function MPT_Sidebar:showForTab(tabIndex)
     if not frame then return end
-    if tabIndex == 2 then
+    if tabIndex == MPT_Tracker.TABS.RUNS then
         rebuildContent(renderRunsContent)
-    elseif tabIndex == 3 then
+    elseif tabIndex == MPT_Tracker.TABS.KEYSTONES then
         rebuildContent(renderKeystonesContent)
     else
         rebuildContent(renderDefaultContent)

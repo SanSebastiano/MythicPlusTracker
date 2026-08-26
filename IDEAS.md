@@ -14,9 +14,9 @@ The addon currently only ever *displays* scores; there is no predictive or compa
 - **Weakest dungeon / best next run** `medium` — rank dungeons by potential score gain so the addon can answer "which key is worth the most to me right now?" Builds directly on score projection.
 - **Target score tracker** `low-medium` — set a goal ("I want 3000") and show what's still missing, per dungeon.
 - **Per-affix performance breakdown** `medium` — `C_MythicPlus.GetSeasonBestAffixScoreInfoForMap` is the **single biggest completely unused M+ API block**: it returns the best run per affix category per dungeon (`level`, `durationSec`, `score`). This is what reveals which half of a dungeon's score is dragging you down, and it's also the data foundation for accurate score projection.
-- **Weekly statistics panel** `low-medium` — how much score was gained each week, how many keys completed. `addon.getRunHistory()` already returns `completionDate`/`runScore`/`thisWeek` per run; bucketing by weekly-reset boundaries reuses the pattern in `Utils/AltKeystones.lua` (`C_DateAndTime.GetWeeklyResetStartTime()`). No sync needed.
+- **Weekly statistics panel** `low-medium` — how much score was gained each week, how many keys completed. `addon.RunHistoryService:getRuns()` already returns `completionDate`/`runScore`/`thisWeek` per run; bucketing by weekly-reset boundaries reuses the pattern in `Modules/Tracker/Services/AltKeystoneService.lua` (`C_DateAndTime.GetWeeklyResetStartTime()`). No sync needed.
 - **Score/key trend graph** `medium` — a small multi-week sparkline instead of just the current week. Same bucketing. For anything beyond the current season, see the season archive in section H.
-- **Personal bests / trends per dungeon** `low-medium` — extends `Utils/RunHistoryCache.lua`, which already has the raw data.
+- **Personal bests / trends per dungeon** `low-medium` — extends `Modules/Tracker/Services/RunHistoryService.lua`, which already has the raw data.
 
 ## B. Great Vault
 
@@ -28,7 +28,7 @@ The addon currently only ever *displays* scores; there is no predictive or compa
 
 ## C. Chat & Announce
 
-- **Bulk-announce group keys** `medium` — a button that posts *all* currently known keystones in the group (`addon.groupKeystones`) at once, instead of just your own (`/mpt announce` already exists, see `Utils/Keystone.lua`). Needs throttle-safe multi-message sending, since the client silently drops `SendChatMessage` calls fired too close together.
+- **Bulk-announce group keys** `medium` — a button that posts *all* currently known keystones in the group (`addon.groupKeystones`) at once, instead of just your own (`/mpt announce` already exists, see `Services/KeystoneService.lua`). Needs throttle-safe multi-message sending, since the client silently drops `SendChatMessage` calls fired too close together.
 - **Bulk-announce alt keys** `medium` — same for `MythicPlusTrackerAltDB`, e.g. to show the group which twink could bring a useful key.
 - **Auto-announce on run completion** `medium` — opt-in, posts a short summary ("+18 X, timed, 3:02 to spare") after `CHALLENGE_MODE_COMPLETED` via `C_ChallengeMode.GetChallengeCompletionInfo()`. Must default to OFF.
 - **Announce to guild** `low` — Guild Sync is silent today; there's no visible guild-chat post of your own key.
@@ -39,7 +39,7 @@ The addon currently only ever *displays* scores; there is no predictive or compa
 
 - **Player detail page** `high` — clicking a member's name opens a page with their season-best per dungeon and recent runs. Today only a single tuple (`mapID:level:score`) is broadcast per player, so this needs a new targeted, chunked request/response protocol with reassembly and timeouts, plus a detail-page navigation layer the Dashboard doesn't have yet (only noted as an intent in `AGENTS.md`). The biggest and riskiest item on this list, but doable without new dependencies. Deserves its own planning pass.
 - **Gear score in sync** `low` — add average item level (`GetAverageItemLevel`) to the existing single-line sync message so the group/guild view can show rough gear next to score and key level. Unlike the detail page this needs no new protocol — just one more number in the message that's already being sent.
-- **Guild achievement announcements** `medium` — when a guild member running the addon hits a personal best or a record (`isMapRecord`/`isAffixRecord`), broadcast it to other addon users and show a local notification, or optionally post to guild chat. A new message type on the existing `GuildComm.lua` protocol; one message is enough. Open questions: what counts as "notable", and on-by-default vs. opt-in to avoid spamming the guild.
+- **Guild achievement announcements** `medium` — when a guild member running the addon hits a personal best or a record (`isMapRecord`/`isAffixRecord`), broadcast it to other addon users and show a local notification, or optionally post to guild chat. A new message type on the existing `GuildKeystoneService.lua` protocol; one message is enough. Open questions: what counts as "notable", and on-by-default vs. opt-in to avoid spamming the guild.
 - **Weekly guild recap** `medium` — a batched "this week in the guild: 12 new personal bests, highest key +21 by X" instead of individual announcements. Less spammy, same data, pairs with section A.
 - **Guild leaderboard** `medium` — `C_ChallengeMode.GetGuildLeaders()`/`RequestLeaders()` are unused and would give a per-dungeon guild leaderboard *without* any sync, since Blizzard serves the data directly.
 - **Spec display in the group view** `low` — role icons already exist; spec (icon or name) does not.
@@ -97,7 +97,7 @@ The addon plays **no sounds at all**, shows no toasts or alerts, and contains ex
 
 ## K. Other Unused APIs & External Integration
 
-No concrete idea behind these yet, just noting what's available and untouched: `C_MythicPlus.GetCurrentSeasonValues`, `GetEndOfRunGearSequenceLevel`, `GetLastWeeklyBestInformation`, `GetSeasonBestMythicRatingFromThisExpansion`, `GetWeeklyBestForMap`, `GetRewardLevelFromKeystoneLevel`, `IsMythicPlusActive`; `C_ChallengeMode.GetLeaverPenaltyWarningTimeLeft`, `GetMapScoreInfo`, `CanUseKeystoneInCurrentMap`, and `GetDungeonScoreRarityColor`/`GetSpecificDungeonScoreRarityColor` (ready-made Blizzard color scales, possibly usable alongside `Utils/ColorHandler.lua`).
+No concrete idea behind these yet, just noting what's available and untouched: `C_MythicPlus.GetCurrentSeasonValues`, `GetEndOfRunGearSequenceLevel`, `GetLastWeeklyBestInformation`, `GetSeasonBestMythicRatingFromThisExpansion`, `GetWeeklyBestForMap`, `GetRewardLevelFromKeystoneLevel`, `IsMythicPlusActive`; `C_ChallengeMode.GetLeaverPenaltyWarningTimeLeft`, `GetMapScoreInfo`, `CanUseKeystoneInCurrentMap`, and `GetDungeonScoreRarityColor`/`GetSpecificDungeonScoreRarityColor` (ready-made Blizzard color scales, possibly usable alongside `Core/Colors.lua`).
 
 - **Group Finder integration** `high` — auto-list your key with a level filter, or browse matching groups (`C_LFGList`). Needs its own deeper API research.
 - **Weekly reset countdown** `low` — e.g. as a minimap tooltip line. A LibDataBroker display would mean a new dependency (conflicts with "no external libraries"); a plain tooltip line does not.

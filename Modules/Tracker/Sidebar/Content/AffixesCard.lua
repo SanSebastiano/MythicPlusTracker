@@ -4,7 +4,7 @@ local ICON_SIZE  = 28
 local ICON_GAP   = 8
 local AFFIXES_GAP = 10   -- gap after the previous card (Score)
 
-local function loadAffixes(sidebar, cursor)
+function MPT_Sidebar:loadAffixes(sidebar, cursor)
     addon.debugMessage("Loading sidebar: affixes...")
 
     -- Advance the cursor unconditionally (even if there are no affixes to show)
@@ -65,5 +65,3 @@ local function loadAffixes(sidebar, cursor)
         end)
     end
 end
-
-MPT_Sidebar.getAffixes = loadAffixes

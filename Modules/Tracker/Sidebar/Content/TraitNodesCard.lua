@@ -403,7 +403,7 @@ local function refreshButtons()
     end
 end
 
-local function loadTraitNodes(sidebar, cursor)
+function MPT_Sidebar:loadTraitNodes(sidebar, cursor)
     addon.debugMessage("Loading sidebar: trait nodes...")
 
     -- Advance the cursor unconditionally (even if the trait system isn't
@@ -443,6 +443,3 @@ local function loadTraitNodes(sidebar, cursor)
         eventFrame:SetScript("OnEvent", function() refreshButtons() end)
     end
 end
-
-MPT_Sidebar.getTraitNodes = loadTraitNodes
-

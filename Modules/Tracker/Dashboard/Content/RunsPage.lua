@@ -43,7 +43,7 @@ local function formatDuration(sec, timeLimit)
     if not sec or sec <= 0 then
         return addon.colors.POOR .. "–" .. addon.colors.RESET
     end
-    local str = string.format("%d:%02d", math.floor(sec / 60), sec % 60)
+    local str = addon.formatMinutesSeconds(sec)
     if timeLimit and timeLimit > 0 and sec > timeLimit then
         return addon.colors.POOR .. str .. addon.colors.RESET
     end
@@ -77,7 +77,7 @@ local function formatTimeDelta(sec, timeLimit)
     end
     local delta    = timeLimit - sec
     local absDelta = math.abs(delta)
-    local str      = string.format("%d:%02d", math.floor(absDelta / 60), absDelta % 60)
+    local str      = addon.formatMinutesSeconds(absDelta)
     if delta >= 0 then
         return addon.colors.TIMER_SUCCESS .. "+" .. str .. addon.colors.RESET
     end
@@ -184,7 +184,7 @@ local function createRow(parent, run, colX, nameW, rowY, isLast, scoreDeltas)
     addon.createTableCell(parent, colX["duration"], rowY, COL_W.duration, ROW_H,
         formatDuration(run.durationSec, timeLimit), "GameFontHighlight", "RIGHT")
     if timeLimit and timeLimit > 0 then
-        local limitStr = string.format("%d:%02d", math.floor(timeLimit / 60), timeLimit % 60)
+        local limitStr = addon.formatMinutesSeconds(timeLimit)
         addCellTooltip(parent, colX["duration"], rowY, COL_W.duration, ROW_H,
             addon.locale["RUN_TOOLTIP_TIME_LIMIT"], limitStr)
     end
@@ -201,11 +201,11 @@ local function createRow(parent, run, colX, nameW, rowY, isLast, scoreDeltas)
 end
 
 function MPT_Dashboard:loadRuns(frame)
-    -- Sort a shallow copy — addon.getRunHistory() returns a cached, shared
+    -- Sort a shallow copy — addon.RunHistoryService:getRuns() returns a cached, shared
     -- reference, and sorting it in place would silently reorder it for
-    -- other consumers (e.g. Dungeons.lua, RunsStats.lua) too.
+    -- other consumers (e.g. DungeonsPage.lua, RunStatisticsCard.lua) too.
     local runHistory = {}
-    for i, run in ipairs(addon.getRunHistory()) do
+    for i, run in ipairs(addon.RunHistoryService:getRuns()) do
         runHistory[i] = run
     end
 

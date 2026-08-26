@@ -2,7 +2,7 @@ local addonName, addon = ...
 
 local SCORE_HEIGHT = 80
 
-local function loadScore(sidebar, cursor)
+function MPT_Sidebar:loadScore(sidebar, cursor)
     addon.debugMessage("Loading sidebar: score...")
 
     local y = cursor:current()
@@ -35,5 +35,3 @@ local function loadScore(sidebar, cursor)
         score:SetText(color .. overallDungeonScore .. addon.colors.RESET)
     end
 end
-
-MPT_Sidebar.getScore = loadScore

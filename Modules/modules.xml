@@ -1,32 +1,36 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 
-    <Include file='Tracker\MainFrame.lua'/>
+    <Script file='Tracker\Tracker.lua'/>
+    <Script file='Tracker\MainFrame.lua'/>
 
-    <Include file='Tracker\Dashboard\init.lua'/>
-    <Include file='Tracker\Dashboard\Navigation.lua'/>
-    <Include file='Tracker\Dashboard\Frame.lua'/>
-    <Include file='Tracker\Dashboard\Content\NotMaxLevel.lua'/>
-    <Include file='Tracker\Dashboard\Content\Dungeons.lua'/>
-    <Include file='Tracker\Dashboard\Content\Runs.lua'/>
-    <Include file='Tracker\Dashboard\Content\Keystones.lua'/>
+    <Script file='Tracker\Services\AltKeystoneService.lua'/>
+    <Script file='Tracker\Services\RunHistoryService.lua'/>
+    <Script file='Tracker\Services\GroupKeystoneService.lua'/>
+    <Script file='Tracker\Services\GuildKeystoneService.lua'/>
 
-    <Include file='Tracker\Sidebar\init.lua'/>
-    <Include file='Tracker\Sidebar\Content\WeeklyVault.lua'/>
-    <Include file='Tracker\Sidebar\Content\TraitNodes.lua'/>
-    <Include file='Tracker\Sidebar\Content\Currency.lua'/>
-    <Include file='Tracker\Sidebar\Content\Keystone.lua'/>
-    <Include file='Tracker\Sidebar\Content\Score.lua'/>
-    <Include file='Tracker\Sidebar\Content\Affixes.lua'/>
-    <Include file='Tracker\Sidebar\Content\RunsStats.lua'/>
-    <Include file='Tracker\Sidebar\Content\Statistics.lua'/>
-    <Include file='Tracker\Sidebar\Frame.lua'/>
+    <Script file='Tracker\Dashboard\Dashboard.lua'/>
+    <Script file='Tracker\Dashboard\DashboardNavigation.lua'/>
+    <Script file='Tracker\Dashboard\TableWidgets.lua'/>
+    <Script file='Tracker\Dashboard\DungeonTeleportCatalog.lua'/>
+    <Script file='Tracker\Dashboard\Content\NotMaxLevelPage.lua'/>
+    <Script file='Tracker\Dashboard\Content\DungeonsPage.lua'/>
+    <Script file='Tracker\Dashboard\Content\RunsPage.lua'/>
+    <Script file='Tracker\Dashboard\Content\KeystonesPage.lua'/>
 
-    <Include file='Tracker\MinimapButton.lua'/>
+    <Script file='Tracker\Sidebar\Sidebar.lua'/>
+    <Script file='Tracker\Sidebar\CardWidgets.lua'/>
+    <Script file='Tracker\Sidebar\Content\WeeklyVaultCard.lua'/>
+    <Script file='Tracker\Sidebar\Content\TraitNodesCard.lua'/>
+    <Script file='Tracker\Sidebar\Content\CurrencyCard.lua'/>
+    <Script file='Tracker\Sidebar\Content\KeystoneCard.lua'/>
+    <Script file='Tracker\Sidebar\Content\ScoreCard.lua'/>
+    <Script file='Tracker\Sidebar\Content\AffixesCard.lua'/>
+    <Script file='Tracker\Sidebar\Content\RunStatisticsCard.lua'/>
+    <Script file='Tracker\Sidebar\Content\KeystoneStatisticsCard.lua'/>
 
-    <Include file='Tracker\init.lua'/>
+    <Script file='Tracker\MinimapButton.lua'/>
 
-    <Include file='Settings\init.lua'/>
-    <Include file='Settings\Frame.lua'/>
+    <Script file='Settings\Settings.lua'/>
 
-    <Script file='WelcomeMessage\init.lua'/>
+    <Script file='WelcomeMessage\WelcomeMessage.lua'/>
 </Ui>

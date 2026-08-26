@@ -1,0 +1,9 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+
+    <Script file='Colors.lua'/>
+    <Script file='Theme.lua'/>
+    <Script file='Messages.lua'/>
+    <Script file='Debug.lua'/>
+    <Script file='Time.lua'/>
+    <Script file='Widgets.lua'/>
+</Ui>

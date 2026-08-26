@@ -47,7 +47,7 @@ local function buildSlot(container, activity, slotIndex, BlizzardMixin)
 
     -- Gold when unlocked (matches the gold section header above), a duller
     -- gray while still locked/in-progress — same state-color language as the
-    -- Trait Nodes "available" highlight (see TraitNodes.lua).
+    -- Trait Nodes "available" highlight (see TraitNodesCard.lua).
     local borderR, borderG, borderB = addon.colorToRGB(unlocked and "ARTIFACT" or "POOR")
     addon.createThinBorder(slot, 1, borderR, borderG, borderB, unlocked and 0.8 or 0.5)
 
@@ -103,7 +103,7 @@ local function buildSlot(container, activity, slotIndex, BlizzardMixin)
     end)
 end
 
-local function loadWeeklyVault(sidebar, cursor)
+function MPT_Sidebar:loadWeeklyVault(sidebar, cursor)
     addon.debugMessage("Loading sidebar: weekly vault...")
 
     local headerY = cursor:current() - WEEKLYVAULT_GAP
@@ -131,5 +131,3 @@ local function loadWeeklyVault(sidebar, cursor)
         buildSlot(container, bySlot[i], i, BlizzardMixin)
     end
 end
-
-MPT_Sidebar.getWeeklyVault = loadWeeklyVault

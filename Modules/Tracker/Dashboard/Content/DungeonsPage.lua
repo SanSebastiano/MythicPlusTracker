@@ -99,13 +99,13 @@ end
 
 local function formatTimeMMSS(sec)
     if not sec or sec <= 0 then return "–" end
-    return string.format("%d:%02d", math.floor(sec / 60), sec % 60)
+    return addon.formatMinutesSeconds(sec)
 end
 
 local function formatBestTime(sec, timeLimitSec)
     if not sec or sec <= 0 then return "–" end
     local s = sec
-    local str = string.format("%d:%02d", math.floor(s / 60), s % 60)
+    local str = addon.formatMinutesSeconds(s)
     local color = s <= timeLimitSec and addon.colors.WHITE or addon.colors.POOR
     return color .. str .. addon.colors.RESET
 end
@@ -144,7 +144,7 @@ local function createTableRow(child, mapID, colX, rowY, nameW, runLookup, isLast
     glowFade:SetSmoothing("IN_OUT")
 
     -- Clicking the dungeon icon teleports the player via the matching known
-    -- "Path of ..." spell, if one is known (see Utils/DungeonTeleports.lua).
+    -- "Path of ..." spell, if one is known (see Dashboard/DungeonTeleportCatalog.lua).
     -- Uses a SecureActionButtonTemplate so the protected spell cast is
     -- allowed to run directly from the click.
     local teleport = addon.getDungeonTeleport(mapID)
@@ -217,7 +217,7 @@ local function createTableRow(child, mapID, colX, rowY, nameW, runLookup, isLast
                 ARTIFACT_R, ARTIFACT_G, ARTIFACT_B, 1, true)
             local delta    = capturedTimeLimit - capturedBestTime
             local absDelta = math.abs(delta)
-            local deltaStr = string.format("%d:%02d", math.floor(absDelta / 60), absDelta % 60)
+            local deltaStr = addon.formatMinutesSeconds(absDelta)
             if delta >= 0 then
                 GameTooltip:AddLine("+" .. deltaStr, 0, 0.8, 0, 1)
             else
@@ -351,7 +351,7 @@ function MPT_Dashboard:loadDungeons(frame)
     local dungeons = C_ChallengeMode.GetMapTable()
     if not dungeons then return end
 
-    local runHistory = addon.getRunHistory()
+    local runHistory = addon.RunHistoryService:getRuns()
     local runLookup  = buildRunLookup(runHistory)
 
     local tableW = DASHBOARD_W - CONTENT_INSET * 2
