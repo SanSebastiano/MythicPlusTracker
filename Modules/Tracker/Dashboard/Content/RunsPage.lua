@@ -5,9 +5,9 @@ local ROW_H          = 40
 local HEADER_H       = 28
 local COL_GAP        = 6
 local ICON_SIZE      = 28
-local DASHBOARD_W    = 800  -- matches Frame.lua
-local CONTENT_INSET  = 20   -- aligns with divider caps
-local NAV_BOTTOM_MARGIN = 8
+local DASHBOARD_W    = MPT_Dashboard.LAYOUT.WIDTH
+local CONTENT_INSET  = MPT_Dashboard.LAYOUT.CONTENT_INSET
+local NAV_BOTTOM_MARGIN = MPT_Dashboard.LAYOUT.NAV_BOTTOM_MARGIN
 local SCROLL_BTN_SIZE = 10  -- gutter reserved for the scrollbar (MinimalScrollBar is 8px wide)
 
 -- Fixed column widths sized to fit their header text (name column is computed dynamically)

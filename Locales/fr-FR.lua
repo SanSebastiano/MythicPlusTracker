@@ -12,7 +12,7 @@ local locale = {
     ["WELCOME_MESSAGE_DEBUG"] = "Le mode débogage est activé. Certaines fonctionnalités peuvent être limitées.",
     -- Minimap Button
     ["MINIMAP_BUTTON_NAME"] = "Mythic Plus Tracker",
-    ["MINIMAP_BUTTON_CLICK_LEFT"] = "Clic gauche : Afficher/Masquer le tableau de bord",
+    ["MINIMAP_BUTTON_CLICK_LEFT"] = "Clic gauche : Ouvrir le tableau de bord",
     ["MINIMAP_BUTTON_CLICK_RIGHT"] = "Clic droit : Ouvrir le Grand Coffre",
     ["MINIMAP_BUTTON_DRAG"] = "Glisser : Déplacer le long de la minimap (Maj+Glisser : Déplacer librement)",
     ["MINIMAP_BUTTON_DRAG_NORMAL"] = "Glisser : Déplacer le long de la minimap",

@@ -1,5 +1,6 @@
 local addonName, addon = ...
 
+local CONTENT_W = MPT_Sidebar.LAYOUT.CONTENT_W
 local KEYSTONE_HEIGHT = 50
 local KEYSTONE_GAP = 7   -- gap after the previous card (Affixes)
 
@@ -10,8 +11,8 @@ function MPT_Sidebar:loadKeystone(sidebar, cursor)
     cursor:advance(KEYSTONE_GAP + KEYSTONE_HEIGHT)
 
     local frame = CreateFrame("Frame", nil, sidebar)
-    frame:SetSize(254, KEYSTONE_HEIGHT)
-    frame:SetPoint("TOPLEFT", sidebar, "TOPLEFT", 23, y)
+    frame:SetSize(CONTENT_W, KEYSTONE_HEIGHT)
+    frame:SetPoint("TOPLEFT", sidebar, "TOPLEFT", MPT_Sidebar.LAYOUT.CONTENT_X, y)
 
     local mapID, level, name, texture = addon.KeystoneService:getOwned()
 

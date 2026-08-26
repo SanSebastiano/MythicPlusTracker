@@ -12,7 +12,7 @@ local locale = {
     ["WELCOME_MESSAGE_DEBUG"] = "Режим отладки включён. Некоторые функции могут быть ограничены.",
     -- Minimap Button
     ["MINIMAP_BUTTON_NAME"] = "Mythic Plus Tracker",
-    ["MINIMAP_BUTTON_CLICK_LEFT"] = "ЛКМ: Открыть/закрыть панель",
+    ["MINIMAP_BUTTON_CLICK_LEFT"] = "ЛКМ: Открыть панель",
     ["MINIMAP_BUTTON_CLICK_RIGHT"] = "ПКМ: Открыть Великое Хранилище",
     ["MINIMAP_BUTTON_DRAG"] = "Перетаскивание: перемещение по краю миникарты (Shift + перетаскивание: свободное перемещение)",
     ["MINIMAP_BUTTON_DRAG_NORMAL"] = "Перетаскивание: перемещение по краю миникарты",

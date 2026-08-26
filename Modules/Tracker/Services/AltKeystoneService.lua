@@ -8,31 +8,19 @@ local addonName, addon = ...
 MythicPlusTrackerAltDB = MythicPlusTrackerAltDB or {}
 MythicPlusTrackerDB = MythicPlusTrackerDB or {}
 
----Realm-qualified key identifying the current character, matching the
----format used for group members in Modules/Tracker/Services/GroupKeystoneService.lua.
----@return string
-local function getCharacterKey()
-    return UnitName("player") .. "-" .. GetNormalizedRealmName()
-end
-
----@return boolean
-local function isMaxLevel()
-    return UnitLevel("player") >= GetMaxPlayerLevel()
-end
-
 ---Saves the local character's current keystone (or lack thereof) into
 ---MythicPlusTrackerAltDB, stamped with the current weekly reset epoch so a
 ---later read can tell whether the data is still from this reset week.
 ---Only max-level characters are persisted.
 local function persistOwnKeystoneIfEligible()
-    if not isMaxLevel() then
+    if not addon.Player:isMaxLevel() then
         return
     end
 
     local mapID, level = addon.KeystoneService:getOwned()
     local _, englishClass = UnitClass("player")
 
-    MythicPlusTrackerAltDB[getCharacterKey()] = {
+    MythicPlusTrackerAltDB[addon.Player:getCharacterKey()] = {
         name       = UnitName("player"),
         realm      = GetNormalizedRealmName(),
         class      = englishClass,

@@ -7,10 +7,12 @@
     <Script file='Tracker\Services\RunHistoryService.lua'/>
     <Script file='Tracker\Services\GroupKeystoneService.lua'/>
     <Script file='Tracker\Services\GuildKeystoneService.lua'/>
+    <Script file='Tracker\Services\KeystoneEntryService.lua'/>
 
     <Script file='Tracker\Dashboard\Dashboard.lua'/>
     <Script file='Tracker\Dashboard\DashboardNavigation.lua'/>
     <Script file='Tracker\Dashboard\TableWidgets.lua'/>
+    <Script file='Tracker\Dashboard\Services\TableSortService.lua'/>
     <Script file='Tracker\Dashboard\DungeonTeleportCatalog.lua'/>
     <Script file='Tracker\Dashboard\Content\NotMaxLevelPage.lua'/>
     <Script file='Tracker\Dashboard\Content\DungeonsPage.lua'/>

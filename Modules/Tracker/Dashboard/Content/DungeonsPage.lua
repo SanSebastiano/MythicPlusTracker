@@ -6,9 +6,9 @@ local HEADER_H   = 30
 local COL_GAP    = 8
 local ICON_SIZE  = 36
 
-local NAV_BOTTOM_MARGIN = 8
-local DASHBOARD_W       = 800  -- dashboard frame width (fixed in Frame.lua)
-local CONTENT_INSET     = 20   -- aligns with the divider bar left/right caps
+local NAV_BOTTOM_MARGIN = MPT_Dashboard.LAYOUT.NAV_BOTTOM_MARGIN
+local DASHBOARD_W       = MPT_Dashboard.LAYOUT.WIDTH
+local CONTENT_INSET     = MPT_Dashboard.LAYOUT.CONTENT_INSET
 
 -- Fixed column widths (name column is computed dynamically)
 local COL_W = {
@@ -21,9 +21,6 @@ local COL_W = {
     bestTime  = 70,
 }
 
-local sortCol = "name"
-local sortDir = "asc"
-local headerCells    = {}   -- [colKey] = FontString, updated when sort changes
 local rowsContainer  = nil  -- recreated on each sort change
 
 local HEADER_LOCALE = {
@@ -45,6 +42,14 @@ local DEFAULT_SORT_DIR = {
     timeLimit = "asc",
     bestTime  = "asc",
 }
+
+-- This table always starts sorted by dungeon name; the Keystones table starts
+-- unsorted instead, which is why the sort state is per-table.
+local sortState = addon.TableSortService:new({
+    initialColumn     = "name",
+    defaultDirections = DEFAULT_SORT_DIR,
+    headerLocaleKeys  = HEADER_LOCALE,
+})
 
 local ARTIFACT_R, ARTIFACT_G, ARTIFACT_B = addon.colorToRGB("ARTIFACT")
 
@@ -252,77 +257,44 @@ local function computeSortedEntries(dungeons, runLookup)
         })
     end
 
+    local sortColumn = sortState:getColumn()
+    local ascending  = sortState:isAscending()
+
     table.sort(entries, function(a, b)
-        if sortCol == "name" then
-            if sortDir == "asc" then return a.name < b.name
-            else                     return a.name > b.name end
+        if sortColumn == "name" then
+            if ascending then return a.name < b.name
+            else              return a.name > b.name end
         else
-            local va = a[sortCol] or 0
-            local vb = b[sortCol] or 0
+            local va = a[sortColumn] or 0
+            local vb = b[sortColumn] or 0
             -- Push zero/no-data entries to the bottom regardless of direction
             if (va == 0) ~= (vb == 0) then return va ~= 0 end
-            if sortDir == "desc" then return va > vb
-            else                      return va < vb end
+            if ascending then return va < vb
+            else              return va > vb end
         end
     end)
 
     return entries
 end
 
-local function updateHeaderIndicators()
-    for colKey, fs in pairs(headerCells) do
-        local localeKey = HEADER_LOCALE[colKey]
-        local label     = addon.locale[localeKey] or localeKey
-        local indicator = (colKey == sortCol) and (sortDir == "asc" and " ^" or " v") or ""
-        fs:SetText(label .. indicator)
-        fs:SetTextColor(ARTIFACT_R, ARTIFACT_G, ARTIFACT_B, 1)
-    end
-end
-
 local function createTableHeader(child, colX, nameW, onSort)
-    wipe(headerCells)
+    sortState:forgetHeaderCells()
 
-    local function hdrBtn(x, w, colKey, justifyH)
-        local btn = CreateFrame("Button", nil, child)
-        btn:SetSize(w, HEADER_H)
-        btn:SetPoint("TOPLEFT", child, "TOPLEFT", x, 0)
+    local headerDefs = {
+        { key = "name",      w = nameW,           j = "LEFT"  },
+        { key = "bestLevel", w = COL_W.bestLevel, j = "RIGHT" },
+        { key = "score",     w = COL_W.score,     j = "RIGHT" },
+        { key = "runs",      w = COL_W.runs,      j = "RIGHT" },
+        { key = "success",   w = COL_W.success,   j = "RIGHT" },
+        { key = "timeLimit", w = COL_W.timeLimit, j = "RIGHT" },
+        { key = "bestTime",  w = COL_W.bestTime,  j = "RIGHT" },
+    }
 
-        local fs = btn:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-        fs:SetSize(w, HEADER_H)
-        fs:SetPoint("TOPLEFT", btn, "TOPLEFT", 0, 0)
-        fs:SetJustifyH(justifyH or "LEFT")
-        fs:SetJustifyV("MIDDLE")
-
-        headerCells[colKey] = fs
-
-        btn:SetScript("OnClick", function()
-            if sortCol == colKey then
-                sortDir = sortDir == "asc" and "desc" or "asc"
-            else
-                sortCol = colKey
-                sortDir = DEFAULT_SORT_DIR[colKey] or "asc"
-            end
-            updateHeaderIndicators()
-            onSort()
-        end)
-
-        btn:SetScript("OnEnter", function()
-            fs:SetTextColor(1, 1, 1, 1)
-        end)
-        btn:SetScript("OnLeave", function()
-            fs:SetTextColor(ARTIFACT_R, ARTIFACT_G, ARTIFACT_B, 1)
-        end)
+    for _, def in ipairs(headerDefs) do
+        addon.createSortableHeaderButton(child, colX[def.key], def.w, HEADER_H, def.j, def.key, sortState, onSort)
     end
 
-    hdrBtn(colX["name"],      nameW,           "name",      "LEFT")
-    hdrBtn(colX["bestLevel"], COL_W.bestLevel, "bestLevel", "RIGHT")
-    hdrBtn(colX["score"],     COL_W.score,     "score",     "RIGHT")
-    hdrBtn(colX["runs"],      COL_W.runs,      "runs",      "RIGHT")
-    hdrBtn(colX["success"],   COL_W.success,   "success",   "RIGHT")
-    hdrBtn(colX["timeLimit"], COL_W.timeLimit, "timeLimit", "RIGHT")
-    hdrBtn(colX["bestTime"],  COL_W.bestTime,  "bestTime",  "RIGHT")
-
-    updateHeaderIndicators()
+    sortState:updateIndicators()
 
     addon.createRowDivider(child, -HEADER_H, 0.5)
 end
@@ -371,9 +343,9 @@ function MPT_Dashboard:loadDungeons(frame)
 
     local childHeight = HEADER_H + 1 + #dungeons * ROW_H + PADDING_X
 
-    -- Reset sort state so the table starts fresh each time the panel opens
+    -- Drop the previous render's frames; createTableHeader re-registers the
+    -- new header cells with the sort state.
     rowsContainer = nil
-    wipe(headerCells)
 
     local tableFrame = CreateFrame("Frame", nil, frame)
     tableFrame:SetSize(tableW, childHeight)

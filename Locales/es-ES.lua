@@ -12,7 +12,7 @@ local locale = {
     ["WELCOME_MESSAGE_DEBUG"] = "El modo de depuración está activado. Algunas funciones pueden estar limitadas.",
     -- Minimap Button
     ["MINIMAP_BUTTON_NAME"] = "Mythic Plus Tracker",
-    ["MINIMAP_BUTTON_CLICK_LEFT"] = "Clic izquierdo: Mostrar/Ocultar el panel",
+    ["MINIMAP_BUTTON_CLICK_LEFT"] = "Clic izquierdo: Abrir el panel",
     ["MINIMAP_BUTTON_CLICK_RIGHT"] = "Clic derecho: Abrir la Gran Bóveda",
     ["MINIMAP_BUTTON_DRAG"] = "Arrastrar: Mover a lo largo del borde del minimapa (Mayús+Arrastrar: Mover libremente)",
     ["MINIMAP_BUTTON_DRAG_NORMAL"] = "Arrastrar: Mover a lo largo del borde del minimapa",

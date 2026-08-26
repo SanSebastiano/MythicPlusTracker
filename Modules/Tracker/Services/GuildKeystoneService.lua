@@ -34,14 +34,9 @@ local lastRefreshedAt = nil
 
 -- Entries are only populated for online guild members who also run
 -- MythicPlusTracker and have responded with their current keystone. Purely
--- in-memory, like addon.groupKeystones in GroupKeystoneService.lua — cleared
+-- in-memory, like GroupKeystoneService's own store — cleared
 -- on /reload, never persisted.
-addon.guildKeystones = addon.guildKeystones or {}
-
----@return boolean
-local function isMaxLevel()
-    return UnitLevel("player") >= GetMaxPlayerLevel()
-end
+local keystonesByPlayerName = {}
 
 ---Splits a guild roster name into character name + realm. Same-realm guild
 ---members are returned by GetGuildRosterInfo without a realm suffix; cross-
@@ -65,7 +60,7 @@ end
 ---matching AltKeystoneService.lua's rule for what counts as a meaningful
 ---keystone owner.
 local function broadcastOwnKeystoneStatus()
-    if not IsInGuild() or not isMaxLevel() then
+    if not IsInGuild() or not addon.Player:isMaxLevel() then
         return
     end
 
@@ -113,7 +108,7 @@ local function handleIncomingMessage(rawMessage, senderFullPlayerName)
     if noKeyScoreText then
         addon.debugMessage("GuildKeystoneService: received NOKEY from " .. tostring(senderFullPlayerName)
             .. " (score " .. noKeyScoreText .. ")")
-        addon.guildKeystones[senderFullPlayerName] = {
+        keystonesByPlayerName[senderFullPlayerName] = {
             mapID     = nil,
             level     = nil,
             score     = tonumber(noKeyScoreText),
@@ -133,7 +128,7 @@ local function handleIncomingMessage(rawMessage, senderFullPlayerName)
     addon.debugMessage("GuildKeystoneService: received KEYSTONE from " .. tostring(senderFullPlayerName)
         .. " (mapID " .. mapIDText .. ", level " .. levelText .. ", score " .. scoreText .. ")")
 
-    addon.guildKeystones[senderFullPlayerName] = {
+    keystonesByPlayerName[senderFullPlayerName] = {
         mapID     = tonumber(mapIDText),
         level     = tonumber(levelText),
         score     = tonumber(scoreText),
@@ -169,9 +164,9 @@ end
 ---
 ---Name/class/online-status come from a live roster scan
 ---(GetNumGuildMembers/GetGuildRosterInfo). Keystone/score come from
----addon.guildKeystones, which this service populates live over its
+---this service's in-memory store, which it populates live over its
 ---REQUEST/KEYSTONE/NOKEY addon-message protocol — the same in-memory,
----per-session-only shape as addon.groupKeystones in GroupKeystoneService.lua.
+---per-session-only shape as GroupKeystoneService's store.
 ---hasAddon is false when no response has been heard from that member yet.
 ---
 ---Members who are also the local account's own alts (MythicPlusTrackerAltDB)
@@ -179,7 +174,7 @@ end
 ---currently-played character, which stays in the list like any other member.
 ---@return table entries
 function addon.GuildKeystoneService:getEntries()
-    local currentCharacterKey = UnitName("player") .. "-" .. GetNormalizedRealmName()
+    local currentCharacterKey = addon.Player:getCharacterKey()
 
     local ownOtherAltKeys = {}
     for key in pairs(MythicPlusTrackerAltDB) do
@@ -200,7 +195,7 @@ function addon.GuildKeystoneService:getEntries()
                 local name, realm = splitNameRealm(rawName)
                 local key = name .. "-" .. realm
                 if not ownOtherAltKeys[key] then
-                    local data = addon.guildKeystones[key]
+                    local data = keystonesByPlayerName[key]
 
                     table.insert(entries, {
                         name     = name,
@@ -249,10 +244,7 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
             return
         end
 
-        local senderFullPlayerName = senderName
-        if senderFullPlayerName and not string.find(senderFullPlayerName, "-", 1, true) then
-            senderFullPlayerName = senderFullPlayerName .. "-" .. GetNormalizedRealmName()
-        end
+        local senderFullPlayerName = addon.Player:qualifyRealm(senderName)
         if senderFullPlayerName then
             handleIncomingMessage(message, senderFullPlayerName)
         end

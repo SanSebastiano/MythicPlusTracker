@@ -12,7 +12,7 @@ local locale = {
     ["COMBAT_LOCKDOWN_WARNING"] = "Das Tracker-Fenster kann im Kampf nicht geöffnet werden.",
     -- Minimap Button
     ["MINIMAP_BUTTON_NAME"] = "Mythic Plus Tracker",
-    ["MINIMAP_BUTTON_CLICK_LEFT"] = "Linksklick: Dashboard umschalten",
+    ["MINIMAP_BUTTON_CLICK_LEFT"] = "Linksklick: Dashboard öffnen",
     ["MINIMAP_BUTTON_CLICK_RIGHT"] = "Rechtsklick: Große Schatzkammer öffnen",
     ["MINIMAP_BUTTON_DRAG"] = "Ziehen: Entlang der Minimap verschieben (Shift+Ziehen: Frei verschieben)",
     ["MINIMAP_BUTTON_DRAG_NORMAL"] = "Ziehen: Entlang der Minimap verschieben",

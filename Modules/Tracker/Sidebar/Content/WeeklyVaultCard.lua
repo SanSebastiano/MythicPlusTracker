@@ -6,10 +6,11 @@ local SLOT_HEIGHT  = 45
 local SLOT_GAP     = 8
 local CONTAINER_W  = SLOT_COUNT * SLOT_WIDTH + (SLOT_COUNT - 1) * SLOT_GAP
 local CONTAINER_H  = SLOT_HEIGHT
-local ANCHOR_X     = 23
-local SLOTS_CENTERED_X = ANCHOR_X + math.floor((254 - CONTAINER_W) / 2)
+local ANCHOR_X     = MPT_Sidebar.LAYOUT.CONTENT_X
+local CONTENT_W    = MPT_Sidebar.LAYOUT.CONTENT_W
+local SLOTS_CENTERED_X = ANCHOR_X + math.floor((CONTENT_W - CONTAINER_W) / 2)
 local WEEKLYVAULT_GAP = 1   -- gap after the previous card (Keystone)
-local HEADER_TO_CONTENT_GAP = 4
+local HEADER_TO_CONTENT_GAP = MPT_Sidebar.LAYOUT.HEADER_TO_CONTENT_GAP
 
 local M_PLUS_TYPE  = Enum.WeeklyRewardChestThresholdType and
                      Enum.WeeklyRewardChestThresholdType.Activities or 3
@@ -110,7 +111,7 @@ function MPT_Sidebar:loadWeeklyVault(sidebar, cursor)
     local contentY = headerY - addon.SIDEBAR_SECTION_HEADER_HEIGHT - HEADER_TO_CONTENT_GAP
     cursor:advance(WEEKLYVAULT_GAP + addon.SIDEBAR_SECTION_HEADER_HEIGHT + HEADER_TO_CONTENT_GAP + CONTAINER_H)
 
-    addon.createSidebarSectionHeader(sidebar, headerY, 254, addon.locale["SIDEBAR_VAULT_TITLE"])
+    addon.createSidebarSectionHeader(sidebar, headerY, MPT_Sidebar.LAYOUT.CONTENT_W, addon.locale["SIDEBAR_VAULT_TITLE"])
 
     local container = CreateFrame("Frame", nil, sidebar)
     container:SetSize(CONTAINER_W, CONTAINER_H)

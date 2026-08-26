@@ -1,8 +1,8 @@
 local addonName, addon = ...
 
--- Both the title banner and the tier header use the full Score-card width (x=23, w=254)
-local CONTENT_X = 23
-local CONTENT_W = 254
+-- Both the title banner and the tier header use the full Score-card width (see MPT_Sidebar.LAYOUT)
+local CONTENT_X = MPT_Sidebar.LAYOUT.CONTENT_X
+local CONTENT_W = MPT_Sidebar.LAYOUT.CONTENT_W
 
 local ICON_SIZE = 22
 local INSET     = 10
@@ -32,7 +32,7 @@ function MPT_Sidebar:loadRunStatistics(sidebar, cursor)
     end
 
     -- -----------------------------------------------------------------------
-    -- "Best Run" title banner. SetSize(254, 80) matches the Score card
+    -- "Best Run" title banner. Matches the Score card's width and height
     -- proportions exactly. All Y positions below are relative to titleY.
     -- -----------------------------------------------------------------------
     local titleY = cursor:current() - RUNSSTATS_GAP

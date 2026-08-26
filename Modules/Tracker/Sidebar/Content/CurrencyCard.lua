@@ -13,7 +13,7 @@ local SLOT_GAP  = 4
 local ICON_SIZE = 22
 local SLOT_H    = ICON_SIZE + 4 + 16  -- icon + gap + amount text
 local CURRENCY_GAP = 20   -- gap after the previous card (TraitNodes)
-local HEADER_TO_CONTENT_GAP = 4
+local HEADER_TO_CONTENT_GAP = MPT_Sidebar.LAYOUT.HEADER_TO_CONTENT_GAP
 
 local function loadCurrency(frame, currencyId, index)
     local currency = C_CurrencyInfo.GetCurrencyInfo(currencyId)
@@ -62,7 +62,7 @@ function MPT_Sidebar:loadCurrencies(sidebar, cursor)
     local contentY = headerY - addon.SIDEBAR_SECTION_HEADER_HEIGHT - HEADER_TO_CONTENT_GAP
     cursor:advance(CURRENCY_GAP + addon.SIDEBAR_SECTION_HEADER_HEIGHT + HEADER_TO_CONTENT_GAP + SLOT_H)
 
-    addon.createSidebarSectionHeader(sidebar, headerY, 254, addon.locale["SIDEBAR_CURRENCY_HEADER"])
+    addon.createSidebarSectionHeader(sidebar, headerY, MPT_Sidebar.LAYOUT.CONTENT_W, addon.locale["SIDEBAR_CURRENCY_HEADER"])
 
     local totalW = #CURRENCY_IDS * SLOT_W + (#CURRENCY_IDS - 1) * SLOT_GAP
 

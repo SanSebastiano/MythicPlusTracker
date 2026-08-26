@@ -61,7 +61,7 @@ addon.SIDEBAR_SECTION_HEADER_HEIGHT = 46
 function addon.createSidebarSectionHeader(parent, y, width, text)
     local header = CreateFrame("Frame", nil, parent)
     header:SetSize(width, addon.SIDEBAR_SECTION_HEADER_HEIGHT)
-    header:SetPoint("TOPLEFT", parent, "TOPLEFT", 23, y)
+    header:SetPoint("TOPLEFT", parent, "TOPLEFT", MPT_Sidebar.LAYOUT.CONTENT_X, y)
 
     local bg = header:CreateTexture(nil, "BACKGROUND")
     bg:SetAllPoints(header)

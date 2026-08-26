@@ -2,6 +2,29 @@
 
 All notable changes to MythicPlusTracker are documented here.
 
+## [1.4.0] - Unreleased
+
+### Added
+- `Tools/registration-validator.sh`, wired into CI: it catches `.lua` files that exist but aren't referenced from any `.toc`/`.xml` manifest. That failure mode produces no error and no warning in-game — the file simply never runs, and whatever it defined is silently missing.
+- `.gitattributes`, so line endings are normalized in the repository instead of depending on each contributor's local git configuration.
+- `CODING_GUIDELINES.md` section 3.4 defines what earns a `Service` suffix, where a service belongs depending on who calls it, and which words are banned in file names.
+
+### Changed
+- **Large internal restructuring with no intended change in behavior.** Nothing about the UI, the saved data, or the group/guild sync protocols changed; this release exists to make the codebase navigable before the next round of features. Each step was verified in-game on its own. In detail:
+  - The `Utils/` folder is gone. Code now sits in one of three layers: `Core/` for cross-cutting infrastructure (colors, theme, messages, debug mode, time formatting, shared widgets), `Services/` for domain services more than one module uses, and `Modules/<Module>/Services/` for services only one module uses. "Where does this file belong?" is now answered by looking at who calls it, not by taste.
+  - Domain services carry a `Service` suffix and one consistent shape: `KeystoneService`, `GroupKeystoneService`, `GuildKeystoneService`, `AltKeystoneService`, `RunHistoryService`, `KeystoneEntryService`, `TableSortService`. `GuildComm.lua` and `GuildKeys.lua` turned out to be two halves of one job and are now a single `GuildKeystoneService`.
+  - The Keystones tab and the Sidebar's statistics card each built the group's keystone list separately from the same source, so the two could disagree. Both now read one provider, and the in-memory keystone stores are no longer global variables.
+  - The Overview and Keystones tables share one sorting implementation, each keeping its own state — sorting one can no longer reorder the other.
+  - Consolidated duplicated logic: realm-qualified character names (7 places), max-level checks (3), `m:ss` duration formatting (6), tooltip label lines (2), and dashboard/sidebar layout constants (26, of which 9 were inline values rather than named constants).
+  - The Sidebar's content files now expose module methods the way the Dashboard's already did, and every module table is declared in the file that shares its name. `init.lua` has a single meaning again — the addon's entry point — instead of three.
+  - Every public method is `camelCase`, with no exceptions left.
+- Removed dead code: the never-used `MythicPlusTracker.lua` core file, an always-true debug guard in the minimap button, and a window-visibility flag nothing ever read.
+
+### Fixed
+- The minimap button's tooltip promised that left-clicking would *toggle* the dashboard, but a click only ever opened it — a second click never closed it. The tooltip now says "open", in all five languages.
+- The developer-only `/mpt test` command printed straight to the chat frame instead of going through the addon's own message helpers, with its diagnostic logic inlined in the slash-command dispatch.
+- `Tools/toc-validator.sh` reported 13 false "MISSING" entries on Windows checkouts because it didn't strip the CR from CRLF line endings, which left the repository's main structural check effectively unusable locally while passing in CI.
+
 ## [1.3.1] - 2026-08-21
 
 ### Added

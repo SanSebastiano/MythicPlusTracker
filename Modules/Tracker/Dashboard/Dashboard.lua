@@ -2,6 +2,16 @@ local addonName, addon = ...
 
 MPT_Dashboard = {}
 
+-- Geometry every content page has to agree with. These used to be copied into
+-- each page with a "-- matches Frame.lua" comment standing in for a shared
+-- constant; the pages now read them from here.
+MPT_Dashboard.LAYOUT = {
+    WIDTH             = 800,
+    HEIGHT            = 550,
+    CONTENT_INSET     = 20,  -- aligns with the divider bar's left/right caps
+    NAV_BOTTOM_MARGIN = 8,
+}
+
 MythicPlusTrackerDB = MythicPlusTrackerDB or {}
 
 local frame
@@ -27,7 +37,7 @@ local function create(mainFrame)
 
     frame = CreateFrame("Frame", nil, mainFrame)
 
-    frame:SetSize(800, 550)
+    frame:SetSize(MPT_Dashboard.LAYOUT.WIDTH, MPT_Dashboard.LAYOUT.HEIGHT)
     frame:SetPoint("TOPRIGHT", mainFrame)
 
     local bg = frame:CreateTexture(nil, "BACKGROUND")
@@ -44,10 +54,6 @@ local function create(mainFrame)
     border:SetAllPoints(borderFrame)
     border:SetAtlas(addon.theme.FRAME_BORDER, false)
 
-    local function isMaxLevel()
-        return UnitLevel("player") >= GetMaxPlayerLevel()
-    end
-
     local function getDefaultTabIndex()
         if MythicPlusTrackerDB.dashboardDefaultTabInGroup and IsInGroup() then
             return MPT_Tracker.TABS.KEYSTONES
@@ -57,17 +63,17 @@ local function create(mainFrame)
 
     local tabCallbacks = {
         [MPT_Tracker.TABS.OVERVIEW] = function()
-            if not isMaxLevel() then return false end
+            if not addon.Player:isMaxLevel() then return false end
             showContent(MPT_Dashboard.loadDungeons)
             MPT_Sidebar:showForTab(MPT_Tracker.TABS.OVERVIEW)
         end,
         [MPT_Tracker.TABS.RUNS] = function()
-            if not isMaxLevel() then return false end
+            if not addon.Player:isMaxLevel() then return false end
             showContent(MPT_Dashboard.loadRuns)
             MPT_Sidebar:showForTab(MPT_Tracker.TABS.RUNS)
         end,
         [MPT_Tracker.TABS.KEYSTONES] = function()
-            if not isMaxLevel() then return false end
+            if not addon.Player:isMaxLevel() then return false end
             showContent(MPT_Dashboard.loadKeystones)
             MPT_Sidebar:showForTab(MPT_Tracker.TABS.KEYSTONES)
         end,
@@ -84,7 +90,7 @@ local function create(mainFrame)
 
         addon.debugMessage("Dashboard Frame OnShow")
 
-        if not isMaxLevel() then
+        if not addon.Player:isMaxLevel() then
             MPT_Dashboard:setActiveNavTab(MPT_Tracker.TABS.OVERVIEW)
             MPT_Dashboard:loadNotMaxLevel(contentWrapper)
             return

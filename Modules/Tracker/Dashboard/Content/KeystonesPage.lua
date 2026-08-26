@@ -8,13 +8,12 @@ local COL_GAP         = 6
 local PORTRAIT_SIZE   = 28
 local ROLE_SIZE        = 18
 local DUNGEON_ICON_SIZE = 24
-local DASHBOARD_W     = 800  -- matches Frame.lua
-local CONTENT_INSET   = 20   -- aligns with divider caps
-local NAV_BOTTOM_MARGIN = 8
+local DASHBOARD_W     = MPT_Dashboard.LAYOUT.WIDTH
+local CONTENT_INSET   = MPT_Dashboard.LAYOUT.CONTENT_INSET
+local NAV_BOTTOM_MARGIN = MPT_Dashboard.LAYOUT.NAV_BOTTOM_MARGIN
 local SCROLL_BTN_SIZE = 10   -- gutter reserved for the scrollbar (MinimalScrollBar is 8px wide)
 local ROW_PADDING_X   = 5
 local ARTIFACT_R, ARTIFACT_G, ARTIFACT_B = addon.colorToRGB("ARTIFACT")
-local POOR_R, POOR_G, POOR_B = addon.colorToRGB("POOR")
 local REFRESH_ICON_SIZE = 20
 local REFRESH_ICON_PRESS_OFFSET = -2 -- pixels the icon shifts down while the button is held, like the nav tabs
 local REFRESH_COOLDOWN_SECONDS = 2 -- minimum time between refreshes, not shown to the player
@@ -30,26 +29,15 @@ local MODE_DROPDOWN_MARGIN = 6
 local lastRefreshTime = 0
 local lastGuildRefreshTime = 0
 
-local MODE_GROUP = "group"
-local MODE_ALTS  = "alts"
-local MODE_GUILD = "guild"
+local MODES = addon.KeystoneEntryService.MODES
 
+-- Dropdown labels. The mode values themselves live on KeystoneEntryService,
+-- which also owns reading and persisting the active one.
 local MODE_OPTIONS = {
-    { mode = MODE_GROUP, localeKey = "KEYSTONES_MODE_GROUP" },
-    { mode = MODE_ALTS,  localeKey = "KEYSTONES_MODE_ALTS" },
-    { mode = MODE_GUILD, localeKey = "KEYSTONES_MODE_GUILD" },
+    { mode = MODES.GROUP, localeKey = "KEYSTONES_MODE_GROUP" },
+    { mode = MODES.ALTS,  localeKey = "KEYSTONES_MODE_ALTS" },
+    { mode = MODES.GUILD, localeKey = "KEYSTONES_MODE_GUILD" },
 }
-
--- Sort state for the clickable column headers, shared across both Group and
--- Alts/Guild modes (same table layout, same header row). nil sortCol means
--- "no explicit sort yet": Group keeps roster order, Alts/Guild keep their
--- own default (level desc, then name — see Modules/Tracker/Services/AltKeystoneService.lua and
--- GuildKeystoneService:getEntries()). Plain
--- module-level locals, like DungeonsPage.lua's sortCol/sortDir — persists across
--- re-renders within the session, reset only by /reload.
-local sortCol = nil
-local sortDir = "asc"
-local headerCells = {} -- [colKey] = FontString, updated when sort changes
 
 local HEADER_LOCALE = {
     name    = "KEYSTONES_COL_PLAYER",
@@ -64,6 +52,14 @@ local SORT_DEFAULT_DIR = {
     level   = "desc",
     score   = "desc",
 }
+
+-- No initial column: until a header is clicked, each mode keeps its provider's
+-- own order (Group the roster order, Alts/Guild level-desc-then-name). Own
+-- instance, so sorting this table never disturbs the Overview table's sort.
+local sortState = addon.TableSortService:new({
+    defaultDirections = SORT_DEFAULT_DIR,
+    headerLocaleKeys  = HEADER_LOCALE,
+})
 
 -- Fixed column widths sized to fit their content (name/dungeon columns are dynamic)
 local COL_W = {
@@ -95,46 +91,6 @@ local CLASS_ICON_ATLAS_BY_ENGLISH_CLASS = {
     WARLOCK     = "UI-HUD-UnitFrame-Player-Portrait-ClassIcon-Warlock",
     WARRIOR     = "UI-HUD-UnitFrame-Player-Portrait-ClassIcon-Warrior",
 }
-
----@return string
-local function getMode()
-    if MythicPlusTrackerDB.keystonesTabMode == MODE_ALTS then
-        return MODE_ALTS
-    elseif MythicPlusTrackerDB.keystonesTabMode == MODE_GUILD then
-        return MODE_GUILD
-    end
-    return MODE_GROUP
-end
-
----@param mode string
-local function setMode(mode)
-    MythicPlusTrackerDB.keystonesTabMode = mode
-end
-
----Resolves the keystone (mapID + level) known for the given unit token, as
----well as whether that member is known to run MythicPlusTracker at all.
----For the local player this is read directly from the owned keystone item;
----for other group members it is looked up from data received via
----addon.GroupKeystoneService (see Modules/Tracker/Services/GroupKeystoneService.lua).
----@param unitToken string
----@param fullPlayerName string|nil
----@return number|nil mapID
----@return number|nil level
----@return boolean hasAddon
----@return number|nil score
-local function getKnownKeystoneForUnit(unitToken, fullPlayerName)
-    if unitToken == "player" then
-        return C_MythicPlus.GetOwnedKeystoneChallengeMapID(), C_MythicPlus.GetOwnedKeystoneLevel(), true,
-            C_ChallengeMode.GetOverallDungeonScore()
-    end
-
-    local groupKeystoneData = fullPlayerName and addon.groupKeystones[fullPlayerName]
-    if not groupKeystoneData then
-        return nil, nil, false, nil
-    end
-
-    return groupKeystoneData.mapID, groupKeystoneData.level, groupKeystoneData.hasAddon == true, groupKeystoneData.score
-end
 
 ---Determines the effective role ("TANK"/"HEALER"/"DAMAGER") for a unit.
 ---For the local player, falls back to the active specialization's role when
@@ -184,7 +140,7 @@ end
 ---Same as refreshGroupView, but for the Guild mode's refresh button — see
 ---the comment above createRefreshButton. Guild's own
 ---addon.GuildKeystoneService:requestKeystones() call happens as part of the normal
----render path (see the MODE_GUILD branch below), just like Group's, so it
+---render path (see the MODES.GUILD branch below), just like Group's, so it
 ---isn't repeated here either.
 local function refreshGuildView()
     local now = GetTime()
@@ -202,18 +158,11 @@ local function refreshGuildView()
     end
 end
 
----Adds a tooltip line whose "<Label>:" prefix (up to and including the first
----colon) is colored POOR-gray, with the rest of the line left in the
----default tooltip color. Used for the secondary "last updated"/"next
----update" lines so only the label reads as muted, not the actual value.
+---The secondary "last updated"/"next update" tooltip lines: label muted, value
+---in the default colour. See addon.addTooltipLabelLine.
 ---@param text string
 local function addPoorLabelLine(text)
-    local prefix, rest = text:match("^([^:]+:)(.*)$")
-    if prefix then
-        GameTooltip:AddLine(addon.colors.POOR .. prefix .. addon.colors.RESET .. rest, 1, 1, 1, true)
-    else
-        GameTooltip:AddLine(text, POOR_R, POOR_G, POOR_B, true)
-    end
+    addon.addTooltipLabelLine(text, "POOR", "POOR")
 end
 
 ---Creates the icon-only refresh button, anchored directly to the left of the
@@ -325,16 +274,16 @@ local function createModeDropdown(frame)
     local dropdown = CreateFrame("DropdownButton", nil, frame, "WowStyle1DropdownTemplate")
     dropdown:SetWidth(MODE_DROPDOWN_W)
     dropdown:SetPoint("TOPRIGHT", MPT_Dashboard.navFrame, "BOTTOMRIGHT", -CONTENT_INSET, -NAV_BOTTOM_MARGIN)
-    dropdown:SetText(labelFor(getMode()))
+    dropdown:SetText(labelFor(addon.KeystoneEntryService:getActiveMode()))
 
     dropdown:SetupMenu(function(_, rootDescription)
         for _, option in ipairs(MODE_OPTIONS) do
             local mode = option.mode
             local label = addon.locale[option.localeKey] or option.localeKey
             rootDescription:CreateRadio(label,
-                function() return getMode() == mode end,
+                function() return addon.KeystoneEntryService:getActiveMode() == mode end,
                 function()
-                    setMode(mode)
+                    addon.KeystoneEntryService:setActiveMode(mode)
                     dropdown:SetText(label)
                     MPT_Dashboard:refreshKeystonesView()
                     if MPT_Sidebar and MPT_Sidebar.showForTab then
@@ -347,18 +296,8 @@ local function createModeDropdown(frame)
     return dropdown
 end
 
-local function updateHeaderIndicators()
-    for colKey, fs in pairs(headerCells) do
-        local localeKey = HEADER_LOCALE[colKey]
-        local label = addon.locale[localeKey] or localeKey
-        local indicator = (colKey == sortCol) and (sortDir == "asc" and " ^" or " v") or ""
-        fs:SetText(label .. indicator)
-        fs:SetTextColor(ARTIFACT_R, ARTIFACT_G, ARTIFACT_B, 1)
-    end
-end
-
 ---Resolves the dungeon name for a normalized row entry, used only for
----sorting by the "Dungeon" column. Group entries (see buildGroupEntries)
+---sorting by the "Dungeon" column. Group entries (from KeystoneEntryService)
 ---already carry a cached dungeonName; Alts entries (from
 ---Modules/Tracker/Services/AltKeystoneService.lua) don't, so it's resolved here on demand instead of
 ---changing that module's saved data shape.
@@ -378,66 +317,38 @@ end
 ---@param entries table
 ---@return table entries
 local function sortEntries(entries)
-    if not sortCol or #entries == 0 then
+    local sortColumn = sortState:getColumn()
+    if not sortColumn or #entries == 0 then
         return entries
     end
 
+    local ascending = sortState:isAscending()
+
     table.sort(entries, function(a, b)
-        if sortCol == "name" then
+        if sortColumn == "name" then
             local an, bn = a.name or "", b.name or ""
-            if sortDir == "asc" then return an < bn end
+            if ascending then return an < bn end
             return an > bn
-        elseif sortCol == "dungeon" then
+        elseif sortColumn == "dungeon" then
             local ad, bd = resolveDungeonName(a), resolveDungeonName(b)
             if (ad == nil) ~= (bd == nil) then return ad ~= nil end
             ad, bd = ad or "", bd or ""
-            if sortDir == "asc" then return ad < bd end
+            if ascending then return ad < bd end
             return ad > bd
         else -- "level" or "score": numeric, push unknown (nil/0) entries last regardless of direction
-            local va = a[sortCol] or 0
-            local vb = b[sortCol] or 0
+            local va = a[sortColumn] or 0
+            local vb = b[sortColumn] or 0
             if (va == 0) ~= (vb == 0) then return va ~= 0 end
-            if sortDir == "desc" then return va > vb end
-            return va < vb
+            if ascending then return va < vb end
+            return va > vb
         end
     end)
 
     return entries
 end
 
----Builds a normalized row-entry array for the Group mode's live unit
----tokens, resolving each unit's name/class/keystone/score once up front so
----sortEntries() can sort them like any other column data. entry.unitToken
----is kept around for the bits that still need a live unit (portrait, role).
----@param unitTokens table
----@return table entries
-local function buildGroupEntries(unitTokens)
-    local entries = {}
-    for _, unitToken in ipairs(unitTokens) do
-        if UnitExists(unitToken) then
-            local fullPlayerName = addon.GroupKeystoneService:getFullPlayerName(unitToken)
-            local unitName = UnitName(unitToken) or fullPlayerName or "?"
-            local _, englishClass = UnitClass(unitToken)
-            local mapID, level, hasAddon, score = getKnownKeystoneForUnit(unitToken, fullPlayerName)
-            local dungeonName = mapID and (C_ChallengeMode.GetMapUIInfo(mapID))
-
-            table.insert(entries, {
-                unitToken   = unitToken,
-                name        = unitName,
-                class       = englishClass,
-                mapID       = mapID,
-                level       = level,
-                hasAddon    = hasAddon,
-                score       = score,
-                dungeonName = dungeonName,
-            })
-        end
-    end
-    return entries
-end
-
 local function createHeader(parent, colX, nameW, dungeonW, onSort)
-    wipe(headerCells)
+    sortState:forgetHeaderCells()
 
     local headerDefs = {
         { key = "name",    w = nameW,        j = "LEFT"  },
@@ -447,39 +358,10 @@ local function createHeader(parent, colX, nameW, dungeonW, onSort)
     }
 
     for _, def in ipairs(headerDefs) do
-        local btn = CreateFrame("Button", nil, parent)
-        btn:SetSize(def.w, HEADER_H)
-        btn:SetPoint("TOPLEFT", parent, "TOPLEFT", colX[def.key], 0)
-
-        local fs = btn:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-        fs:SetSize(def.w, HEADER_H)
-        fs:SetPoint("TOPLEFT", btn, "TOPLEFT", 0, 0)
-        fs:SetJustifyH(def.j)
-        fs:SetJustifyV("MIDDLE")
-        fs:SetWordWrap(false)
-
-        headerCells[def.key] = fs
-
-        btn:SetScript("OnClick", function()
-            if sortCol == def.key then
-                sortDir = sortDir == "asc" and "desc" or "asc"
-            else
-                sortCol = def.key
-                sortDir = SORT_DEFAULT_DIR[def.key] or "asc"
-            end
-            updateHeaderIndicators()
-            onSort()
-        end)
-
-        btn:SetScript("OnEnter", function()
-            fs:SetTextColor(1, 1, 1, 1)
-        end)
-        btn:SetScript("OnLeave", function()
-            fs:SetTextColor(ARTIFACT_R, ARTIFACT_G, ARTIFACT_B, 1)
-        end)
+        addon.createSortableHeaderButton(parent, colX[def.key], def.w, HEADER_H, def.j, def.key, sortState, onSort)
     end
 
-    updateHeaderIndicators()
+    sortState:updateIndicators()
     addon.createRowDivider(parent, -HEADER_H, 0.5)
 end
 
@@ -598,7 +480,7 @@ end
 ---entry.unitToken is still needed for the portrait render and the live role
 ---lookup — neither is precomputed since they don't factor into sorting.
 ---@param parent Frame
----@param entry table entry from buildGroupEntries
+---@param entry table entry from addon.KeystoneEntryService:getGroupEntries()
 local function createRow(parent, entry, colX, nameW, dungeonW, rowY, isLast)
     local unitToken = entry.unitToken
 
@@ -666,7 +548,7 @@ local function buildColumnLayout(mode, scrollChildW, nameW)
     local cursor = ROW_PADDING_X
     local dungeonW
 
-    if mode == MODE_GROUP then
+    if mode == MODES.GROUP then
         dungeonW = scrollChildW - COL_W.portrait - COL_W.classIcon - COL_W.role - nameW - COL_W.level - COL_W.score
             - 6 * COL_GAP - (2 * ROW_PADDING_X)
 
@@ -692,7 +574,7 @@ local function buildColumnLayout(mode, scrollChildW, nameW)
 end
 
 function MPT_Dashboard:loadKeystones(frame)
-    local mode = getMode()
+    local mode = addon.KeystoneEntryService:getActiveMode()
 
     local dropdown = createModeDropdown(frame)
 
@@ -716,10 +598,10 @@ function MPT_Dashboard:loadKeystones(frame)
         MPT_Dashboard:refreshKeystonesView()
     end)
 
-    if mode == MODE_GROUP then
+    if mode == MODES.GROUP then
         createRefreshButton(dropdown, refreshGroupView,
             function() return addon.GroupKeystoneService and addon.GroupKeystoneService:getLastRefreshedAt() end)
-    elseif mode == MODE_ALTS then
+    elseif mode == MODES.ALTS then
         createInfoButton(dropdown, function()
             return {
                 string.format(addon.locale["KEYSTONES_LAST_UPDATED"],
@@ -727,7 +609,7 @@ function MPT_Dashboard:loadKeystones(frame)
                 addon.locale["KEYSTONES_ALTS_NEXT_UPDATE"],
             }
         end)
-    elseif mode == MODE_GUILD then
+    elseif mode == MODES.GUILD then
         createRefreshButton(dropdown, refreshGuildView,
             function() return addon.GuildKeystoneService and addon.GuildKeystoneService:getLastRefreshedAt() end)
     end
@@ -739,13 +621,12 @@ function MPT_Dashboard:loadKeystones(frame)
     local scrollChild = CreateFrame("Frame", nil, scrollFrame)
     scrollFrame:SetScrollChild(scrollChild)
 
-    if mode == MODE_GROUP then
+    if mode == MODES.GROUP then
         if addon.GroupKeystoneService then
             addon.GroupKeystoneService:requestKeystones()
         end
 
-        local unitTokens = addon.GroupKeystoneService:getGroupUnitTokens()
-        local entries = sortEntries(buildGroupEntries(unitTokens))
+        local entries = sortEntries(addon.KeystoneEntryService:getGroupEntries())
         scrollChild:SetSize(scrollChildW, #entries * ROW_H)
 
         for rowIndex, entry in ipairs(entries) do
@@ -753,7 +634,7 @@ function MPT_Dashboard:loadKeystones(frame)
             local isLast = (rowIndex == #entries)
             createRow(scrollChild, entry, colX, nameW, dungeonW, rowY, isLast)
         end
-    elseif mode == MODE_ALTS then
+    elseif mode == MODES.ALTS then
         local altEntries = sortEntries(addon.AltKeystoneService:getEntries())
         scrollChild:SetSize(scrollChildW, math.max(#altEntries, 1) * ROW_H)
 
@@ -771,7 +652,7 @@ function MPT_Dashboard:loadKeystones(frame)
                 createAltRow(scrollChild, altEntry, colX, nameW, dungeonW, rowY, isLast)
             end
         end
-    else -- MODE_GUILD
+    else -- MODES.GUILD
         if addon.GuildKeystoneService then
             addon.GuildKeystoneService:requestKeystones()
         end
