@@ -110,7 +110,7 @@
 
 ### 2.2 Separation Of Concerns
 
-2.2.1: Domain logic MUST live in the relevant module table (for example `addon.KeystoneService`, `addon.Communication`), not in event handlers, frame scripts, or slash-command dispatch.
+2.2.1: Domain logic MUST live in the relevant module table (for example `addon.KeystoneService`, `addon.GroupKeystoneService`), not in event handlers, frame scripts, or slash-command dispatch.
 
 2.2.2: Event handlers and `OnEvent`/`OnClick`/`OnUpdate` scripts MUST translate WoW callbacks into calls to named module functions. They MUST NOT contain multi-step business logic inline.
 
@@ -244,7 +244,7 @@
 
 7.1.1: Repeated technical strings MUST be represented as constants: WoW event names used more than once, slash-command literals, locale keys, addon-message prefixes/types, atlas texture names, and color-table keys.
 
-7.1.2: Constants that are part of an external contract (an addon-message protocol byte, a SavedVariables field name relied on elsewhere) SHOULD be grouped together near the code that owns that contract (for example the constants at the top of `Utils/Communication.lua`).
+7.1.2: Constants that are part of an external contract (an addon-message protocol byte, a SavedVariables field name relied on elsewhere) SHOULD be grouped together near the code that owns that contract (for example the constants at the top of `Modules/Tracker/Services/GroupKeystoneService.lua`).
 
 7.1.3: Magic strings MUST NOT be duplicated across modules, event handlers, commands, and UI files. Reference the constant instead.
 
@@ -318,7 +318,7 @@
 
 ### 11.2 Throttling
 
-11.2.1: Work triggered by high-frequency events (`GROUP_ROSTER_UPDATE`, `CHAT_MSG_ADDON`, `COMBAT_LOG_EVENT_UNFILTERED`) that results in outbound requests or expensive recomputation MUST be throttled with an explicit cooldown constant, following the existing pattern in `Utils/Communication.lua` (`REQUEST_COOLDOWN_SECONDS`).
+11.2.1: Work triggered by high-frequency events (`GROUP_ROSTER_UPDATE`, `CHAT_MSG_ADDON`, `COMBAT_LOG_EVENT_UNFILTERED`) that results in outbound requests or expensive recomputation MUST be throttled with an explicit cooldown constant, following the existing pattern in `Modules/Tracker/Services/GroupKeystoneService.lua` (`REQUEST_COOLDOWN_SECONDS`).
 
 11.2.2: A throttle/cooldown constant MUST be a named constant (section 7.1), not a bare inline number.
 

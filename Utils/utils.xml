@@ -1,6 +1,5 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 
-    <Script file='Communication.lua'/>
     <Script file='GuildKeys.lua'/>
     <Script file='GuildComm.lua'/>
 </Ui>

@@ -4,6 +4,7 @@
     <Script file='Tracker\MainFrame.lua'/>
     <Script file='Tracker\Services\AltKeystoneService.lua'/>
     <Script file='Tracker\Services\RunHistoryService.lua'/>
+    <Script file='Tracker\Services\GroupKeystoneService.lua'/>
 
     <Script file='Tracker\Dashboard\Dashboard.lua'/>
     <Script file='Tracker\Dashboard\DashboardNavigation.lua'/>

@@ -128,7 +128,7 @@ end
 ---@return table entries
 local function buildGroupStatEntries()
     local entries = {}
-    local unitTokens = addon.Communication and addon.Communication:GetGroupUnitTokens() or { "player" }
+    local unitTokens = addon.GroupKeystoneService and addon.GroupKeystoneService:getGroupUnitTokens() or { "player" }
 
     for _, unitToken in ipairs(unitTokens) do
         if UnitExists(unitToken) then
@@ -141,7 +141,7 @@ local function buildGroupStatEntries()
                 level = C_MythicPlus.GetOwnedKeystoneLevel()
                 score = C_ChallengeMode.GetOverallDungeonScore()
             else
-                local fullPlayerName = addon.Communication:GetFullPlayerName(unitToken)
+                local fullPlayerName = addon.GroupKeystoneService:getFullPlayerName(unitToken)
                 local data = fullPlayerName and addon.groupKeystones[fullPlayerName]
                 if data and data.hasAddon then
                     mapID, level, score = data.mapID, data.level, data.score
@@ -238,8 +238,8 @@ function MPT_Sidebar:loadStatistics(sidebar, cursor)
         renderStatsSection(sidebar, cursor, addon.locale["KEYSTONES_MODE_GUILD"],
             addon.GuildKeys:GetEntries(), addon.locale["KEYSTONES_GUILD_EMPTY"])
     else
-        if addon.Communication then
-            addon.Communication:RequestGroupKeystones()
+        if addon.GroupKeystoneService then
+            addon.GroupKeystoneService:requestKeystones()
         end
         renderStatsSection(sidebar, cursor, addon.locale["SIDEBAR_GROUP_HEADER"], buildGroupStatEntries(), nil)
     end

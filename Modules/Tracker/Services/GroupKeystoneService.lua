@@ -29,7 +29,7 @@ end
 
 ---@param unitToken string
 ---@return string|nil fullPlayerName
-local function getFullPlayerName(unitToken)
+local function resolveFullPlayerName(unitToken)
     local name, realm = UnitFullName(unitToken)
     if not name or name == "" then
         return nil
@@ -42,7 +42,7 @@ end
 
 ---Solo players get a single-entry list containing "player".
 ---@return table unitTokens
-local function getGroupUnitTokens()
+local function collectGroupUnitTokens()
     local unitTokens = {}
 
     if IsInRaid() then
@@ -68,7 +68,7 @@ end
 local function broadcastOwnKeystoneStatus()
     local channel = getGroupChannel()
     if not channel then
-        addon.debugMessage("Communication: broadcastOwnKeystoneStatus skipped (not in a group)")
+        addon.debugMessage("GroupKeystoneService: broadcastOwnKeystoneStatus skipped (not in a group)")
         return
     end
 
@@ -82,17 +82,17 @@ local function broadcastOwnKeystoneStatus()
         message = PROTOCOL_VERSION .. ":NOKEY:" .. score
     end
 
-    addon.debugMessage("Communication: sending '" .. message .. "' on " .. channel)
+    addon.debugMessage("GroupKeystoneService: sending '" .. message .. "' on " .. channel)
     C_ChatInfo.SendAddonMessage(ADDON_MESSAGE_PREFIX, message, channel)
 end
 
 local function sendKeystoneRequestMessage()
     local channel = getGroupChannel()
     if not channel then
-        addon.debugMessage("Communication: sendKeystoneRequestMessage skipped (not in a group)")
+        addon.debugMessage("GroupKeystoneService: sendKeystoneRequestMessage skipped (not in a group)")
         return
     end
-    addon.debugMessage("Communication: sending 'REQUEST' on " .. channel)
+    addon.debugMessage("GroupKeystoneService: sending 'REQUEST' on " .. channel)
     C_ChatInfo.SendAddonMessage(ADDON_MESSAGE_PREFIX, PROTOCOL_VERSION .. ":REQUEST", channel)
 end
 
@@ -100,20 +100,20 @@ local function handleIncomingMessage(rawMessage, senderFullPlayerName)
     local versionText, message = string.match(rawMessage, "^(%d+):(.+)$")
     local version = tonumber(versionText)
     if not version or version ~= PROTOCOL_VERSION then
-        addon.debugMessage("Communication: ignoring message with unknown/mismatched protocol version: "
+        addon.debugMessage("GroupKeystoneService: ignoring message with unknown/mismatched protocol version: "
             .. tostring(rawMessage))
         return
     end
 
     if message == "REQUEST" then
-        addon.debugMessage("Communication: received REQUEST from " .. tostring(senderFullPlayerName))
+        addon.debugMessage("GroupKeystoneService: received REQUEST from " .. tostring(senderFullPlayerName))
         broadcastOwnKeystoneStatus()
         return
     end
 
     local noKeyScoreText = string.match(message, "^NOKEY:(%d+)$")
     if noKeyScoreText then
-        addon.debugMessage("Communication: received NOKEY from " .. tostring(senderFullPlayerName)
+        addon.debugMessage("GroupKeystoneService: received NOKEY from " .. tostring(senderFullPlayerName)
             .. " (score " .. noKeyScoreText .. ")")
         addon.groupKeystones[senderFullPlayerName] = {
             mapID     = nil,
@@ -127,12 +127,12 @@ local function handleIncomingMessage(rawMessage, senderFullPlayerName)
 
     local mapIDText, levelText, scoreText = string.match(message, "^KEYSTONE:(%d+):(%d+):(%d+)$")
     if not mapIDText or not levelText then
-        addon.debugMessage("Communication: received unrecognized message from "
+        addon.debugMessage("GroupKeystoneService: received unrecognized message from "
             .. tostring(senderFullPlayerName) .. ": '" .. tostring(message) .. "'")
         return
     end
 
-    addon.debugMessage("Communication: received KEYSTONE from " .. tostring(senderFullPlayerName)
+    addon.debugMessage("GroupKeystoneService: received KEYSTONE from " .. tostring(senderFullPlayerName)
         .. " (mapID " .. mapIDText .. ", level " .. levelText .. ", score " .. scoreText .. ")")
 
     addon.groupKeystones[senderFullPlayerName] = {
@@ -144,7 +144,7 @@ local function handleIncomingMessage(rawMessage, senderFullPlayerName)
     }
 end
 
-addon.Communication = addon.Communication or {}
+addon.GroupKeystoneService = addon.GroupKeystoneService or {}
 
 -- Several call sites (Dashboard Keystones tab, Sidebar group scores, the
 -- manual refresh button, GROUP_ROSTER_UPDATE) each request fresh group
@@ -155,7 +155,7 @@ local REQUEST_COOLDOWN_SECONDS = 2
 local lastRequestTime = 0
 
 -- Server timestamp of the last time a request actually went out (not
--- skipped by cooldown). Session-only, unlike Utils/AltKeystones.lua's
+-- skipped by cooldown). Session-only, unlike Modules/Tracker/Services/AltKeystoneService.lua's
 -- persisted timestamp — group keystone data itself is just an in-memory
 -- cache that's gone after /reload, so a timestamp surviving the reload
 -- would be misleading. Used by the refresh button's tooltip.
@@ -163,10 +163,10 @@ local lastRefreshedAt = nil
 
 ---Calls within REQUEST_COOLDOWN_SECONDS of the previous one are silently
 ---ignored.
-function addon.Communication:RequestGroupKeystones()
+function addon.GroupKeystoneService:requestKeystones()
     local now = GetTime()
     if now - lastRequestTime < REQUEST_COOLDOWN_SECONDS then
-        addon.debugMessage("Communication: RequestGroupKeystones skipped (cooldown)")
+        addon.debugMessage("GroupKeystoneService: requestKeystones skipped (cooldown)")
         return
     end
     lastRequestTime = now
@@ -179,20 +179,20 @@ end
 ---Returns the server timestamp of the last time a group keystone request
 ---actually went out this session, or nil if that hasn't happened yet.
 ---@return number|nil
-function addon.Communication:GetLastRefreshedAt()
+function addon.GroupKeystoneService:getLastRefreshedAt()
     return lastRefreshedAt
 end
 
 ---@param unitToken string
 ---@return string|nil fullPlayerName
-function addon.Communication:GetFullPlayerName(unitToken)
-    return getFullPlayerName(unitToken)
+function addon.GroupKeystoneService:getFullPlayerName(unitToken)
+    return resolveFullPlayerName(unitToken)
 end
 
 ---Solo players get a single-entry list containing "player".
 ---@return table unitTokens
-function addon.Communication:GetGroupUnitTokens()
-    return getGroupUnitTokens()
+function addon.GroupKeystoneService:getGroupUnitTokens()
+    return collectGroupUnitTokens()
 end
 
 local eventFrame = CreateFrame("Frame")
@@ -204,11 +204,11 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
     if event == "PLAYER_LOGIN" then
         C_ChatInfo.RegisterAddonMessagePrefix(ADDON_MESSAGE_PREFIX)
         local isRegistered = C_ChatInfo.IsAddonMessagePrefixRegistered(ADDON_MESSAGE_PREFIX)
-        addon.debugMessage("Communication: registered addon message prefix '" .. ADDON_MESSAGE_PREFIX
+        addon.debugMessage("GroupKeystoneService: registered addon message prefix '" .. ADDON_MESSAGE_PREFIX
             .. "' (confirmed: " .. tostring(isRegistered) .. ")")
     elseif event == "GROUP_ROSTER_UPDATE" then
-        addon.debugMessage("Communication: group roster changed, re-requesting keystones")
-        addon.Communication:RequestGroupKeystones()
+        addon.debugMessage("GroupKeystoneService: group roster changed, re-requesting keystones")
+        addon.GroupKeystoneService:requestKeystones()
     elseif event == "CHAT_MSG_ADDON" then
         local prefix, message, _, senderName = ...
 
@@ -216,7 +216,7 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
             return
         end
 
-        addon.debugMessage("Communication: CHAT_MSG_ADDON prefix='" .. tostring(prefix)
+        addon.debugMessage("GroupKeystoneService: CHAT_MSG_ADDON prefix='" .. tostring(prefix)
             .. "' message='" .. tostring(message) .. "' sender='" .. tostring(senderName) .. "'")
 
         local senderFullPlayerName = senderName

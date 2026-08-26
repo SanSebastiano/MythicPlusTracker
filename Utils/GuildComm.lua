@@ -2,19 +2,19 @@ local addonName, addon = ...
 
 -- Addon message prefix used to exchange keystone information between
 -- MythicPlusTracker installations across the whole guild (not just the
--- current group — see Utils/Communication.lua for that). Deliberately a
+-- current group — see Modules/Tracker/Services/GroupKeystoneService.lua for that). Deliberately a
 -- different prefix than "MPTrackerKeys" so the two protocols never collide.
 -- Blizzard limits addon message prefixes to 16 characters (including the
 -- null terminator, i.e. 15 visible characters).
 local ADDON_MESSAGE_PREFIX = "MPTrackerGuild"
 
 -- Leading version token on every message, matching the convention in
--- Utils/Communication.lua.
+-- Modules/Tracker/Services/GroupKeystoneService.lua.
 local PROTOCOL_VERSION = 1
 
 -- Entries are only populated for online guild members who also run
 -- MythicPlusTracker and have responded with their current keystone. Purely
--- in-memory, like addon.groupKeystones in Utils/Communication.lua — cleared
+-- in-memory, like addon.groupKeystones in Modules/Tracker/Services/GroupKeystoneService.lua — cleared
 -- on /reload, never persisted.
 addon.guildKeystones = addon.guildKeystones or {}
 

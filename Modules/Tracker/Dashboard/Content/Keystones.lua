@@ -43,7 +43,7 @@ local MODE_OPTIONS = {
 -- Sort state for the clickable column headers, shared across both Group and
 -- Alts/Guild modes (same table layout, same header row). nil sortCol means
 -- "no explicit sort yet": Group keeps roster order, Alts/Guild keep their
--- own default (level desc, then name — see Utils/AltKeystones.lua and
+-- own default (level desc, then name — see Modules/Tracker/Services/AltKeystoneService.lua and
 -- Utils/GuildKeys.lua's GetEntries()). Plain
 -- module-level locals, like Dungeons.lua's sortCol/sortDir — persists across
 -- re-renders within the session, reset only by /reload.
@@ -115,7 +115,7 @@ end
 ---well as whether that member is known to run MythicPlusTracker at all.
 ---For the local player this is read directly from the owned keystone item;
 ---for other group members it is looked up from data received via
----addon.Communication (see Utils/Communication.lua).
+---addon.GroupKeystoneService (see Modules/Tracker/Services/GroupKeystoneService.lua).
 ---@param unitToken string
 ---@param fullPlayerName string|nil
 ---@return number|nil mapID
@@ -161,7 +161,7 @@ end
 ---Requests fresh group keystone data and re-renders both the Keystones tab
 ---and the Sidebar group scores view (which always mirrors this tab). Both
 ---MPT_Dashboard:refreshKeystonesView() and MPT_Sidebar:showForTab(MPT_Tracker.TABS.KEYSTONES) trigger
----their own addon.Communication:RequestGroupKeystones() call as part of
+---their own addon.GroupKeystoneService:requestKeystones() call as part of
 ---their normal render path, so no separate request is issued here.
 ---Calls within REFRESH_COOLDOWN_SECONDS of the previous refresh are silently
 ---ignored — no visible feedback is given to the player.
@@ -360,7 +360,7 @@ end
 ---Resolves the dungeon name for a normalized row entry, used only for
 ---sorting by the "Dungeon" column. Group entries (see buildGroupEntries)
 ---already carry a cached dungeonName; Alts entries (from
----Utils/AltKeystones.lua) don't, so it's resolved here on demand instead of
+---Modules/Tracker/Services/AltKeystoneService.lua) don't, so it's resolved here on demand instead of
 ---changing that module's saved data shape.
 ---@param entry table
 ---@return string|nil
@@ -415,7 +415,7 @@ local function buildGroupEntries(unitTokens)
     local entries = {}
     for _, unitToken in ipairs(unitTokens) do
         if UnitExists(unitToken) then
-            local fullPlayerName = addon.Communication:GetFullPlayerName(unitToken)
+            local fullPlayerName = addon.GroupKeystoneService:getFullPlayerName(unitToken)
             local unitName = UnitName(unitToken) or fullPlayerName or "?"
             local _, englishClass = UnitClass(unitToken)
             local mapID, level, hasAddon, score = getKnownKeystoneForUnit(unitToken, fullPlayerName)
@@ -718,7 +718,7 @@ function MPT_Dashboard:loadKeystones(frame)
 
     if mode == MODE_GROUP then
         createRefreshButton(dropdown, refreshGroupView,
-            function() return addon.Communication and addon.Communication:GetLastRefreshedAt() end)
+            function() return addon.GroupKeystoneService and addon.GroupKeystoneService:getLastRefreshedAt() end)
     elseif mode == MODE_ALTS then
         createInfoButton(dropdown, function()
             return {
@@ -740,11 +740,11 @@ function MPT_Dashboard:loadKeystones(frame)
     scrollFrame:SetScrollChild(scrollChild)
 
     if mode == MODE_GROUP then
-        if addon.Communication then
-            addon.Communication:RequestGroupKeystones()
+        if addon.GroupKeystoneService then
+            addon.GroupKeystoneService:requestKeystones()
         end
 
-        local unitTokens = addon.Communication:GetGroupUnitTokens()
+        local unitTokens = addon.GroupKeystoneService:getGroupUnitTokens()
         local entries = sortEntries(buildGroupEntries(unitTokens))
         scrollChild:SetSize(scrollChildW, #entries * ROW_H)
 

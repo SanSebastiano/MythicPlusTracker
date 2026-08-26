@@ -27,7 +27,7 @@ end
 ---(GetNumGuildMembers/GetGuildRosterInfo). Keystone/score come from
 ---addon.guildKeystones, which Utils/GuildComm.lua populates live over its
 ---REQUEST/KEYSTONE/NOKEY addon-message protocol — the same in-memory,
----per-session-only shape as addon.groupKeystones in Utils/Communication.lua.
+---per-session-only shape as addon.groupKeystones in Modules/Tracker/Services/GroupKeystoneService.lua.
 ---hasAddon is false when no response has been heard from that member yet.
 ---
 ---Members who are also the local account's own alts (MythicPlusTrackerAltDB)

@@ -9,7 +9,7 @@ MythicPlusTrackerAltDB = MythicPlusTrackerAltDB or {}
 MythicPlusTrackerDB = MythicPlusTrackerDB or {}
 
 ---Realm-qualified key identifying the current character, matching the
----format used for group members in Utils/Communication.lua.
+---format used for group members in Modules/Tracker/Services/GroupKeystoneService.lua.
 ---@return string
 local function getCharacterKey()
     return UnitName("player") .. "-" .. GetNormalizedRealmName()
