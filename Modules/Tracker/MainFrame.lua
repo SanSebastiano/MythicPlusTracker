@@ -60,7 +60,7 @@ function MPT_Tracker:getFrame()
     return create()
 end
 
-function MPT_Tracker:Show()
+function MPT_Tracker:show()
     if InCombatLockdown() then
         local now = GetTime()
         if now - lastCombatWarningTime > 5 then

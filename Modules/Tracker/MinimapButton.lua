@@ -136,7 +136,7 @@ local function onFreeDragUpdate()
     updatePosition()
 end
 
-function MPT_MinimapButton:SetHidden(hidden)
+function MPT_MinimapButton:setHidden(hidden)
     if not button then
         return
     end
@@ -148,7 +148,7 @@ function MPT_MinimapButton:SetHidden(hidden)
     end
 end
 
-function MPT_MinimapButton:SetStyle(style)
+function MPT_MinimapButton:setStyle(style)
     if style ~= "large" and style ~= "normal" then
         return
     end
@@ -178,7 +178,7 @@ local function applySavedState()
     local state = ensureMinimapButtonState()
     applyStyle(state.style)
     updatePosition()
-    MPT_MinimapButton:SetHidden(MythicPlusTrackerDB.minimapButtonHidden)
+    MPT_MinimapButton:setHidden(MythicPlusTrackerDB.minimapButtonHidden)
 end
 
 local stateFrame = CreateFrame("Frame")
@@ -226,7 +226,7 @@ function MPT_MinimapButton:load()
         addon.debugMessage("Pressed " ..  clickedButton .. (down and " down" or " up"))
 
         if clickedButton == "LeftButton" then
-            MPT_Tracker:Show()
+            MPT_Tracker:show()
 
         elseif clickedButton == "RightButton" then
             if WeeklyRewardsFrame then

@@ -56,7 +56,7 @@ local function createSettingsPanel()
 
     local function setMinimapButtonShown(value)
         MythicPlusTrackerDB.minimapButtonHidden = not value
-        MPT_MinimapButton:SetHidden(not value)
+        MPT_MinimapButton:setHidden(not value)
     end
 
     -- Proxy setting again: the stored flag is inverted (minimapButtonHidden)
@@ -78,7 +78,7 @@ local function createSettingsPanel()
     end
 
     local function setMinimapButtonStyle(value)
-        MPT_MinimapButton:SetStyle(value)
+        MPT_MinimapButton:setStyle(value)
     end
 
     local function getMinimapButtonStyleOptions()
@@ -117,7 +117,7 @@ local function createSettingsPanel()
     MPT_Settings.category = category
 end
 
-function MPT_Settings:Open()
+function MPT_Settings:open()
     if self.category then
         Settings.OpenToCategory(self.category:GetID())
     end
