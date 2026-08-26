@@ -18,16 +18,6 @@ local LABEL_W     = CONTENT_W - INSET * 2 - VALUE_W - 6
 
 local EMPTY_TEXT_H = 54
 
----@return boolean
-local function isAltsMode()
-    return MythicPlusTrackerDB.keystonesTabMode == "alts"
-end
-
----@return boolean
-local function isGuildMode()
-    return MythicPlusTrackerDB.keystonesTabMode == "guild"
-end
-
 ---A thin 1px divider spanning the same inset content width as the rows
 ---themselves (CONTENT_X+INSET .. CONTENT_X+CONTENT_W-INSET) — same
 ---convention as the hand-built dividers in RunStatisticsCard.lua, not the full-width
@@ -71,7 +61,7 @@ end
 ---key. Kept as its own value string (not a special full-width row) so it
 ---renders through the same renderRow() as every other stat, keeping the
 ---section a single consistent table.
----@param stats table from computeStats
+---@param stats table from addon.KeystoneEntryService:computeStatistics
 ---@return string
 local function formatBestValue(stats)
     if not stats.best then
@@ -81,78 +71,6 @@ local function formatBestValue(stats)
     local classColor = stats.best.class and RAID_CLASS_COLORS[stats.best.class]
     local coloredName = classColor and classColor:WrapTextInColorCode(stats.best.name) or stats.best.name
     return coloredName .. " " .. addon.colorKeystoneLevel(stats.best.level) .. "+" .. stats.best.level .. addon.colors.RESET
-end
-
----Aggregates a list of normalized {name, class, mapID, level, score} entries
----(the shared shape produced by buildGroupStatEntries() and, already,
----addon.AltKeystoneService:getEntries()) into the numbers this panel shows.
----Averages only ever consider entries with a known value, so a member
----without the addon (nil score) can't drag the average toward zero.
----"Best" ranks by level first, score as the tiebreaker.
----@param entries table
----@return table stats { avgScore, avgLevel, withKey, total, best }
-local function computeStats(entries)
-    local scoreSum, scoreCount = 0, 0
-    local levelSum, levelCount = 0, 0
-    local best
-
-    for _, e in ipairs(entries) do
-        if e.score then
-            scoreSum = scoreSum + e.score
-            scoreCount = scoreCount + 1
-        end
-        if e.mapID and e.level then
-            levelSum = levelSum + e.level
-            levelCount = levelCount + 1
-            if not best or e.level > best.level or (e.level == best.level and (e.score or 0) > (best.score or 0)) then
-                best = { name = e.name, class = e.class, level = e.level, score = e.score }
-            end
-        end
-    end
-
-    return {
-        avgScore = scoreCount > 0 and (scoreSum / scoreCount) or nil,
-        avgLevel = levelCount > 0 and (levelSum / levelCount) or nil,
-        withKey  = levelCount,
-        total    = #entries,
-        best     = best,
-    }
-end
-
----Builds the Group's normalized entry list from the live roster. The local
----player's own keystone/score is always known (read directly via the API,
----like Modules/Tracker/Dashboard/Content/KeystonesPage.lua's getKnownKeystoneForUnit),
----so the Group section always has at least one entry — no "not in a group"
----fallback is needed here, unlike the old GroupScores.lua which excluded
----the player entirely.
----@return table entries
-local function buildGroupStatEntries()
-    local entries = {}
-    local unitTokens = addon.GroupKeystoneService and addon.GroupKeystoneService:getGroupUnitTokens() or { "player" }
-
-    for _, unitToken in ipairs(unitTokens) do
-        if UnitExists(unitToken) then
-            local name = UnitName(unitToken)
-            local _, englishClass = UnitClass(unitToken)
-            local mapID, level, score
-
-            if unitToken == "player" then
-                mapID = C_MythicPlus.GetOwnedKeystoneChallengeMapID()
-                level = C_MythicPlus.GetOwnedKeystoneLevel()
-                score = C_ChallengeMode.GetOverallDungeonScore()
-            else
-                local fullPlayerName = addon.GroupKeystoneService:getFullPlayerName(unitToken)
-                local data = fullPlayerName and addon.groupKeystones[fullPlayerName]
-                if data and data.hasAddon then
-                    mapID, level, score = data.mapID, data.level, data.score
-                end
-            end
-
-            table.insert(entries, { name = name, class = englishClass, mapID = mapID, level = level, score = score })
-        end
-    end
-
-    return entries
 end
 
 ---Renders the single "Gruppe"/"Twinks" section matching whichever mode is
@@ -183,20 +101,20 @@ local function renderStatsSection(sidebar, cursor, headerText, entries, emptyTex
         return
     end
 
-    local stats = computeStats(entries)
+    local stats = addon.KeystoneEntryService:computeStatistics(entries)
 
     local avgScoreText
-    if stats.avgScore then
-        local rounded = math.floor(stats.avgScore + 0.5)
+    if stats.averageScore then
+        local rounded = math.floor(stats.averageScore + 0.5)
         avgScoreText = addon.colorForScore(rounded) .. rounded .. addon.colors.RESET
     else
         avgScoreText = addon.colors.POOR .. "–" .. addon.colors.RESET
     end
 
     local avgLevelText
-    if stats.avgLevel then
-        local displayLevel = string.format("%.1f", stats.avgLevel)
-        avgLevelText = addon.colorKeystoneLevel(math.floor(stats.avgLevel + 0.5)) .. displayLevel .. addon.colors.RESET
+    if stats.averageLevel then
+        local displayLevel = string.format("%.1f", stats.averageLevel)
+        avgLevelText = addon.colorKeystoneLevel(math.floor(stats.averageLevel + 0.5)) .. displayLevel .. addon.colors.RESET
     else
         avgLevelText = addon.colors.POOR .. "–" .. addon.colors.RESET
     end
@@ -228,19 +146,22 @@ end
 function MPT_Sidebar:loadKeystoneStatistics(sidebar, cursor)
     addon.debugMessage("Loading sidebar: statistics...")
 
-    if isAltsMode() then
-        renderStatsSection(sidebar, cursor, addon.locale["KEYSTONES_MODE_ALTS"],
-            addon.AltKeystoneService:getEntries(), addon.locale["KEYSTONES_ALTS_EMPTY"])
-    elseif isGuildMode() then
-        if addon.GuildKeystoneService then
-            addon.GuildKeystoneService:requestKeystones()
-        end
-        renderStatsSection(sidebar, cursor, addon.locale["KEYSTONES_MODE_GUILD"],
-            addon.GuildKeystoneService:getEntries(), addon.locale["KEYSTONES_GUILD_EMPTY"])
+    local MODES = addon.KeystoneEntryService.MODES
+    local mode = addon.KeystoneEntryService:getActiveMode()
+
+    -- Group and Guild pull live data over addon messages, so the render path
+    -- kicks off a (throttled) request first; Alts reads persisted snapshots.
+    local headerText, emptyText
+    if mode == MODES.ALTS then
+        headerText, emptyText = addon.locale["KEYSTONES_MODE_ALTS"], addon.locale["KEYSTONES_ALTS_EMPTY"]
+    elseif mode == MODES.GUILD then
+        headerText, emptyText = addon.locale["KEYSTONES_MODE_GUILD"], addon.locale["KEYSTONES_GUILD_EMPTY"]
+        addon.GuildKeystoneService:requestKeystones()
     else
-        if addon.GroupKeystoneService then
-            addon.GroupKeystoneService:requestKeystones()
-        end
-        renderStatsSection(sidebar, cursor, addon.locale["SIDEBAR_GROUP_HEADER"], buildGroupStatEntries(), nil)
+        headerText, emptyText = addon.locale["SIDEBAR_GROUP_HEADER"], nil
+        addon.GroupKeystoneService:requestKeystones()
     end
+
+    renderStatsSection(sidebar, cursor, headerText,
+        addon.KeystoneEntryService:getEntriesForActiveMode(), emptyText)
 end

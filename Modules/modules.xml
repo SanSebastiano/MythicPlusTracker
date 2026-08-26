@@ -7,6 +7,7 @@
     <Script file='Tracker\Services\RunHistoryService.lua'/>
     <Script file='Tracker\Services\GroupKeystoneService.lua'/>
     <Script file='Tracker\Services\GuildKeystoneService.lua'/>
+    <Script file='Tracker\Services\KeystoneEntryService.lua'/>
 
     <Script file='Tracker\Dashboard\Dashboard.lua'/>
     <Script file='Tracker\Dashboard\DashboardNavigation.lua'/>

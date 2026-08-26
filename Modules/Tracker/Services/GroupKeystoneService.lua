@@ -15,7 +15,7 @@ local PROTOCOL_VERSION = 1
 
 -- Entries are only populated for other group members that also run
 -- MythicPlusTracker and have responded with their current keystone.
-addon.groupKeystones = addon.groupKeystones or {}
+local keystonesByPlayerName = {}
 
 ---@return string|nil channel
 local function getGroupChannel()
@@ -115,7 +115,7 @@ local function handleIncomingMessage(rawMessage, senderFullPlayerName)
     if noKeyScoreText then
         addon.debugMessage("GroupKeystoneService: received NOKEY from " .. tostring(senderFullPlayerName)
             .. " (score " .. noKeyScoreText .. ")")
-        addon.groupKeystones[senderFullPlayerName] = {
+        keystonesByPlayerName[senderFullPlayerName] = {
             mapID     = nil,
             level     = nil,
             score     = tonumber(noKeyScoreText),
@@ -135,7 +135,7 @@ local function handleIncomingMessage(rawMessage, senderFullPlayerName)
     addon.debugMessage("GroupKeystoneService: received KEYSTONE from " .. tostring(senderFullPlayerName)
         .. " (mapID " .. mapIDText .. ", level " .. levelText .. ", score " .. scoreText .. ")")
 
-    addon.groupKeystones[senderFullPlayerName] = {
+    keystonesByPlayerName[senderFullPlayerName] = {
         mapID     = tonumber(mapIDText),
         level     = tonumber(levelText),
         score     = tonumber(scoreText),
@@ -181,6 +181,16 @@ end
 ---@return number|nil
 function addon.GroupKeystoneService:getLastRefreshedAt()
     return lastRefreshedAt
+end
+
+---The keystone last received from one group member, or nil if that member has
+---not responded this session — which means either they do not run the addon or
+---the request is still in flight. Entries are only ever stored for responders,
+---so a non-nil result always has hasAddon = true.
+---@param fullPlayerName string realm-qualified, see addon.Player:getCharacterKey
+---@return table|nil keystoneInfo { mapID, level, score, hasAddon, timestamp }
+function addon.GroupKeystoneService:getKeystone(fullPlayerName)
+    return keystonesByPlayerName[fullPlayerName]
 end
 
 ---@param unitToken string
