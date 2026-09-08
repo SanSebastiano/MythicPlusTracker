@@ -136,7 +136,7 @@ local function onFreeDragUpdate()
     updatePosition()
 end
 
-function MPT_MinimapButton:SetHidden(hidden)
+function MPT_MinimapButton:setHidden(hidden)
     if not button then
         return
     end
@@ -148,7 +148,7 @@ function MPT_MinimapButton:SetHidden(hidden)
     end
 end
 
-function MPT_MinimapButton:SetStyle(style)
+function MPT_MinimapButton:setStyle(style)
     if style ~= "large" and style ~= "normal" then
         return
     end
@@ -178,7 +178,7 @@ local function applySavedState()
     local state = ensureMinimapButtonState()
     applyStyle(state.style)
     updatePosition()
-    MPT_MinimapButton:SetHidden(MythicPlusTrackerDB.minimapButtonHidden)
+    MPT_MinimapButton:setHidden(MythicPlusTrackerDB.minimapButtonHidden)
 end
 
 local stateFrame = CreateFrame("Frame")
@@ -223,12 +223,10 @@ function MPT_MinimapButton:load()
     end)
 
     button:SetScript("OnClick", function(self, clickedButton, down)
-        if addon.isDebugMode then
-            addon.debugMessage("Pressed " ..  clickedButton .. (down and " down" or " up"))
-        end
+        addon.debugMessage("Pressed " ..  clickedButton .. (down and " down" or " up"))
 
         if clickedButton == "LeftButton" then
-            MPT_MAIN:Show()
+            MPT_Tracker:show()
 
         elseif clickedButton == "RightButton" then
             if WeeklyRewardsFrame then
@@ -244,14 +242,6 @@ function MPT_MinimapButton:load()
     -- Colors the "<Label>:" prefix (before the first colon) in the addon's
     -- gold accent, leaving the rest of the line white, and wraps long lines
     -- instead of letting them stretch the tooltip's width.
-    local function addInstructionLine(text)
-        local prefix, rest = text:match("^([^:]+:)(.*)$")
-        if prefix then
-            GameTooltip:AddLine(addon.colors.ARTIFACT .. prefix .. addon.colors.RESET .. rest, 1, 1, 1, true)
-        else
-            GameTooltip:AddLine(text, 1, 1, 1, true)
-        end
-    end
 
     button:SetScript("OnEnter", function(self)
         local state = ensureMinimapButtonState()
@@ -260,13 +250,13 @@ function MPT_MinimapButton:load()
         -- Matches the two-tone addon name from the .toc title.
         GameTooltip:SetText(addon.colors.EPIC .. "Mythic" .. addon.colors.RESET
             .. " " .. addon.colors.LEGENDARY .. "Plus Tracker" .. addon.colors.RESET)
-        addInstructionLine(addon.locale['MINIMAP_BUTTON_CLICK_LEFT'])
-        addInstructionLine(addon.locale['MINIMAP_BUTTON_CLICK_RIGHT'])
+        addon.addTooltipLabelLine(addon.locale['MINIMAP_BUTTON_CLICK_LEFT'], "ARTIFACT")
+        addon.addTooltipLabelLine(addon.locale['MINIMAP_BUTTON_CLICK_RIGHT'], "ARTIFACT")
 
         if state.style == "normal" then
-            addInstructionLine(addon.locale['MINIMAP_BUTTON_DRAG_NORMAL'])
+            addon.addTooltipLabelLine(addon.locale['MINIMAP_BUTTON_DRAG_NORMAL'], "ARTIFACT")
         else
-            addInstructionLine(addon.locale['MINIMAP_BUTTON_DRAG'])
+            addon.addTooltipLabelLine(addon.locale['MINIMAP_BUTTON_DRAG'], "ARTIFACT")
         end
 
         GameTooltip:Show()
@@ -276,3 +266,5 @@ function MPT_MinimapButton:load()
         GameTooltip:Hide()
     end)
 end
+
+MPT_MinimapButton:load()

@@ -29,6 +29,9 @@ echo ""
 echo "--- MythicPlusTracker.toc ---"
 
 while IFS= read -r line; do
+    # Strip the CR of CRLF line endings (core.autocrlf checkouts on Windows)
+    line="${line%$'\r'}"
+
     # Skip blank lines and ## metadata lines
     [[ -z "$line" || "$line" =~ ^## ]] && continue
 

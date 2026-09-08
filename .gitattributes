@@ -1,0 +1,23 @@
+# Line endings are normalized here rather than left to each contributor's
+# core.autocrlf setting. The repository already stores every text file with LF;
+# this makes that explicit and, more importantly, makes the *working copy*
+# consistent too.
+#
+# That second part matters: Tools/toc-validator.sh silently reported 13 false
+# "MISSING" entries on Windows checkouts because MythicPlusTracker.toc had CRLF
+# there and LF in CI. Tools/registration-validator.sh had the mirror-image bug,
+# passing on Windows and failing on Linux. Platform-dependent line endings are
+# how both stayed hidden.
+#
+# text=auto still lets git detect binary files on its own; eol=lf then applies
+# to whatever it classified as text, in the working copy as well as the index.
+
+* text=auto eol=lf
+
+# Shell scripts are the case where a stray CR actually breaks execution: CI runs
+# them with bash, where a trailing CR becomes part of the last token on a line.
+# Called out separately so the reason is on record, not because * misses them.
+*.sh text eol=lf
+
+# Never normalize binary assets, even if git's heuristic ever misjudges one.
+*.png binary

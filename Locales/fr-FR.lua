@@ -12,7 +12,7 @@ local locale = {
     ["WELCOME_MESSAGE_DEBUG"] = "Le mode débogage est activé. Certaines fonctionnalités peuvent être limitées.",
     -- Minimap Button
     ["MINIMAP_BUTTON_NAME"] = "Mythic Plus Tracker",
-    ["MINIMAP_BUTTON_CLICK_LEFT"] = "Clic gauche : Afficher/Masquer le tableau de bord",
+    ["MINIMAP_BUTTON_CLICK_LEFT"] = "Clic gauche : Ouvrir le tableau de bord",
     ["MINIMAP_BUTTON_CLICK_RIGHT"] = "Clic droit : Ouvrir le Grand Coffre",
     ["MINIMAP_BUTTON_DRAG"] = "Glisser : Déplacer le long de la minimap (Maj+Glisser : Déplacer librement)",
     ["MINIMAP_BUTTON_DRAG_NORMAL"] = "Glisser : Déplacer le long de la minimap",
@@ -63,6 +63,7 @@ local locale = {
     ["DUNGEON_TOOLTIP_TIME_LIMIT"] = "Limite de temps",
     ["DUNGEON_TELEPORT_TOOLTIP"] = "Cliquez pour vous téléporter",
     ["DUNGEON_TELEPORT_NOT_OWNED"] = "Aucun jouet de téléportation connu ou possédé pour ce donjon",
+    ["DUNGEON_CURRENT_WEEK_ONLY"] = "Semaine en cours uniquement",
     -- Overview summary boxes
     ["DASHBOARD_SUMMARY_HIGHEST_KEY"]   = "Clé la plus élevée",
     ["DASHBOARD_SUMMARY_TOTAL_RUNS"]    = "Donjons totaux",
@@ -76,6 +77,9 @@ local locale = {
     ["RUN_COL_DATE"]      = "Date",
     ["RUN_COL_TIME_DELTA"] = "Temps +/-",
     ["RUN_TABLE_NO_RUNS"] = "Aucun donjon enregistré pour le moment.",
+    -- Runs table filters
+    ["RUNS_FILTER_TIMED_LABEL"] = "Limite de temps",
+    ["RUNS_FILTER_UNTIMED"]     = "Hors délai",
     -- Runs table tooltips
     ["RUN_TOOLTIP_TIME_LIMIT"]    = "Limite de temps",
     ["RUN_TOOLTIP_DUNGEON_SCORE"] = "Score du donjon",

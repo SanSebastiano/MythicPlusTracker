@@ -1,13 +1,13 @@
 ## Interface: 120100
 ## Title: |cFFA335EEMythic|r |cFFFF8000Plus Tracker|r
 ## Author: SanSebastiano
-## Version: 1.3.1
+## Version: 1.4.0
 
-## Notes: Tracks your Mythic+ dungeon runs, group members, deaths, and completion status
-## Notes-deDE: Verfolgt die Mythic+-Dungeon-Runs, Gruppenmitglieder, Todesfälle und den Abschlussstatus
-## Notes-frFR: Suit vos donjons Mythique+, les membres du groupe, les morts et le statut de complétion
-## Notes-esES: Rastrea tus mazmorras Míticas+, los miembros del grupo, las muertes y el estado de finalización
-## Notes-ruRU: Отслеживает Ваши прохождения в подземелья M+, участников группы, смерти и статус завершения
+## Notes: Track Mythic+ (M+) keystones, dungeon runs, score, group members, and completion status — your at-a-glance mythic plus overview.
+## Notes-deDE: Verfolgt deine Mythic+ (M+) Schlüsselsteine, Dungeon-Runs, Score, Gruppenmitglieder und den Abschlussstatus – dein Überblick für Mythic Plus.
+## Notes-frFR: Suit vos clés Mythique+ (M+), donjons, score, membres du groupe et statut de complétion – votre aperçu Mythique+ en un clin d'œil.
+## Notes-esES: Rastrea tus llaves Míticas+ (M+), mazmorras, puntuación, miembros del grupo y estado de finalización – tu resumen de Mítica+ de un vistazo.
+## Notes-ruRU: Отслеживает ваши ключи Мифического+ (M+), подземелья, рейтинг, участников группы и статус завершения – ваш обзор Мифический+ на одном экране.
 
 ## IconTexture: Interface\AddOns\MythicPlusTracker\mplus-icon-64.png
 
@@ -22,8 +22,8 @@
 init.lua
 
 Locales\locales.xml
-Utils\utils.xml
+Core\core.xml
+Services\services.xml
 
-MythicPlusTracker.lua
 Command\commands.xml
 Modules\modules.xml

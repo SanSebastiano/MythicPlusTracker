@@ -6,7 +6,7 @@ on:
 
 jobs:
   validate:
-    name: Locale, TOC & Lua validation
+    name: Locale, TOC, registration & Lua validation
     runs-on: ubuntu-latest
 
     steps:
@@ -24,6 +24,9 @@ jobs:
 
       - name: TOC validator
         run: bash Tools/toc-validator.sh
+
+      - name: Registration validator
+        run: bash Tools/registration-validator.sh
 
       - name: Luacheck
         run: luacheck .

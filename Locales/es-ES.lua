@@ -12,7 +12,7 @@ local locale = {
     ["WELCOME_MESSAGE_DEBUG"] = "El modo de depuración está activado. Algunas funciones pueden estar limitadas.",
     -- Minimap Button
     ["MINIMAP_BUTTON_NAME"] = "Mythic Plus Tracker",
-    ["MINIMAP_BUTTON_CLICK_LEFT"] = "Clic izquierdo: Mostrar/Ocultar el panel",
+    ["MINIMAP_BUTTON_CLICK_LEFT"] = "Clic izquierdo: Abrir el panel",
     ["MINIMAP_BUTTON_CLICK_RIGHT"] = "Clic derecho: Abrir la Gran Bóveda",
     ["MINIMAP_BUTTON_DRAG"] = "Arrastrar: Mover a lo largo del borde del minimapa (Mayús+Arrastrar: Mover libremente)",
     ["MINIMAP_BUTTON_DRAG_NORMAL"] = "Arrastrar: Mover a lo largo del borde del minimapa",
@@ -63,6 +63,7 @@ local locale = {
     ["DUNGEON_TOOLTIP_TIME_LIMIT"] = "Límite de tiempo",
     ["DUNGEON_TELEPORT_TOOLTIP"] = "Haz clic para teletransportarte",
     ["DUNGEON_TELEPORT_NOT_OWNED"] = "No se conoce ni se posee ningún juguete de teletransporte para esta mazmorra",
+    ["DUNGEON_CURRENT_WEEK_ONLY"] = "Solo la semana actual",
     -- Overview summary boxes
     ["DASHBOARD_SUMMARY_HIGHEST_KEY"]   = "Llave más alta",
     ["DASHBOARD_SUMMARY_TOTAL_RUNS"]    = "Mazmorras totales",
@@ -76,6 +77,9 @@ local locale = {
     ["RUN_COL_DATE"]      = "Fecha",
     ["RUN_COL_TIME_DELTA"] = "Tiempo +/-",
     ["RUN_TABLE_NO_RUNS"] = "Aún no se ha registrado ninguna mazmorra.",
+    -- Runs table filters
+    ["RUNS_FILTER_TIMED_LABEL"] = "Límite de tiempo",
+    ["RUNS_FILTER_UNTIMED"]     = "Fuera de tiempo",
     -- Runs table tooltips
     ["RUN_TOOLTIP_TIME_LIMIT"]    = "Límite de tiempo",
     ["RUN_TOOLTIP_DUNGEON_SCORE"] = "Puntuación de la mazmorra",

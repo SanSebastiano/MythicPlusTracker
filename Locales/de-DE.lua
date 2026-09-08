@@ -12,7 +12,7 @@ local locale = {
     ["COMBAT_LOCKDOWN_WARNING"] = "Das Tracker-Fenster kann im Kampf nicht geöffnet werden.",
     -- Minimap Button
     ["MINIMAP_BUTTON_NAME"] = "Mythic Plus Tracker",
-    ["MINIMAP_BUTTON_CLICK_LEFT"] = "Linksklick: Dashboard umschalten",
+    ["MINIMAP_BUTTON_CLICK_LEFT"] = "Linksklick: Dashboard öffnen",
     ["MINIMAP_BUTTON_CLICK_RIGHT"] = "Rechtsklick: Große Schatzkammer öffnen",
     ["MINIMAP_BUTTON_DRAG"] = "Ziehen: Entlang der Minimap verschieben (Shift+Ziehen: Frei verschieben)",
     ["MINIMAP_BUTTON_DRAG_NORMAL"] = "Ziehen: Entlang der Minimap verschieben",
@@ -60,6 +60,7 @@ local locale = {
     ["DUNGEON_TOOLTIP_TIME_LIMIT"] = "Zeitlimit",
     ["DUNGEON_TELEPORT_TOOLTIP"] = "Klicken zum Teleportieren",
     ["DUNGEON_TELEPORT_NOT_OWNED"] = "Kein Teleport-Spielzeug für diesen Dungeon bekannt oder besessen",
+    ["DUNGEON_CURRENT_WEEK_ONLY"] = "Nur aktuelle Woche",
     -- Overview summary boxes
     ["DASHBOARD_SUMMARY_HIGHEST_KEY"]   = "Höchster Schlüsselstein",
     ["DASHBOARD_SUMMARY_TOTAL_RUNS"]    = "Anzahl Läufe",
@@ -73,6 +74,9 @@ local locale = {
     ["RUN_COL_DATE"]      = "Datum",
     ["RUN_COL_TIME_DELTA"] = "Zeit +/-",
     ["RUN_TABLE_NO_RUNS"] = "Noch keine Läufe aufgezeichnet.",
+    -- Runs table filters
+    ["RUNS_FILTER_TIMED_LABEL"] = "Zeitlimit",
+    ["RUNS_FILTER_UNTIMED"]     = "Nicht im Zeitlimit",
     -- Runs table tooltips
     ["RUN_TOOLTIP_TIME_LIMIT"]    = "Zeitlimit",
     ["RUN_TOOLTIP_DUNGEON_SCORE"] = "Dungeon-Wertung",
