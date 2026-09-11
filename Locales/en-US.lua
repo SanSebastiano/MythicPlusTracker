@@ -12,6 +12,7 @@ local locale = {
     ["MINIMAP_BUTTON_CLICK_RIGHT"] = "Right Click: Open Great Vault",
     ["MINIMAP_BUTTON_DRAG"] = "Drag: Move along minimap edge (Shift+Drag: Move freely)",
     ["MINIMAP_BUTTON_DRAG_NORMAL"] = "Drag: Move along minimap edge",
+    ["MINIMAP_BUTTON_TELEPORT_FLYOUT"] = "Quick Teleport: Unrolls after %s",
     -- Mythic Plus specific messages
     ["KEYSTONE_UPGRADED"] = "Keystone upgraded to level %d!",
     ["KEYSTONE_DEPLETED"] = "Keystone depleted.",
@@ -56,7 +57,8 @@ local locale = {
     ["DUNGEON_TOOLTIP_TIME_LIMIT"] = "Time Limit",
     ["DUNGEON_TELEPORT_TOOLTIP"] = "Click to teleport",
     ["DUNGEON_TELEPORT_NOT_OWNED"] = "No teleport toy known or owned for this dungeon",
-    ["DUNGEON_CURRENT_WEEK_ONLY"] = "Current week only",
+    -- Shared by the Overview and Runs tabs' filter rows
+    ["FILTER_CURRENT_WEEK_ONLY"] = "Current week only",
     -- Overview summary boxes
     ["DASHBOARD_SUMMARY_HIGHEST_KEY"]   = "Highest Keystone",
     ["DASHBOARD_SUMMARY_TOTAL_RUNS"]    = "Total Runs",
@@ -87,6 +89,7 @@ local locale = {
     ["SIDEBAR_RUNS_BEST_RUN"]    = "Best Run",
     ["SIDEBAR_RUNS_NO_RUNS"]     = "No successful M+ run yet.",
     ["SIDEBAR_RUNS_TIER_HEADER"] = "Timed Runs",
+    ["SIDEBAR_RUNS_TIER_HEADER_FILTERED"] = "%s (filtered)",
     ["SIDEBAR_GROUP_HEADER"]     = "Group",
     ["SIDEBAR_GROUP_NO_MEMBERS"] = "Not currently in a group.",
     -- Sidebar: Statistics tab (Keystones)
@@ -114,9 +117,19 @@ local locale = {
     ["KEYSTONES_ALTS_NEXT_UPDATE"] = "Next update on: dungeon completion, login/zone change, or a keystone exchange",
     ["TIME_UNKNOWN"]     = "unknown",
     ["TIME_JUST_NOW"]    = "just now",
+    ["FORMAT_SECONDS"] = "%s s",
     ["TIME_MINUTES_AGO"] = "%d min. ago",
     ["TIME_HOURS_AGO"]   = "%d hr. ago",
     ["TIME_DAYS_AGO"]    = "%d days ago",
+    -- Dungeon bonus event
+    ["BONUS_EVENT_TOOLTIP_TITLE"]   = "Dungeon Bonus Event",
+    ["BONUS_EVENT_ACTIVE"]          = "This week's bonus event rewards Mythic dungeon runs.",
+    ["BONUS_EVENT_QUEST_LABEL"]     = "Weekly quest: %s",
+    ["BONUS_EVENT_QUEST_LOADING"]   = "loading...",
+    ["BONUS_EVENT_QUEST_AVAILABLE"] = "Available from Archmage Aethas Sunreaver in Silvermoon City.",
+    ["BONUS_EVENT_QUEST_COMPLETED"] = "Already completed this week.",
+    ["BONUS_EVENT_QUEST_TURN_IN"]   = "Ready to turn in.",
+    ["BONUS_EVENT_QUEST_PROGRESS"]  = "%d/%d completed",
     -- Settings panel
     ["SETTINGS_CATEGORY_NAME"]         = "Mythic Plus Tracker",
     ["SETTINGS_SECTION_GENERAL_LABEL"] = "General",
@@ -130,10 +143,20 @@ local locale = {
     ["SETTINGS_MINIMAP_BUTTON_TOOLTIP"] = "Shows or hides the Mythic Plus Tracker minimap button.",
     ["SETTINGS_MINIMAP_BUTTON_STYLE_LABEL"] = "Minimap Button Style",
     ["SETTINGS_MINIMAP_BUTTON_STYLE_TOOLTIP"] = "Choose between the large, freely draggable button or a normal button movable only along the minimap edge.",
+    ["SETTINGS_MINIMAP_TELEPORT_FLYOUT_LABEL"] = "Minimap Quick Teleport",
+    ["SETTINGS_MINIMAP_TELEPORT_FLYOUT_TOOLTIP"] = "Hover the minimap to unroll a strip with the season dungeons you own a teleport for. Click an icon to teleport.",
+    ["SETTINGS_MINIMAP_TELEPORT_FLYOUT_DELAY_LABEL"] = "Quick Teleport Delay",
+    ["SETTINGS_MINIMAP_TELEPORT_FLYOUT_DELAY_TOOLTIP"] = "How long to hover the minimap before the quick teleport strip unrolls, in seconds.",
+    ["SETTINGS_MINIMAP_TELEPORT_FLYOUT_ORIENTATION_LABEL"] = "Quick Teleport Direction",
+    ["SETTINGS_MINIMAP_TELEPORT_FLYOUT_ORIENTATION_TOOLTIP"] = "Whether the quick teleport strip unrolls sideways or up and down from the minimap button.",
+    ["TELEPORT_FLYOUT_ORIENTATION_HORIZONTAL"] = "Horizontal",
+    ["TELEPORT_FLYOUT_ORIENTATION_VERTICAL"] = "Vertical",
     ["MINIMAP_BUTTON_STYLE_LARGE"] = "Large",
     ["MINIMAP_BUTTON_STYLE_NORMAL"] = "Normal",
     ["SETTINGS_WELCOME_MESSAGE_LABEL"]  = "Show Welcome Message",
     ["SETTINGS_WELCOME_MESSAGE_TOOLTIP"] = "Shows or hides the Mythic Plus Tracker welcome message on login.",
+    ["SETTINGS_BONUS_EVENT_ICON_LABEL"]   = "Show Bonus Event Icon",
+    ["SETTINGS_BONUS_EVENT_ICON_TOOLTIP"] = "Shows an icon in the tracker window's header while the weekly Mythic dungeon bonus event is active.",
 }
 
 for key, value in pairs(locale) do

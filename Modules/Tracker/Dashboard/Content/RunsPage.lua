@@ -15,6 +15,9 @@ local FILTER_DROPDOWN_W      = 108
 local FILTER_DROPDOWN_H      = 26  -- fixed height of WowStyle1DropdownTemplate
 local FILTER_DROPDOWN_MARGIN = 6
 local FILTER_DROPDOWN_GAP    = 8
+-- Smaller than the dropdowns next to it: UICheckButtonTemplate draws a wide
+-- frame around its box, so matching FILTER_DROPDOWN_H makes it tower over them.
+local FILTER_CHECKBOX_SIZE   = 20
 
 -- Fixed column widths sized to fit their header text (name column is computed dynamically)
 local COL_W = {
@@ -27,17 +30,10 @@ local COL_W = {
     timeDelta = 55,
 }
 
--- Stufen-Brackets for the level filter dropdown, as given by the addon's
--- maintainer to match how this group talks about key levels — not derived
--- from the color-tier thresholds in Core/Colors.lua, which cut differently.
-local LEVEL_BRACKETS = {
-    { key = "2-3",   min = 2,  max = 3 },
-    { key = "4-6",   min = 4,  max = 6 },
-    { key = "7-9",   min = 7,  max = 9 },
-    { key = "10-11", min = 10, max = 11 },
-    { key = "12-14", min = 12, max = 14 },
-    { key = "15+",   min = 15, max = nil },
-}
+local RunsFilterService = addon.RunsFilterService
+local DIMENSIONS        = RunsFilterService.DIMENSIONS
+local TIMED_STATES      = RunsFilterService.TIMED_STATES
+local LEVEL_BRACKETS    = RunsFilterService.LEVEL_BRACKETS
 
 local ARTIFACT_R, ARTIFACT_G, ARTIFACT_B = addon.colorToRGB("ARTIFACT")
 
@@ -104,73 +100,13 @@ local function formatTimeDelta(sec, timeLimit)
     return addon.colors.TIMER_DANGER .. "-" .. str .. addon.colors.RESET
 end
 
----@param bracket table one entry from LEVEL_BRACKETS
+---@param bracket table one entry from addon.RunsFilterService.LEVEL_BRACKETS
 ---@return string
 local function levelBracketLabel(bracket)
     if bracket.max then
         return "+" .. bracket.min .. "-" .. bracket.max
     end
     return "+" .. bracket.min .. "+"
-end
-
----@param level number|nil
----@return string|nil bracketKey nil if level is missing/out of range
-local function levelBracketForLevel(level)
-    if not level then return nil end
-    for _, bracket in ipairs(LEVEL_BRACKETS) do
-        if level >= bracket.min and (not bracket.max or level <= bracket.max) then
-            return bracket.key
-        end
-    end
-    return nil
-end
-
----SavedVariables lazy-init for the Runs tab's filter selections. Each set is
----keyed by the filtered value (mapID / "timed"|"untimed" / bracket key) with
----value true; an empty set means "no filter applied, show everything".
-local function ensureRunsFilterInitialized()
-    MythicPlusTrackerDB.runsFilter = MythicPlusTrackerDB.runsFilter or {}
-    MythicPlusTrackerDB.runsFilter.dungeons = MythicPlusTrackerDB.runsFilter.dungeons or {}
-    MythicPlusTrackerDB.runsFilter.timedStates = MythicPlusTrackerDB.runsFilter.timedStates or {}
-    MythicPlusTrackerDB.runsFilter.levelBrackets = MythicPlusTrackerDB.runsFilter.levelBrackets or {}
-end
-
----@param set table
----@return number
-local function countSelected(set)
-    local count = 0
-    for _ in pairs(set) do
-        count = count + 1
-    end
-    return count
-end
-
----Whether a run should be shown given the Runs tab's active filters. An empty
----set for a given dimension means that dimension doesn't filter at all.
----@param run table entry from addon.RunHistoryService:getRuns()
----@return boolean
-local function passesRunsFilter(run)
-    local filter = MythicPlusTrackerDB.runsFilter
-
-    if countSelected(filter.dungeons) > 0 and not filter.dungeons[run.mapChallengeModeID] then
-        return false
-    end
-
-    if countSelected(filter.timedStates) > 0 then
-        local state = run.completed and "timed" or "untimed"
-        if not filter.timedStates[state] then
-            return false
-        end
-    end
-
-    if countSelected(filter.levelBrackets) > 0 then
-        local bracketKey = levelBracketForLevel(run.level)
-        if not (bracketKey and filter.levelBrackets[bracketKey]) then
-            return false
-        end
-    end
-
-    return true
 end
 
 local function addCellTooltip(parent, x, y, w, h, title, body)
@@ -305,12 +241,7 @@ local function renderFilteredRows(scrollFrame, scrollChild, scrollChildW, sorted
         rowsContainer:Hide()
     end
 
-    local filteredRuns = {}
-    for _, run in ipairs(sortedRunHistory) do
-        if passesRunsFilter(run) then
-            table.insert(filteredRuns, run)
-        end
-    end
+    local filteredRuns = RunsFilterService:filterRuns(sortedRunHistory)
 
     local totalRowsH = #filteredRuns * ROW_H + PADDING_X
     scrollChild:SetSize(scrollChildW, totalRowsH)
@@ -384,28 +315,28 @@ local function createFilterDropdown(parent, anchorFrame, anchorToNav, staticLabe
     return dropdown
 end
 
----Creates the Dungeon / Timed / Stufen-Bracket filter dropdowns, left to
----right, right-aligned above the table. Persists selections to
----MythicPlusTrackerDB.runsFilter and calls onFilterChanged (a row-only
----re-render, see renderFilteredRows) after every toggle.
+---Creates the filter row above the table, right-aligned: the "current week
+---only" checkbox, then the Dungeon / Timed / Stufen-Bracket dropdowns. All
+---selections live in addon.RunsFilterService — the three dropdowns persist
+---account-wide, the checkbox deliberately only for the session (see the
+---service). onFilterChanged runs after every toggle and does a row-only
+---re-render (see renderFilteredRows) plus a Sidebar refresh, since the
+---Sidebar's Timed Runs breakdown mirrors the same filter — see
+---Sidebar/Content/RunStatisticsCard.lua. Best Run there stays season-wide on
+---purpose.
 ---@param frame Frame the tab's content panel
 ---@param dungeons table array of mapChallengeModeIDs, from C_ChallengeMode.GetMapTable()
 ---@param onFilterChanged function
-local function createRunsFilterDropdowns(frame, dungeons, onFilterChanged)
+local function createRunsFilters(frame, dungeons, onFilterChanged)
     local levelDropdown = createFilterDropdown(frame, MPT_Dashboard.navFrame, true,
         addon.locale["RUN_COL_LEVEL"],
-        function() return countSelected(MythicPlusTrackerDB.runsFilter.levelBrackets) end,
+        function() return RunsFilterService:countSelected(DIMENSIONS.LEVEL_BRACKETS) end,
         function(rootDescription)
             for _, bracket in ipairs(LEVEL_BRACKETS) do
                 rootDescription:CreateCheckbox(levelBracketLabel(bracket),
-                    function() return MythicPlusTrackerDB.runsFilter.levelBrackets[bracket.key] == true end,
+                    function() return RunsFilterService:isSelected(DIMENSIONS.LEVEL_BRACKETS, bracket.key) end,
                     function()
-                        local set = MythicPlusTrackerDB.runsFilter.levelBrackets
-                        if set[bracket.key] then
-                            set[bracket.key] = nil
-                        else
-                            set[bracket.key] = true
-                        end
+                        RunsFilterService:toggle(DIMENSIONS.LEVEL_BRACKETS, bracket.key)
                         onFilterChanged()
                     end)
             end
@@ -413,51 +344,53 @@ local function createRunsFilterDropdowns(frame, dungeons, onFilterChanged)
 
     local timedDropdown = createFilterDropdown(frame, levelDropdown, false,
         addon.locale["RUNS_FILTER_TIMED_LABEL"],
-        function() return countSelected(MythicPlusTrackerDB.runsFilter.timedStates) end,
+        function() return RunsFilterService:countSelected(DIMENSIONS.TIMED_STATES) end,
         function(rootDescription)
             local options = {
-                { key = "timed",   label = addon.locale["RUN_COL_COMPLETED"] },
-                { key = "untimed", label = addon.locale["RUNS_FILTER_UNTIMED"] },
+                { key = TIMED_STATES.TIMED,   label = addon.locale["RUN_COL_COMPLETED"] },
+                { key = TIMED_STATES.UNTIMED, label = addon.locale["RUNS_FILTER_UNTIMED"] },
             }
             for _, option in ipairs(options) do
                 rootDescription:CreateCheckbox(option.label,
-                    function() return MythicPlusTrackerDB.runsFilter.timedStates[option.key] == true end,
+                    function() return RunsFilterService:isSelected(DIMENSIONS.TIMED_STATES, option.key) end,
                     function()
-                        local set = MythicPlusTrackerDB.runsFilter.timedStates
-                        if set[option.key] then
-                            set[option.key] = nil
-                        else
-                            set[option.key] = true
-                        end
+                        RunsFilterService:toggle(DIMENSIONS.TIMED_STATES, option.key)
                         onFilterChanged()
                     end)
             end
         end)
 
-    createFilterDropdown(frame, timedDropdown, false,
+    local dungeonDropdown = createFilterDropdown(frame, timedDropdown, false,
         addon.locale["RUN_COL_DUNGEON"],
-        function() return countSelected(MythicPlusTrackerDB.runsFilter.dungeons) end,
+        function() return RunsFilterService:countSelected(DIMENSIONS.DUNGEONS) end,
         function(rootDescription)
             for _, mapID in ipairs(dungeons) do
                 local name = C_ChallengeMode.GetMapUIInfo(mapID)
                 rootDescription:CreateCheckbox(name or ("Map " .. tostring(mapID)),
-                    function() return MythicPlusTrackerDB.runsFilter.dungeons[mapID] == true end,
+                    function() return RunsFilterService:isSelected(DIMENSIONS.DUNGEONS, mapID) end,
                     function()
-                        local set = MythicPlusTrackerDB.runsFilter.dungeons
-                        if set[mapID] then
-                            set[mapID] = nil
-                        else
-                            set[mapID] = true
-                        end
+                        RunsFilterService:toggle(DIMENSIONS.DUNGEONS, mapID)
                         onFilterChanged()
                     end)
             end
         end)
+
+    -- Initial state comes from the service, not from a local: loadRuns runs
+    -- again on every tab reselect, and the checkbox has to come back checked
+    -- for as long as the session's filter says so.
+    local weekCheckbox = addon.createLabeledCheckbox(frame,
+        addon.locale["FILTER_CURRENT_WEEK_ONLY"],
+        FILTER_CHECKBOX_SIZE,
+        RunsFilterService:isCurrentWeekOnly(),
+        function(checked)
+            RunsFilterService:setCurrentWeekOnly(checked)
+            onFilterChanged()
+        end)
+
+    weekCheckbox:SetPoint("RIGHT", dungeonDropdown, "LEFT", -FILTER_DROPDOWN_GAP, 0)
 end
 
 function MPT_Dashboard:loadRuns(frame)
-    ensureRunsFilterInitialized()
-
     local dungeons = C_ChallengeMode.GetMapTable() or {}
 
     -- Sort a shallow copy — addon.RunHistoryService:getRuns() returns a cached, shared
@@ -532,11 +465,24 @@ function MPT_Dashboard:loadRuns(frame)
     local scrollChild = CreateFrame("Frame", nil, scrollFrame)
     scrollFrame:SetScrollChild(scrollChild)
 
-    createRunsFilterDropdowns(frame, dungeons, function()
+    -- Wired before the first render, not after: renderFilteredRows ends with
+    -- UpdateScrollChildRect, and the scrollbar only ever learns its size from
+    -- an OnScrollRangeChanged that fires *after* it was attached. Wiring it
+    -- afterwards meant the initial render had already moved the range to its
+    -- final value, so the scrollbar never heard about it and hid itself.
+    addon.createTableScrollbar(outerFrame, scrollFrame, ROW_H)
+
+    createRunsFilters(frame, dungeons, function()
         renderFilteredRows(scrollFrame, scrollChild, scrollChildW, runHistory, colX, nameW, scoreDeltas)
+
+        -- Deliberately only the Sidebar, never a full tab reload: reloading the
+        -- tab would hide the dropdown's own parent panel and close the menu
+        -- mid-selection. The Sidebar is a sibling frame, so rebuilding it
+        -- leaves the open menu alone.
+        if MPT_Sidebar and MPT_Sidebar.showForTab then
+            MPT_Sidebar:showForTab(MPT_Tracker.TABS.RUNS)
+        end
     end)
 
     renderFilteredRows(scrollFrame, scrollChild, scrollChildW, runHistory, colX, nameW, scoreDeltas)
-
-    addon.createTableScrollbar(outerFrame, scrollFrame, ROW_H)
 end

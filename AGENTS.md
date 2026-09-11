@@ -98,7 +98,7 @@ Don't hand-roll checks this repo already automates — use these (also wired int
 | Locale key consistency | `bash Tools/locale-validator.sh` | `.github/skills/locale-validator/SKILL.md` |
 | `.toc`/`.xml` file references exist | `bash Tools/toc-validator.sh` | `.github/skills/toc-validator/SKILL.md` |
 | Every `.lua` file is registered | `bash Tools/registration-validator.sh` | `.github/skills/registration-validator/SKILL.md` |
-| Look up a WoW API signature | see skill | `.github/skills/wow-api-lookup/SKILL.md` (authoritative source: https://warcraft.wiki.gg/wiki/World_of_Warcraft_API) |
+| Look up a WoW API signature | `bash Tools/wow-api-lookup.sh <name>` | `.github/skills/wow-api-lookup/SKILL.md` (authoritative source: https://warcraft.wiki.gg/wiki/World_of_Warcraft_API) |
 
 If `luacheck` flags a genuine WoW API global as undefined, add it to the `globals` table in `.luacheckrc` rather than suppressing the warning.
 

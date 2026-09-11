@@ -16,6 +16,7 @@ local locale = {
     ["MINIMAP_BUTTON_CLICK_RIGHT"] = "ПКМ: Открыть Великое Хранилище",
     ["MINIMAP_BUTTON_DRAG"] = "Перетаскивание: перемещение по краю миникарты (Shift + перетаскивание: свободное перемещение)",
     ["MINIMAP_BUTTON_DRAG_NORMAL"] = "Перетаскивание: перемещение по краю миникарты",
+    ["MINIMAP_BUTTON_TELEPORT_FLYOUT"] = "Быстрая телепортация: разворачивается через %s",
     -- Mythic Plus specific messages
     ["KEYSTONE_UPGRADED"] = "Ключ улучшен до %d уровня!",
     ["KEYSTONE_DEPLETED"] = "Ключ сломан.",
@@ -60,7 +61,8 @@ local locale = {
     ["DUNGEON_TOOLTIP_TIME_LIMIT"] = "Ограничение по времени",
     ["DUNGEON_TELEPORT_TOOLTIP"] = "Нажмите, чтобы телепортироваться",
     ["DUNGEON_TELEPORT_NOT_OWNED"] = "Нет известной или имеющейся игрушки-телепорта для этого подземелья",
-    ["DUNGEON_CURRENT_WEEK_ONLY"] = "Только текущая неделя",
+    -- Shared by the Overview and Runs tabs' filter rows
+    ["FILTER_CURRENT_WEEK_ONLY"] = "Только текущая неделя",
     -- Overview summary boxes
     ["DASHBOARD_SUMMARY_HIGHEST_KEY"]   = "Наивысший ключ",
     ["DASHBOARD_SUMMARY_TOTAL_RUNS"]    = "Всего прохождений",
@@ -91,6 +93,7 @@ local locale = {
     ["SIDEBAR_RUNS_BEST_RUN"]    = "Лучшее прохождение",
     ["SIDEBAR_RUNS_NO_RUNS"]     = "Нет успешных прохождений М+.",
     ["SIDEBAR_RUNS_TIER_HEADER"] = "Прохождений вовремя",
+    ["SIDEBAR_RUNS_TIER_HEADER_FILTERED"] = "%s (фильтр)",
     ["SIDEBAR_GROUP_HEADER"]     = "Группа",
     ["SIDEBAR_GROUP_NO_MEMBERS"] = "Сейчас не в группе.",
     -- Sidebar: Statistics tab (Keystones)
@@ -118,9 +121,19 @@ local locale = {
     ["KEYSTONES_ALTS_NEXT_UPDATE"] = "Следующее обновление при завершении подземелья, входе в игру/смене зоны или обмене ключа",
     ["TIME_UNKNOWN"]     = "неизвестно",
     ["TIME_JUST_NOW"]    = "только что",
+    ["FORMAT_SECONDS"] = "%s сек.",
     ["TIME_MINUTES_AGO"] = "%d мин. назад",
     ["TIME_HOURS_AGO"]   = "%d ч. назад",
     ["TIME_DAYS_AGO"]    = "%d дн. назад",
+    -- Dungeon bonus event
+    ["BONUS_EVENT_TOOLTIP_TITLE"]   = "Бонусное событие подземелий",
+    ["BONUS_EVENT_ACTIVE"]          = "Бонусное событие этой недели награждает за мифические подземелья.",
+    ["BONUS_EVENT_QUEST_LABEL"]     = "Недельное задание: %s",
+    ["BONUS_EVENT_QUEST_LOADING"]   = "загрузка…",
+    ["BONUS_EVENT_QUEST_AVAILABLE"] = "Доступно у архимага Этаса Похитителя Солнца в Луносвете.",
+    ["BONUS_EVENT_QUEST_COMPLETED"] = "Уже выполнено на этой неделе.",
+    ["BONUS_EVENT_QUEST_TURN_IN"]   = "Готово к сдаче.",
+    ["BONUS_EVENT_QUEST_PROGRESS"]  = "%d/%d завершено",
     -- Settings panel
     ["SETTINGS_CATEGORY_NAME"]         = "Mythic Plus Tracker",
     ["SETTINGS_SECTION_GENERAL_LABEL"] = "Основное",
@@ -134,10 +147,20 @@ local locale = {
     ["SETTINGS_MINIMAP_BUTTON_TOOLTIP"] = "Показывает или скрывает кнопку Mythic Plus Tracker на миникарте.",
     ["SETTINGS_MINIMAP_BUTTON_STYLE_LABEL"] = "Стиль кнопки миникарты",
     ["SETTINGS_MINIMAP_BUTTON_STYLE_TOOLTIP"] = "Выберите между большой кнопкой со свободным перемещением или обычной кнопкой, перемещаемой только по краю миникарты.",
+    ["SETTINGS_MINIMAP_TELEPORT_FLYOUT_LABEL"] = "Быстрая телепортация с миникарты",
+    ["SETTINGS_MINIMAP_TELEPORT_FLYOUT_TOOLTIP"] = "Наведите курсор на миникарту, чтобы развернуть полосу с подземельями сезона, телепорты в которые вы знаете. Щёлкните значок, чтобы телепортироваться.",
+    ["SETTINGS_MINIMAP_TELEPORT_FLYOUT_DELAY_LABEL"] = "Задержка телепортации",
+    ["SETTINGS_MINIMAP_TELEPORT_FLYOUT_DELAY_TOOLTIP"] = "Сколько секунд нужно удерживать курсор на миникарте, прежде чем развернётся полоса быстрой телепортации.",
+    ["SETTINGS_MINIMAP_TELEPORT_FLYOUT_ORIENTATION_LABEL"] = "Ориентация телепортации",
+    ["SETTINGS_MINIMAP_TELEPORT_FLYOUT_ORIENTATION_TOOLTIP"] = "Разворачивается ли полоса быстрой телепортации по горизонтали или по вертикали от кнопки миникарты.",
+    ["TELEPORT_FLYOUT_ORIENTATION_HORIZONTAL"] = "Горизонтально",
+    ["TELEPORT_FLYOUT_ORIENTATION_VERTICAL"] = "Вертикально",
     ["MINIMAP_BUTTON_STYLE_LARGE"] = "Большой",
     ["MINIMAP_BUTTON_STYLE_NORMAL"] = "Обычный",
     ["SETTINGS_WELCOME_MESSAGE_LABEL"]  = "Показывать приветственное сообщение",
     ["SETTINGS_WELCOME_MESSAGE_TOOLTIP"] = "Отображает или скрывает приветственное сообщение Mythic Plus Tracker при входе в систему.",
+    ["SETTINGS_BONUS_EVENT_ICON_LABEL"]   = "Показывать значок бонусного события",
+    ["SETTINGS_BONUS_EVENT_ICON_TOOLTIP"] = "Показывает значок в заголовке окна трекера, пока активно недельное бонусное событие мифических подземелий.",
 }
 
 for key, value in pairs(locale) do

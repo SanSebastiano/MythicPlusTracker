@@ -16,6 +16,7 @@ local locale = {
     ["MINIMAP_BUTTON_CLICK_RIGHT"] = "Clic droit : Ouvrir le Grand Coffre",
     ["MINIMAP_BUTTON_DRAG"] = "Glisser : Déplacer le long de la minimap (Maj+Glisser : Déplacer librement)",
     ["MINIMAP_BUTTON_DRAG_NORMAL"] = "Glisser : Déplacer le long de la minimap",
+    ["MINIMAP_BUTTON_TELEPORT_FLYOUT"] = "Téléportation rapide : Se déroule après %s",
     -- Mythic Plus specific messages
     ["KEYSTONE_UPGRADED"] = "Clé mythique améliorée au niveau %d !",
     ["KEYSTONE_DEPLETED"] = "Clé mythique épuisée.",
@@ -63,7 +64,8 @@ local locale = {
     ["DUNGEON_TOOLTIP_TIME_LIMIT"] = "Limite de temps",
     ["DUNGEON_TELEPORT_TOOLTIP"] = "Cliquez pour vous téléporter",
     ["DUNGEON_TELEPORT_NOT_OWNED"] = "Aucun jouet de téléportation connu ou possédé pour ce donjon",
-    ["DUNGEON_CURRENT_WEEK_ONLY"] = "Semaine en cours uniquement",
+    -- Shared by the Overview and Runs tabs' filter rows
+    ["FILTER_CURRENT_WEEK_ONLY"] = "Semaine en cours uniquement",
     -- Overview summary boxes
     ["DASHBOARD_SUMMARY_HIGHEST_KEY"]   = "Clé la plus élevée",
     ["DASHBOARD_SUMMARY_TOTAL_RUNS"]    = "Donjons totaux",
@@ -94,6 +96,7 @@ local locale = {
     ["SIDEBAR_RUNS_BEST_RUN"]    = "Meilleur donjon",
     ["SIDEBAR_RUNS_NO_RUNS"]     = "Aucun donjon M+ réussi.",
     ["SIDEBAR_RUNS_TIER_HEADER"] = "Donjons dans les temps",
+    ["SIDEBAR_RUNS_TIER_HEADER_FILTERED"] = "%s (filtré)",
     ["SIDEBAR_GROUP_HEADER"]     = "Groupe",
     ["SIDEBAR_GROUP_NO_MEMBERS"] = "Vous n'êtes actuellement pas en groupe.",
     -- Sidebar: Statistics tab (Keystones)
@@ -118,9 +121,19 @@ local locale = {
     ["KEYSTONES_ALTS_NEXT_UPDATE"] = "Prochaine mise à jour lors de la fin d'un donjon, de la connexion/changement de zone, ou d'un échange de clé",
     ["TIME_UNKNOWN"]     = "inconnu",
     ["TIME_JUST_NOW"]    = "à l'instant",
+    ["FORMAT_SECONDS"] = "%s s",
     ["TIME_MINUTES_AGO"] = "il y a %d min",
     ["TIME_HOURS_AGO"]   = "il y a %d h",
     ["TIME_DAYS_AGO"]    = "il y a %d jours",
+    -- Dungeon bonus event
+    ["BONUS_EVENT_TOOLTIP_TITLE"]   = "Événement bonus de donjon",
+    ["BONUS_EVENT_ACTIVE"]          = "L'événement bonus de cette semaine récompense les donjons mythiques.",
+    ["BONUS_EVENT_QUEST_LABEL"]     = "Quête hebdomadaire : %s",
+    ["BONUS_EVENT_QUEST_LOADING"]   = "chargement…",
+    ["BONUS_EVENT_QUEST_AVAILABLE"] = "Disponible auprès de l'archimage Aethas Faucheronde à Lune-d'Argent.",
+    ["BONUS_EVENT_QUEST_COMPLETED"] = "Déjà terminée cette semaine.",
+    ["BONUS_EVENT_QUEST_TURN_IN"]   = "Prête à être rendue.",
+    ["BONUS_EVENT_QUEST_PROGRESS"]  = "%d/%d terminés",
     -- Settings panel
     ["SETTINGS_CATEGORY_NAME"]         = "Mythic Plus Tracker",
     ["SETTINGS_SECTION_GENERAL_LABEL"] = "Général",
@@ -134,10 +147,20 @@ local locale = {
     ["SETTINGS_MINIMAP_BUTTON_TOOLTIP"] = "Affiche ou masque le bouton de la minimap de Mythic Plus Tracker.",
     ["SETTINGS_MINIMAP_BUTTON_STYLE_LABEL"] = "Style du bouton de la minimap",
     ["SETTINGS_MINIMAP_BUTTON_STYLE_TOOLTIP"] = "Choisissez le grand bouton déplaçable librement ou le bouton normal, déplaçable sur le bord de la minimap.",
+    ["SETTINGS_MINIMAP_TELEPORT_FLYOUT_LABEL"] = "Téléportation rapide de la minicarte",
+    ["SETTINGS_MINIMAP_TELEPORT_FLYOUT_TOOLTIP"] = "Survolez la minicarte pour dérouler une barre avec les donjons de la saison dont vous possédez la téléportation. Cliquez sur une icône pour vous téléporter.",
+    ["SETTINGS_MINIMAP_TELEPORT_FLYOUT_DELAY_LABEL"] = "Délai de téléportation",
+    ["SETTINGS_MINIMAP_TELEPORT_FLYOUT_DELAY_TOOLTIP"] = "Durée de survol de la minicarte avant que la barre de téléportation rapide ne se déroule, en secondes.",
+    ["SETTINGS_MINIMAP_TELEPORT_FLYOUT_ORIENTATION_LABEL"] = "Orientation de la téléportation",
+    ["SETTINGS_MINIMAP_TELEPORT_FLYOUT_ORIENTATION_TOOLTIP"] = "Si la barre de téléportation rapide se déroule horizontalement ou verticalement depuis le bouton de la minicarte.",
+    ["TELEPORT_FLYOUT_ORIENTATION_HORIZONTAL"] = "Horizontale",
+    ["TELEPORT_FLYOUT_ORIENTATION_VERTICAL"] = "Verticale",
     ["MINIMAP_BUTTON_STYLE_LARGE"] = "Grand",
     ["MINIMAP_BUTTON_STYLE_NORMAL"] = "Normal",
     ["SETTINGS_WELCOME_MESSAGE_LABEL"]  = "Afficher le message de bienvenue",
     ["SETTINGS_WELCOME_MESSAGE_TOOLTIP"] = "Affiche ou masque le message de bienvenue de Mythic Plus Tracker à la connexion.",
+    ["SETTINGS_BONUS_EVENT_ICON_LABEL"]   = "Afficher l'icône d'événement bonus",
+    ["SETTINGS_BONUS_EVENT_ICON_TOOLTIP"] = "Affiche une icône dans l'en-tête de la fenêtre du tracker pendant l'événement bonus hebdomadaire des donjons mythiques.",
 }
 
 for key, value in pairs(locale) do

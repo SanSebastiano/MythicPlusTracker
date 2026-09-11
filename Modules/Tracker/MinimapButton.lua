@@ -21,6 +21,14 @@ local NORMAL_ICON_SIZE = 24
 local NORMAL_ICON_OFFSET_X = 5
 local NORMAL_ICON_OFFSET_Y = -5
 
+-- How far the visible artwork stops short of the frame's own vertical edges.
+-- The "large" atlas carries a wide transparent margin inside its 64px square;
+-- the "normal" style's border texture starts essentially at the frame edge.
+-- Set by eye — there is no runtime way to ask an atlas where its opaque pixels
+-- begin — so they live here as named values rather than inside a SetPoint.
+local LARGE_ARTWORK_INSET  = 8
+local NORMAL_ARTWORK_INSET = 2
+
 local function create()
     local newButton = CreateFrame("Button", "MPTMinimapButton", Minimap)
     newButton:SetFrameStrata("MEDIUM")
@@ -134,6 +142,25 @@ local function onFreeDragUpdate()
     state.y = cursorY
 
     updatePosition()
+end
+
+---The button frame itself, so other modules can anchor to it or hook its mouse
+---scripts (see MinimapTeleportFlyout.lua). Nil before load() has run.
+---@return Button|nil
+function MPT_MinimapButton:getFrame()
+    return button
+end
+
+---Distance between the frame's vertical edge and the visible artwork, so
+---neighbouring UI can sit flush against what the player actually sees instead
+---of against the frame's invisible bounding box (see MinimapTeleportFlyout.lua).
+---@return number pixels
+function MPT_MinimapButton:getArtworkInset()
+    if ensureMinimapButtonState().style == "normal" then
+        return NORMAL_ARTWORK_INSET
+    end
+
+    return LARGE_ARTWORK_INSET
 end
 
 function MPT_MinimapButton:setHidden(hidden)
@@ -257,6 +284,14 @@ function MPT_MinimapButton:load()
             addon.addTooltipLabelLine(addon.locale['MINIMAP_BUTTON_DRAG_NORMAL'], "ARTIFACT")
         else
             addon.addTooltipLabelLine(addon.locale['MINIMAP_BUTTON_DRAG'], "ARTIFACT")
+        end
+
+        -- The hover delay is configurable but was only visible in the settings
+        -- panel; name it where the strip is actually used. Runs at hover time,
+        -- long after both files have loaded — the guard is belt and braces.
+        if MPT_MinimapTeleportFlyout and MPT_MinimapTeleportFlyout:isEnabled() then
+            addon.addTooltipLabelLine(addon.locale['MINIMAP_BUTTON_TELEPORT_FLYOUT']
+                :format(addon.formatSeconds(MPT_MinimapTeleportFlyout:getHoverDelay())), "ARTIFACT")
         end
 
         GameTooltip:Show()

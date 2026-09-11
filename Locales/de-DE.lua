@@ -16,6 +16,7 @@ local locale = {
     ["MINIMAP_BUTTON_CLICK_RIGHT"] = "Rechtsklick: Große Schatzkammer öffnen",
     ["MINIMAP_BUTTON_DRAG"] = "Ziehen: Entlang der Minimap verschieben (Shift+Ziehen: Frei verschieben)",
     ["MINIMAP_BUTTON_DRAG_NORMAL"] = "Ziehen: Entlang der Minimap verschieben",
+    ["MINIMAP_BUTTON_TELEPORT_FLYOUT"] = "Schnellteleport: Fährt nach %s aus",
     -- Mythic Plus specific messages
     ["KEYSTONE_UPGRADED"] = "Schlüsselstein auf Level %d aufgewertet!",
     ["KEYSTONE_DEPLETED"] = "Schlüsselstein erschöpft.",
@@ -60,7 +61,8 @@ local locale = {
     ["DUNGEON_TOOLTIP_TIME_LIMIT"] = "Zeitlimit",
     ["DUNGEON_TELEPORT_TOOLTIP"] = "Klicken zum Teleportieren",
     ["DUNGEON_TELEPORT_NOT_OWNED"] = "Kein Teleport-Spielzeug für diesen Dungeon bekannt oder besessen",
-    ["DUNGEON_CURRENT_WEEK_ONLY"] = "Nur aktuelle Woche",
+    -- Shared by the Overview and Runs tabs' filter rows
+    ["FILTER_CURRENT_WEEK_ONLY"] = "Nur aktuelle Woche",
     -- Overview summary boxes
     ["DASHBOARD_SUMMARY_HIGHEST_KEY"]   = "Höchster Schlüsselstein",
     ["DASHBOARD_SUMMARY_TOTAL_RUNS"]    = "Anzahl Läufe",
@@ -91,6 +93,7 @@ local locale = {
     ["SIDEBAR_RUNS_BEST_RUN"]    = "Bester Durchlauf",
     ["SIDEBAR_RUNS_NO_RUNS"]     = "Noch kein erfolgreicher M+-Lauf.",
     ["SIDEBAR_RUNS_TIER_HEADER"] = "Zeitliche Durchläufe",
+    ["SIDEBAR_RUNS_TIER_HEADER_FILTERED"] = "%s (gefiltert)",
     ["SIDEBAR_GROUP_HEADER"]     = "Gruppe",
     ["SIDEBAR_GROUP_NO_MEMBERS"] = "Aktuell in keiner Gruppe.",
     -- Sidebar: Statistics tab (Keystones)
@@ -118,9 +121,19 @@ local locale = {
     ["KEYSTONES_ALTS_NEXT_UPDATE"] = "Nächstes Update bei: Dungeon-Abschluss, Login/Zonenwechsel oder Schlüsselstein-Tausch",
     ["TIME_UNKNOWN"]     = "unbekannt",
     ["TIME_JUST_NOW"]    = "gerade eben",
+    ["FORMAT_SECONDS"] = "%s Sek.",
     ["TIME_MINUTES_AGO"] = "vor %d Min.",
     ["TIME_HOURS_AGO"]   = "vor %d Std.",
     ["TIME_DAYS_AGO"]    = "vor %d Tagen",
+    -- Dungeon bonus event
+    ["BONUS_EVENT_TOOLTIP_TITLE"]   = "Dungeon-Bonusereignis",
+    ["BONUS_EVENT_ACTIVE"]          = "Das Bonusereignis dieser Woche belohnt mythische Dungeons.",
+    ["BONUS_EVENT_QUEST_LABEL"]     = "Wochenquest: %s",
+    ["BONUS_EVENT_QUEST_LOADING"]   = "wird geladen …",
+    ["BONUS_EVENT_QUEST_AVAILABLE"] = "Erhältlich bei Erzmagier Aethas Sonnenhäscher in Silbermond.",
+    ["BONUS_EVENT_QUEST_COMPLETED"] = "Diese Woche bereits abgeschlossen.",
+    ["BONUS_EVENT_QUEST_TURN_IN"]   = "Kann abgegeben werden.",
+    ["BONUS_EVENT_QUEST_PROGRESS"]  = "%d/%d abgeschlossen",
     -- Settings panel
     ["SETTINGS_CATEGORY_NAME"]         = "Mythic Plus Tracker",
     ["SETTINGS_SECTION_GENERAL_LABEL"] = "Allgemein",
@@ -134,10 +147,20 @@ local locale = {
     ["SETTINGS_MINIMAP_BUTTON_TOOLTIP"] = "Zeigt oder versteckt den Mythic Plus Tracker Minimap-Button.",
     ["SETTINGS_MINIMAP_BUTTON_STYLE_LABEL"] = "Minimap-Button-Stil",
     ["SETTINGS_MINIMAP_BUTTON_STYLE_TOOLTIP"] = "Wähle den großen, frei verschiebbaren Button oder den normalen Button, nur am Minimap-Rand verschiebbar.",
+    ["SETTINGS_MINIMAP_TELEPORT_FLYOUT_LABEL"] = "Minimap-Schnellteleport",
+    ["SETTINGS_MINIMAP_TELEPORT_FLYOUT_TOOLTIP"] = "Fahre über die Minimap, um einen Streifen mit den Season-Dungeons auszufahren, für die du einen Teleport besitzt. Klicke ein Icon zum Teleportieren.",
+    ["SETTINGS_MINIMAP_TELEPORT_FLYOUT_DELAY_LABEL"] = "Schnellteleport-Verzögerung",
+    ["SETTINGS_MINIMAP_TELEPORT_FLYOUT_DELAY_TOOLTIP"] = "Wie lange du über der Minimap verweilen musst, bis der Schnellteleport-Streifen ausfährt, in Sekunden.",
+    ["SETTINGS_MINIMAP_TELEPORT_FLYOUT_ORIENTATION_LABEL"] = "Schnellteleport-Ausrichtung",
+    ["SETTINGS_MINIMAP_TELEPORT_FLYOUT_ORIENTATION_TOOLTIP"] = "Ob der Schnellteleport-Streifen seitlich oder nach oben bzw. unten vom Minimap-Button ausfährt.",
+    ["TELEPORT_FLYOUT_ORIENTATION_HORIZONTAL"] = "Waagerecht",
+    ["TELEPORT_FLYOUT_ORIENTATION_VERTICAL"] = "Senkrecht",
     ["MINIMAP_BUTTON_STYLE_LARGE"] = "Groß",
     ["MINIMAP_BUTTON_STYLE_NORMAL"] = "Normal",
     ["SETTINGS_WELCOME_MESSAGE_LABEL"]  = "Willkommensnachricht anzeigen",
     ["SETTINGS_WELCOME_MESSAGE_TOOLTIP"] = "Zeigt oder versteckt die Mythic Plus Tracker Willkommensnachricht beim Login.",
+    ["SETTINGS_BONUS_EVENT_ICON_LABEL"]   = "Bonusereignis-Icon anzeigen",
+    ["SETTINGS_BONUS_EVENT_ICON_TOOLTIP"] = "Zeigt im Kopfbereich des Trackerfensters ein Icon an, solange das wöchentliche Bonusereignis für mythische Dungeons aktiv ist.",
 }
 
 for key, value in pairs(locale) do

@@ -1,7 +1,7 @@
 ## Interface: 120100
 ## Title: |cFFA335EEMythic|r |cFFFF8000Plus Tracker|r
 ## Author: SanSebastiano
-## Version: 1.4.0
+## Version: 1.5.0
 
 ## Notes: Track Mythic+ (M+) keystones, dungeon runs, score, group members, and completion status — your at-a-glance mythic plus overview.
 ## Notes-deDE: Verfolgt deine Mythic+ (M+) Schlüsselsteine, Dungeon-Runs, Score, Gruppenmitglieder und den Abschlussstatus – dein Überblick für Mythic Plus.

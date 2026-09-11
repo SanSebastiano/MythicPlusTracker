@@ -132,37 +132,16 @@ end
 ---Persisted so it survives a UI reload; toggling re-renders the whole tab.
 ---@param frame Frame the tab's content panel
 local function createWeekFilterCheckbox(frame)
-    local checkbox = CreateFrame("CheckButton", nil, frame, "UICheckButtonTemplate")
-    checkbox:SetSize(WEEK_FILTER_ROW_H, WEEK_FILTER_ROW_H)
+    local checkbox = addon.createLabeledCheckbox(frame,
+        addon.locale["FILTER_CURRENT_WEEK_ONLY"],
+        WEEK_FILTER_ROW_H,
+        MythicPlusTrackerDB.overviewFilterCurrentWeek,
+        function(checked)
+            MythicPlusTrackerDB.overviewFilterCurrentWeek = checked
+            MPT_Dashboard:refreshDungeonsView()
+        end)
+
     checkbox:SetPoint("TOPRIGHT", MPT_Dashboard.navFrame, "BOTTOMRIGHT", -CONTENT_INSET, -NAV_BOTTOM_MARGIN)
-    checkbox:SetChecked(MythicPlusTrackerDB.overviewFilterCurrentWeek)
-
-    local function applyFilterChange(checked)
-        MythicPlusTrackerDB.overviewFilterCurrentWeek = checked
-        MPT_Dashboard:refreshDungeonsView()
-    end
-
-    checkbox:SetScript("OnClick", function(self)
-        applyFilterChange(self:GetChecked() == true)
-    end)
-
-    -- A plain FontString can't receive clicks, so the label is its own Button
-    -- (sized to the rendered text) to the checkbox's left — clicking the text
-    -- toggles the checkbox exactly like clicking the checkbox itself.
-    local labelButton = CreateFrame("Button", nil, frame)
-    labelButton:SetHeight(WEEK_FILTER_ROW_H)
-    labelButton:SetPoint("RIGHT", checkbox, "LEFT", -4, 0)
-
-    local labelText = labelButton:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    labelText:SetPoint("RIGHT", labelButton, "RIGHT", 0, 0)
-    labelText:SetText(addon.colors.POOR .. addon.locale["DUNGEON_CURRENT_WEEK_ONLY"] .. addon.colors.RESET)
-
-    labelButton:SetWidth(labelText:GetStringWidth())
-    labelButton:SetScript("OnClick", function()
-        local checked = not checkbox:GetChecked()
-        checkbox:SetChecked(checked)
-        applyFilterChange(checked)
-    end)
 end
 
 local function getDungeonScore(mapID, ri)

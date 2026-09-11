@@ -5,29 +5,25 @@ description: Looks up WoW API documentation for a specific function, method, nam
 
 # WoW API Lookup
 
-Fetches authoritative documentation from **warcraft.wiki.gg** for WoW Lua API functions, events, and namespaces.
+**warcraft.wiki.gg** is the source: prose, examples, patch history, and community notes on quirks and deprecations.
 
 ## Steps
 
-### Quick lookup (single item)
-
-Use the `web_fetch` tool or the shell script:
+### Quick lookup
 
 ```bash
 bash Tools/wow-api-lookup.sh <API_NAME>
 ```
 
-Examples:
 ```bash
 bash Tools/wow-api-lookup.sh C_MythicPlus.GetRunHistory
-bash Tools/wow-api-lookup.sh C_ChallengeMode.GetMapTable
 bash Tools/wow-api-lookup.sh CHALLENGE_MODE_MAPS_UPDATE
 bash Tools/wow-api-lookup.sh CreateFrame
 ```
 
-URL pattern: `https://warcraft.wiki.gg/wiki/<API_NAME>`
+The script resolves the page title itself. Worth knowing if you fetch by hand: the wiki puts API functions under an `API_` prefix (`API_C_ChallengeMode.GetMapTable`) but events under the bare name (`CHALLENGE_MODE_MAPS_UPDATE`).
 
-### Browsing
+### Browsing warcraft.wiki.gg
 
 - **Full API index**: https://warcraft.wiki.gg/wiki/World_of_Warcraft_API
 - **Events index**: https://warcraft.wiki.gg/wiki/Events
@@ -45,7 +41,6 @@ URL pattern: `https://warcraft.wiki.gg/wiki/<API_NAME>`
 
 ## Important Notes
 
-- This addon targets **Interface 120001** (Midnight expansion)
-- WoW uses **Lua 5.1** — standard library differences apply
-- Always verify on warcraft.wiki.gg — some APIs change between expansions
-- Deprecated APIs may still work but should be replaced with current equivalents
+- This addon targets **Interface 120100** (patch 12.1.0, Midnight) — see `MythicPlusTracker.toc`.
+- WoW uses **Lua 5.1** — standard library differences apply.
+- Deprecated APIs may still work but should be replaced with current equivalents.

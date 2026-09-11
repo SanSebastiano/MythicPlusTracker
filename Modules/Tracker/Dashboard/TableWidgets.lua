@@ -1,73 +1,5 @@
 local addonName, addon = ...
 
-local TELEPORT_ARTIFACT_R, TELEPORT_ARTIFACT_G, TELEPORT_ARTIFACT_B = addon.colorToRGB("ARTIFACT")
-
----Attaches a hover-glow + click-to-teleport button on top of a dungeon icon,
----using the season's known "Path of ..." spell for mapID (see
----Dashboard/DungeonTeleportCatalog.lua). Uses a SecureActionButtonTemplate so
----the protected spell cast is allowed to run directly from the click. Shared
----by DungeonsPage.lua and KeystonesPage.lua so both tabs behave identically.
----@param parent Frame the row/table frame the icon texture belongs to
----@param icon Texture the dungeon icon to brighten/glow on hover — secure
----frames can't anchor to a Texture, so the button is anchored to `parent`
----using the same x/y/size instead of to `icon` itself
----@param mapID number
----@param name string dungeon name, shown in the tooltip when no spell is known
----@param x number
----@param y number
----@param size number
----@return Button
-function addon.attachDungeonTeleportButton(parent, icon, mapID, name, x, y, size)
-    local glow = parent:CreateTexture(nil, "OVERLAY")
-    glow:SetAllPoints(icon)
-    glow:SetColorTexture(0.3, 0.6, 1, 1)
-    glow:SetBlendMode("ADD")
-    glow:Hide()
-
-    local glowAnim = glow:CreateAnimationGroup()
-    glowAnim:SetLooping("BOUNCE")
-    local glowFade = glowAnim:CreateAnimation("Alpha")
-    glowFade:SetFromAlpha(0.15)
-    glowFade:SetToAlpha(0.55)
-    glowFade:SetDuration(0.6)
-    glowFade:SetSmoothing("IN_OUT")
-
-    local teleport = addon.getDungeonTeleport(mapID)
-    local hasTeleport = teleport and C_SpellBook.IsSpellKnown(teleport.spellID)
-    local teleportBtn = CreateFrame("Button", nil, parent, "SecureActionButtonTemplate")
-    teleportBtn:SetSize(size, size)
-    teleportBtn:SetPoint("TOPLEFT", parent, "TOPLEFT", x, y)
-    teleportBtn:RegisterForClicks("AnyUp", "AnyDown")
-    if hasTeleport then
-        teleportBtn:SetAttribute("type", "spell")
-        teleportBtn:SetAttribute("spell", teleport.spellID)
-    end
-    teleportBtn:SetScript("OnEnter", function(self)
-        icon:SetVertexColor(1.15, 1.15, 1.15)
-        if hasTeleport then
-            glow:Show()
-            glowAnim:Play()
-        end
-        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        if hasTeleport then
-            GameTooltip:SetSpellByID(teleport.spellID)
-            GameTooltip:AddLine(addon.locale["DUNGEON_TELEPORT_TOOLTIP"], 0, 1, 0, true)
-        else
-            GameTooltip:AddLine(name, TELEPORT_ARTIFACT_R, TELEPORT_ARTIFACT_G, TELEPORT_ARTIFACT_B)
-            GameTooltip:AddLine(addon.locale["DUNGEON_TELEPORT_NOT_OWNED"], 1, 0.2, 0.2, true)
-        end
-        GameTooltip:Show()
-    end)
-    teleportBtn:SetScript("OnLeave", function()
-        icon:SetVertexColor(1, 1, 1)
-        glowAnim:Stop()
-        glow:Hide()
-        GameTooltip:Hide()
-    end)
-
-    return teleportBtn
-end
-
 ---Creates a single FontString table cell, shared by the Dashboard table views
 ---(Dungeons/Runs/Keystones) to avoid re-implementing the same cell layout per file.
 function addon.createTableCell(parent, x, y, w, h, text, font, justifyH, wordWrap)
@@ -144,10 +76,57 @@ function addon.createTableScrollbar(outerFrame, scrollFrame, rowHeight)
     -- defaults the pan extent to 30px, independent of this table's row height).
     scrollFrame:SetPanExtent(rowHeight * 3)
 
-    -- scrollChild is already sized/populated by the caller before this runs,
-    -- so force one range recalculation now — otherwise OnScrollRangeChanged
-    -- never fires and the thumb stays full-size.
+    -- The scrollbar learns its size exclusively from OnScrollRangeChanged, and
+    -- that only fires when the range actually changes. So the first range
+    -- change has to happen at or after this point: either the caller has
+    -- already sized scrollChild and this recalculation produces it, or the
+    -- caller sizes it afterwards and produces it then. What breaks is a caller
+    -- that calls UpdateScrollChildRect itself *before* wiring — the range is
+    -- then already final, the recalculation below is a no-op, no event fires,
+    -- and SetHideIfUnscrollable above hides the bar for good.
     scrollFrame:UpdateScrollChildRect()
 
     return scrollBar
+end
+
+---Creates a checkbox with a clickable text label to its left, for the filter
+---rows above the Dashboard tables. A plain FontString can't receive clicks, so
+---the label is its own Button (sized to the rendered text) — clicking the text
+---toggles the checkbox exactly like clicking the checkbox itself.
+---
+---The caller anchors the returned checkbox: the Overview and Runs tabs place
+---their filter rows differently. The size is a parameter for the same reason —
+---the Overview tab's row is deliberately squeezed (see the comment on its
+---WEEK_FILTER_ROW_H), the Runs tab's row has a dropdown's worth of height.
+---@param parent Frame
+---@param labelText string plain text; the coloring is applied here so both tabs match
+---@param size number edge length of the square checkbox, also the label's height
+---@param initialChecked boolean
+---@param onChanged function(checked) runs after every toggle, from either half
+---@return CheckButton
+function addon.createLabeledCheckbox(parent, labelText, size, initialChecked, onChanged)
+    local checkbox = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
+    checkbox:SetSize(size, size)
+    checkbox:SetChecked(initialChecked)
+
+    checkbox:SetScript("OnClick", function(self)
+        onChanged(self:GetChecked() == true)
+    end)
+
+    local labelButton = CreateFrame("Button", nil, parent)
+    labelButton:SetHeight(size)
+    labelButton:SetPoint("RIGHT", checkbox, "LEFT", -4, 0)
+
+    local label = labelButton:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    label:SetPoint("RIGHT", labelButton, "RIGHT", 0, 0)
+    label:SetText(addon.colors.POOR .. labelText .. addon.colors.RESET)
+
+    labelButton:SetWidth(label:GetStringWidth())
+    labelButton:SetScript("OnClick", function()
+        local checked = not checkbox:GetChecked()
+        checkbox:SetChecked(checked)
+        onChanged(checked)
+    end)
+
+    return checkbox
 end

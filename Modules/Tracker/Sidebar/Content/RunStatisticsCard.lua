@@ -10,20 +10,30 @@ local INSET     = 10
 local ARTIFACT_R, ARTIFACT_G, ARTIFACT_B = addon.colorToRGB("ARTIFACT")
 local RUNSSTATS_GAP = 8   -- gap after the previous card (Score)
 
-local TIERS = {
-    { label = "15+",     min = 15, max = math.huge },
-    { label = "12 – 14", min = 12, max = 14        },
-    { label = "10 – 11", min = 10, max = 11        },
-    { label = "7 – 9",   min = 7,  max = 9         },
-    { label = "4 – 6",   min = 4,  max = 6         },
-    { label = "2 – 3",   min = 2,  max = 3         },
-}
+-- Shared with the Runs tab's level filter so the two can't disagree about a
+-- boundary — the rows below are that filter's own buckets. Ascending there,
+-- rendered descending here.
+local LEVEL_BRACKETS = addon.RunsFilterService.LEVEL_BRACKETS
+
+local BRACKET_RANGE_SEPARATOR = " – "
+
+---@param bracket table one entry from addon.RunsFilterService.LEVEL_BRACKETS
+---@return string
+local function bracketLabel(bracket)
+    if bracket.max then
+        return bracket.min .. BRACKET_RANGE_SEPARATOR .. bracket.max
+    end
+    return bracket.min .. "+"
+end
 
 function MPT_Sidebar:loadRunStatistics(sidebar, cursor)
     addon.debugMessage("Loading sidebar: runs stats...")
 
     local runHistory = addon.RunHistoryService:getRuns()
 
+    -- Best Run intentionally ignores the Runs tab's filter: it is the season's
+    -- best and stays a fixed reference next to the filtered breakdown below.
+    -- Don't "fix" this to match.
     local bestRun = nil
     for _, run in ipairs(runHistory) do
         if not bestRun or (run.runScore or 0) > (bestRun.runScore or 0) then
@@ -92,6 +102,13 @@ function MPT_Sidebar:loadRunStatistics(sidebar, cursor)
         noRun:SetText(addon.colors.POOR .. addon.locale["SIDEBAR_RUNS_NO_RUNS"] .. addon.colors.RESET)
     end
 
+    -- Resolved before any frame code: only this header is filtered, so only it
+    -- says so. The Best Run banner above must keep its plain title.
+    local headerText = addon.locale["SIDEBAR_RUNS_TIER_HEADER"]
+    if addon.RunsFilterService:hasActiveFilter() then
+        headerText = string.format(addon.locale["SIDEBAR_RUNS_TIER_HEADER_FILTERED"], headerText)
+    end
+
     -- -----------------------------------------------------------------------
     -- "Timed Runs" section header  (fixed at titleY-108)
     -- Height 46 so the text has breathing room and the atlas isn't over-scaled.
@@ -108,7 +125,7 @@ function MPT_Sidebar:loadRunStatistics(sidebar, cursor)
     local headerLabel = headerFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     headerLabel:SetPoint("CENTER", headerFrame, "CENTER", 0, 0)
     headerLabel:SetTextColor(ARTIFACT_R, ARTIFACT_G, ARTIFACT_B, 1)
-    headerLabel:SetText(addon.locale["SIDEBAR_RUNS_TIER_HEADER"])
+    headerLabel:SetText(headerText)
 
     -- -----------------------------------------------------------------------
     -- Tier breakdown  (header bottom: headerY-46, 8px gap → titleY-162)
@@ -118,20 +135,21 @@ function MPT_Sidebar:loadRunStatistics(sidebar, cursor)
     local COL_SUCCESS = CONTENT_X + CONTENT_W - INSET
     local COL_TOTAL   = CONTENT_X + CONTENT_W - INSET - 48
 
-    local counts   = {}
-    local success  = {}
-    for _, tier in ipairs(TIERS) do
-        local total = 0
-        local won   = 0
-        for _, run in ipairs(runHistory) do
-            local lvl = run.level or 0
-            if lvl >= tier.min and lvl <= tier.max then
-                total = total + 1
-                if run.completed then won = won + 1 end
+    -- One pass, bucketed by the filter service's own bracket lookup, so the
+    -- boundaries can't drift from the Runs tab's dropdown. runHistory is the
+    -- shared cached table and is only read here — never sorted or mutated.
+    local counts  = {}
+    local success = {}
+    for _, run in ipairs(runHistory) do
+        if addon.RunsFilterService:isRunIncluded(run) then
+            local bracketKey = addon.RunsFilterService:getLevelBracketKey(run.level)
+            if bracketKey then
+                counts[bracketKey] = (counts[bracketKey] or 0) + 1
+                if run.completed then
+                    success[bracketKey] = (success[bracketKey] or 0) + 1
+                end
             end
         end
-        counts[tier.label]  = total
-        success[tier.label] = won
     end
 
     local sectionY = titleY - 162
@@ -171,8 +189,13 @@ function MPT_Sidebar:loadRunStatistics(sidebar, cursor)
 
     sectionY = sectionY - ROW_H - 2
 
-    for i, tier in ipairs(TIERS) do
-        if i > 1 then
+    -- Iterated backwards: LEVEL_BRACKETS is ascending (it is the filter's own
+    -- order), this table reads highest-first. The divider therefore sits above
+    -- every row except the first rendered one, which is the *last* index.
+    for i = #LEVEL_BRACKETS, 1, -1 do
+        local bracket = LEVEL_BRACKETS[i]
+
+        if i < #LEVEL_BRACKETS then
             local div = sidebar:CreateTexture(nil, "ARTWORK")
             div:SetPoint("TOPLEFT",  sidebar, "TOPLEFT",  CONTENT_X + INSET, sectionY)
             div:SetPoint("TOPRIGHT", sidebar, "TOPLEFT",  CONTENT_X + CONTENT_W - INSET, sectionY)
@@ -185,7 +208,7 @@ function MPT_Sidebar:loadRunStatistics(sidebar, cursor)
         labelFS:SetSize(LABEL_W, ROW_H)
         labelFS:SetJustifyH("LEFT")
         labelFS:SetJustifyV("MIDDLE")
-        labelFS:SetText(tier.label)
+        labelFS:SetText(bracketLabel(bracket))
         labelFS:SetTextColor(0.85, 0.85, 0.85, 1)
 
         local totalFS = sidebar:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
@@ -193,9 +216,9 @@ function MPT_Sidebar:loadRunStatistics(sidebar, cursor)
         totalFS:SetSize(40, ROW_H)
         totalFS:SetJustifyH("RIGHT")
         totalFS:SetJustifyV("MIDDLE")
-        totalFS:SetText(addon.colors.POOR .. tostring(counts[tier.label] or 0) .. addon.colors.RESET)
+        totalFS:SetText(addon.colors.POOR .. tostring(counts[bracket.key] or 0) .. addon.colors.RESET)
 
-        local won        = success[tier.label] or 0
+        local won        = success[bracket.key] or 0
         local wonColor   = won > 0 and addon.colors.ARTIFACT or addon.colors.POOR
         local successFS  = sidebar:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
         successFS:SetPoint("TOPRIGHT", sidebar, "TOPLEFT", COL_SUCCESS, sectionY)

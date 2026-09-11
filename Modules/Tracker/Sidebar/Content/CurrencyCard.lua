@@ -15,33 +15,45 @@ local SLOT_H    = ICON_SIZE + 4 + 16  -- icon + gap + amount text
 local CURRENCY_GAP = 20   -- gap after the previous card (TraitNodes)
 local HEADER_TO_CONTENT_GAP = MPT_Sidebar.LAYOUT.HEADER_TO_CONTENT_GAP
 
----Whether a currency has hit its cap (weekly or season-total, whichever
----applies) — verified against how the Plumber addon does this
----(CurrencyButtonMixin:Refresh in its Currency.lua): the season-earned
----formula and the official Blizzard queries are independent signals, OR'd
----together, not one a fallback for the other. That distinction matters for
----crests specifically: `quantity` (currently held) drops as crests get spent
----on upgrades, while `totalEarned` (this season's progress toward the cap,
----the same number the game's own tooltip shows) does not — a currency can
----read as season-capped in the tooltip while quantity is well below
----maxQuantity, which C_CurrencyInfo.PlayerHasMaxQuantity alone doesn't catch.
+---The progress value a currency's cap is measured against, paired with that
+---cap — the same pairing the game's own tooltip shows. `useTotalEarnedForMaxQty`
+---marks `maxQuantity` as a season-earned cap, which is what every crest uses:
+---progress is `totalEarned`, never `quantity`. The two drift apart in both
+---directions — `quantity` falls as crests get spent on upgrades, and it rises
+---above `totalEarned` for crests from sources that don't count toward the cap
+---(the crest exchange, for one) — so `quantity` is no measure of cap progress.
+---@param currency table result of C_CurrencyInfo.GetCurrencyInfo
+---@return number|nil earned, number|nil cap
+local function getEarnedAndCap(currency)
+    if currency.useTotalEarnedForMaxQty and (currency.maxQuantity or 0) > 0 then
+        return currency.totalEarned or 0, currency.maxQuantity
+    end
+    if (currency.maxWeeklyQuantity or 0) > 0 then
+        return currency.quantityEarnedThisWeek or 0, currency.maxWeeklyQuantity
+    end
+    if (currency.maxQuantity or 0) > 0 then
+        return currency.quantity or 0, currency.maxQuantity
+    end
+end
+
 ---@param currency table result of C_CurrencyInfo.GetCurrencyInfo
 ---@param currencyId number
 ---@return boolean
 local function isCurrencyCapped(currency, currencyId)
-    local quantity    = currency.quantity or 0
-    local totalEarned = currency.totalEarned or 0
-    local maxQuantity = currency.maxQuantity or 0
-
-    local formulaCapped = quantity > 0 and maxQuantity > 0
-        and ((maxQuantity - totalEarned == 0) or quantity >= maxQuantity)
-
-    local apiCapped = false
-    if C_CurrencyInfo.PlayerHasMaxWeeklyQuantity and C_CurrencyInfo.PlayerHasMaxQuantity then
-        apiCapped = C_CurrencyInfo.PlayerHasMaxWeeklyQuantity(currencyId) or C_CurrencyInfo.PlayerHasMaxQuantity(currencyId)
+    local earned, cap = getEarnedAndCap(currency)
+    if earned and cap then
+        return earned >= cap
     end
 
-    return formulaCapped or apiCapped
+    -- No usable cap on the info table: let Blizzard answer. These queries are
+    -- an alternative to the comparison above, not an additional signal — the
+    -- Plumber addon treats them the same way (API.IsCurrencyFullyEarned) — so
+    -- OR-ing them in would only risk reintroducing a cap the tooltip denies.
+    if C_CurrencyInfo.PlayerHasMaxWeeklyQuantity and C_CurrencyInfo.PlayerHasMaxQuantity then
+        return C_CurrencyInfo.PlayerHasMaxWeeklyQuantity(currencyId) or C_CurrencyInfo.PlayerHasMaxQuantity(currencyId)
+    end
+
+    return false
 end
 
 local function loadCurrency(frame, currencyId, index)

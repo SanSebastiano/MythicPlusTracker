@@ -2,7 +2,23 @@
 
 All notable changes to MythicPlusTracker are documented here.
 
-## [1.4.0] - UNRELEASED
+## [1.5.0] - 2026-09-11
+
+### Added
+- **Quick teleport strip at the minimap button.** Hovering the button unrolls a strip of the season dungeons you own the "Path of ..." teleport for — click an icon to cast it. Unrolls sideways or vertically; switch it off or change its delay under Settings → Minimap.
+- **"Current week only" filter in the Runs tab.** A checkbox next to the filter dropdowns limits the run list, and with it the Sidebar's Timed Runs breakdown, to the current reset week. Unlike the three dropdowns it is not remembered — it starts cleared on every login.
+- **Bonus event indicator in the tracker window's header.** During a Mythic dungeon bonus event week, an icon in the tab bar shows the *Emissary of War* quest state — still to do, ready to hand in, or done. Can be switched off under Settings → Dashboard.
+
+### Changed
+- **The Sidebar's Timed Runs breakdown now follows the Runs tab's filters**, and its header reads "Timed Runs (filtered)" while one is active. Best Run and the score above it stay season-wide.
+
+### Fixed
+- **The "default to the Keystones tab in a group" setting never did anything.** Its value was never saved, in any version since 1.4.0 — please set it once more after updating. Opening that way now also switches to the Group view, without overwriting your saved choice.
+- **The debug mode checkbox showed as off after every login**, even while debug mode was on. Same cause as above.
+- **The Runs tab had no scrollbar until a filter was touched.** Regression from 1.4.0.
+- **Crest currency amounts in the Sidebar turned green before the season cap was reached.** The check now uses only cap-relevant progress instead of the currently-held quantity.
+
+## [1.4.0] - 2026-09-08
 
 ### Added
 - **"Current week only" filter in the Overview tab.** A new checkbox above the table (clicking its label toggles it too) limits Runs, Success, and Best Time to what was completed since the last weekly reset. Level and Score are unaffected, since those reflect Blizzard's season-wide best rather than the local run history.

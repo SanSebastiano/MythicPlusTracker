@@ -16,6 +16,7 @@ local locale = {
     ["MINIMAP_BUTTON_CLICK_RIGHT"] = "Clic derecho: Abrir la Gran Bóveda",
     ["MINIMAP_BUTTON_DRAG"] = "Arrastrar: Mover a lo largo del borde del minimapa (Mayús+Arrastrar: Mover libremente)",
     ["MINIMAP_BUTTON_DRAG_NORMAL"] = "Arrastrar: Mover a lo largo del borde del minimapa",
+    ["MINIMAP_BUTTON_TELEPORT_FLYOUT"] = "Teletransporte rápido: Se despliega tras %s",
     -- Mythic Plus specific messages
     ["KEYSTONE_UPGRADED"] = "¡Llave mítica mejorada al nivel %d!",
     ["KEYSTONE_DEPLETED"] = "Llave mítica agotada.",
@@ -63,7 +64,8 @@ local locale = {
     ["DUNGEON_TOOLTIP_TIME_LIMIT"] = "Límite de tiempo",
     ["DUNGEON_TELEPORT_TOOLTIP"] = "Haz clic para teletransportarte",
     ["DUNGEON_TELEPORT_NOT_OWNED"] = "No se conoce ni se posee ningún juguete de teletransporte para esta mazmorra",
-    ["DUNGEON_CURRENT_WEEK_ONLY"] = "Solo la semana actual",
+    -- Shared by the Overview and Runs tabs' filter rows
+    ["FILTER_CURRENT_WEEK_ONLY"] = "Solo la semana actual",
     -- Overview summary boxes
     ["DASHBOARD_SUMMARY_HIGHEST_KEY"]   = "Llave más alta",
     ["DASHBOARD_SUMMARY_TOTAL_RUNS"]    = "Mazmorras totales",
@@ -94,6 +96,7 @@ local locale = {
     ["SIDEBAR_RUNS_BEST_RUN"]    = "Mejor mazmorra",
     ["SIDEBAR_RUNS_NO_RUNS"]     = "Ninguna mazmorra M+ superada aún.",
     ["SIDEBAR_RUNS_TIER_HEADER"] = "Mazmorras a tiempo",
+    ["SIDEBAR_RUNS_TIER_HEADER_FILTERED"] = "%s (filtrado)",
     ["SIDEBAR_GROUP_HEADER"]     = "Grupo",
     ["SIDEBAR_GROUP_NO_MEMBERS"] = "Actualmente no estás en un grupo.",
     -- Sidebar: Statistics tab (Keystones)
@@ -118,9 +121,19 @@ local locale = {
     ["KEYSTONES_ALTS_NEXT_UPDATE"] = "Próxima actualización al completar una mazmorra, iniciar sesión/cambiar de zona, o intercambiar la llave",
     ["TIME_UNKNOWN"]     = "desconocido",
     ["TIME_JUST_NOW"]    = "justo ahora",
+    ["FORMAT_SECONDS"] = "%s s",
     ["TIME_MINUTES_AGO"] = "hace %d min.",
     ["TIME_HOURS_AGO"]   = "hace %d h",
     ["TIME_DAYS_AGO"]    = "hace %d días",
+    -- Dungeon bonus event
+    ["BONUS_EVENT_TOOLTIP_TITLE"]   = "Evento de bonificación de mazmorras",
+    ["BONUS_EVENT_ACTIVE"]          = "El evento de bonificación de esta semana recompensa las mazmorras míticas.",
+    ["BONUS_EVENT_QUEST_LABEL"]     = "Misión semanal: %s",
+    ["BONUS_EVENT_QUEST_LOADING"]   = "cargando…",
+    ["BONUS_EVENT_QUEST_AVAILABLE"] = "Disponible en el archimago Aethas Cosechasol en Ciudad de Lunargenta.",
+    ["BONUS_EVENT_QUEST_COMPLETED"] = "Ya completada esta semana.",
+    ["BONUS_EVENT_QUEST_TURN_IN"]   = "Lista para entregar.",
+    ["BONUS_EVENT_QUEST_PROGRESS"]  = "%d/%d completadas",
     -- Settings panel
     ["SETTINGS_CATEGORY_NAME"]         = "Mythic Plus Tracker",
     ["SETTINGS_SECTION_GENERAL_LABEL"] = "General",
@@ -134,10 +147,20 @@ local locale = {
     ["SETTINGS_MINIMAP_BUTTON_TOOLTIP"] = "Muestra u oculta el botón del minimapa de Mythic Plus Tracker.",
     ["SETTINGS_MINIMAP_BUTTON_STYLE_LABEL"] = "Estilo del botón del minimapa",
     ["SETTINGS_MINIMAP_BUTTON_STYLE_TOOLTIP"] = "Elige entre el botón grande movible libremente o un botón normal movible solo por el borde del minimapa.",
+    ["SETTINGS_MINIMAP_TELEPORT_FLYOUT_LABEL"] = "Teletransporte rápido del minimapa",
+    ["SETTINGS_MINIMAP_TELEPORT_FLYOUT_TOOLTIP"] = "Pasa el cursor sobre el minimapa para desplegar una barra con las mazmorras de la temporada cuyo teletransporte posees. Haz clic en un icono para teletransportarte.",
+    ["SETTINGS_MINIMAP_TELEPORT_FLYOUT_DELAY_LABEL"] = "Retardo del teletransporte",
+    ["SETTINGS_MINIMAP_TELEPORT_FLYOUT_DELAY_TOOLTIP"] = "Cuánto tiempo hay que mantener el cursor sobre el minimapa antes de que se despliegue la barra de teletransporte rápido, en segundos.",
+    ["SETTINGS_MINIMAP_TELEPORT_FLYOUT_ORIENTATION_LABEL"] = "Orientación del teletransporte",
+    ["SETTINGS_MINIMAP_TELEPORT_FLYOUT_ORIENTATION_TOOLTIP"] = "Si la barra de teletransporte rápido se despliega en horizontal o en vertical desde el botón del minimapa.",
+    ["TELEPORT_FLYOUT_ORIENTATION_HORIZONTAL"] = "Horizontal",
+    ["TELEPORT_FLYOUT_ORIENTATION_VERTICAL"] = "Vertical",
     ["MINIMAP_BUTTON_STYLE_LARGE"] = "Grande",
     ["MINIMAP_BUTTON_STYLE_NORMAL"] = "Normal",
     ["SETTINGS_WELCOME_MESSAGE_LABEL"]  = "Mostrar mensaje de bienvenida",
     ["SETTINGS_WELCOME_MESSAGE_TOOLTIP"] = "Muestra u oculta el mensaje de bienvenida de Mythic Plus Tracker al iniciar sesión.",
+    ["SETTINGS_BONUS_EVENT_ICON_LABEL"]   = "Mostrar icono de evento de bonificación",
+    ["SETTINGS_BONUS_EVENT_ICON_TOOLTIP"] = "Muestra un icono en la cabecera de la ventana del tracker mientras el evento de bonificación semanal de mazmorras míticas está activo.",
 }
 
 for key, value in pairs(locale) do

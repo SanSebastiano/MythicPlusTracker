@@ -15,10 +15,26 @@ addon.KeystoneEntryService.MODES = {
 
 local MODES = addon.KeystoneEntryService.MODES
 
----The Keystones tab's active view. Anything unrecognised (including nil on a
----fresh install) resolves to Group.
+-- A view forced by the situation rather than chosen: the Dashboard sets this to
+-- Group when it auto-opens on the Keystones tab because the player is in a
+-- group. Deliberately not persisted — it describes where the player is right
+-- now, not what they configured, and must not outlive the session.
+local modeOverride
+
+-- Set the moment someone uses the dropdown. From then on the automatic opening
+-- stops forcing a view for the rest of the session, so a deliberate choice
+-- can't be taken away again on the next open.
+local modeChosenByUser = false
+
+---The Keystones tab's active view, shared by the table, the dropdown and the
+---Sidebar's statistics card so the three can't disagree. Anything unrecognised
+---(including nil on a fresh install) resolves to Group.
 ---@return string mode one of MODES
 function addon.KeystoneEntryService:getActiveMode()
+    if modeOverride then
+        return modeOverride
+    end
+
     local storedMode = MythicPlusTrackerDB.keystonesTabMode
     if storedMode == MODES.ALTS or storedMode == MODES.GUILD then
         return storedMode
@@ -26,9 +42,30 @@ function addon.KeystoneEntryService:getActiveMode()
     return MODES.GROUP
 end
 
+---Forces a view without storing it, for the Dashboard's automatic open in a
+---group. Passing nil drops the override — the Dashboard does that on every
+---open that isn't the group case, which is what keeps the forced view from
+---outlasting the group.
+---
+---A view the player picked themselves wins: once that has happened, this is
+---ignored for the rest of the session.
+---@param mode string|nil one of MODES, or nil to drop the override
+function addon.KeystoneEntryService:setModeOverride(mode)
+    if modeChosenByUser then
+        modeOverride = nil
+        return
+    end
+
+    modeOverride = mode
+end
+
+---The dropdown's path. Stores the choice and stands down the override, so the
+---selection takes effect immediately and isn't undone by the next auto-open.
 ---@param mode string one of MODES
 function addon.KeystoneEntryService:setActiveMode(mode)
     MythicPlusTrackerDB.keystonesTabMode = mode
+    modeChosenByUser = true
+    modeOverride = nil
 end
 
 ---Resolves the keystone known for one group unit, plus whether that member is

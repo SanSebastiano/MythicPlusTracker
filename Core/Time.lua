@@ -10,6 +10,21 @@ function addon.formatMinutesSeconds(seconds)
     return string.format("%d:%02d", math.floor(seconds / 60), seconds % 60)
 end
 
+---Formats a short, possibly fractional duration with its unit, for settings
+---and tooltips that talk about a hover delay. Trailing zeros are dropped so a
+---whole number reads as "2 Sek." rather than "2.00 Sek." — the slider's step is
+---a quarter second, so at most two decimals ever survive. The separator stays
+---the C locale's dot; WoW does not expose a localized decimal mark.
+---@param seconds number
+---@return string
+function addon.formatSeconds(seconds)
+    -- gsub in parentheses: it returns the replacement count as a second value,
+    -- which would otherwise ride along into string.format as a stray argument.
+    local amount = (string.format("%.2f", seconds):gsub("%.?0+$", ""))
+
+    return string.format(addon.locale["FORMAT_SECONDS"], amount)
+end
+
 ---Start of the current weekly-reset week, as a time() timestamp. Computed as
 ---the next reset (via the Blizzard API that also drives quest/vault reset
 ---countdowns) minus 7 days, so it works regardless of region/reset weekday.

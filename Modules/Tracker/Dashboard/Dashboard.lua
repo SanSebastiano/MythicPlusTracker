@@ -80,6 +80,10 @@ local function create(mainFrame)
 
         addon.debugMessage("Dashboard Frame OnShow")
 
+        -- Ahead of the max-level guard below, so the icon is also correctly
+        -- hidden on the not-max-level page.
+        MPT_Dashboard:refreshBonusEventIcon()
+
         if not addon.Player:isMaxLevel() then
             MPT_Dashboard:setActiveNavTab(MPT_Tracker.TABS.OVERVIEW)
             MPT_Dashboard:loadNotMaxLevel(contentWrapper)
@@ -90,9 +94,17 @@ local function create(mainFrame)
         MPT_Dashboard:setActiveNavTab(defaultTab)
 
         if defaultTab == MPT_Tracker.TABS.KEYSTONES then
+            -- Landing on the Keystones tab while the dropdown still says Alts
+            -- would defeat the setting's whole point, so the group view comes
+            -- along. Set before the content is built: the table, the dropdown
+            -- and the Sidebar all read the mode as they render.
+            addon.KeystoneEntryService:setModeOverride(addon.KeystoneEntryService.MODES.GROUP)
             showContent(MPT_Dashboard.loadKeystones)
             MPT_Sidebar:showForTab(MPT_Tracker.TABS.KEYSTONES)
         else
+            -- Every open re-decides, so dropping the override here is what keeps
+            -- the forced group view from outliving the group itself.
+            addon.KeystoneEntryService:setModeOverride(nil)
             showContent(MPT_Dashboard.loadDungeons)
             MPT_Sidebar:showForTab(MPT_Tracker.TABS.OVERVIEW)
         end

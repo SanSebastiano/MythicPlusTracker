@@ -13,7 +13,10 @@
 
 set -euo pipefail
 
-if [ -z "${1-}" ]; then
+WIKI_BASE="https://warcraft.wiki.gg/wiki"
+USER_AGENT="MythicPlusTracker-api-lookup (addon development, single on-demand lookup)"
+
+usage() {
     echo "Usage: $0 <API_function_or_event>"
     echo ""
     echo "Examples:"
@@ -22,49 +25,92 @@ if [ -z "${1-}" ]; then
     echo "  $0 CHALLENGE_MODE_MAPS_UPDATE"
     echo "  $0 CreateFrame"
     echo ""
-    echo "Full API index: https://warcraft.wiki.gg/wiki/World_of_Warcraft_API"
+    echo "Full API index: $WIKI_BASE/World_of_Warcraft_API"
+}
+
+QUERY=""
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        -h|--help)
+            usage
+            exit 0
+            ;;
+        *)
+            QUERY="$1"
+            shift
+            ;;
+    esac
+done
+
+if [ -z "$QUERY" ]; then
+    usage
     exit 1
 fi
 
-QUERY="$1"
-# warcraft.wiki.gg uses the function name as the page title (dots preserved)
-URL="https://warcraft.wiki.gg/wiki/${QUERY}"
-
-echo "=== WoW API Lookup: $QUERY ==="
-echo "URL: $URL"
-echo ""
-
-# Fetch the page and extract readable text by stripping HTML tags.
-# Requires: curl (standard on Linux/macOS; available via Git Bash on Windows)
 if ! command -v curl &>/dev/null; then
-    echo "curl not found. Open the URL above in your browser."
+    echo "curl not found — install it, or open the documentation in a browser."
     exit 0
 fi
 
-RAW=$(curl -sL --max-time 10 "$URL" 2>/dev/null) || {
-    echo "Could not fetch page (network error or page not found)."
-    echo "Open: $URL"
-    exit 0
+# Strips HTML tags and entities, collapses blank lines. Rough but readable.
+strip_html() {
+    sed 's/<style[^>]*>.*<\/style>//gI' \
+        | sed 's/<script[^>]*>.*<\/script>//gI' \
+        | sed 's/<[^>]*>//g' \
+        | sed 's/&lt;/</g; s/&gt;/>/g; s/&amp;/\&/g; s/&nbsp;/ /g; s/&#[0-9]*;//g' \
+        | sed '/^[[:space:]]*$/d' \
+        | sed 's/^[[:space:]]*//'
 }
 
-# Check for "page does not exist" response
-if echo "$RAW" | grep -q "does not exist"; then
-    echo "Page not found on warcraft.wiki.gg."
+lookup_wiki() {
+    # Page titles keep the dots but differ by symbol kind: API functions live
+    # under an "API_" prefix (API_C_ChallengeMode.GetMapTable), events do not
+    # (CHALLENGE_MODE_MAPS_UPDATE, where the prefixed title 404s). Try the
+    # prefix first — the bare title can be a redirect stub with no content.
+    local candidates=("API_${QUERY}" "${QUERY}")
+
+    echo "=== WoW API Lookup: $QUERY (warcraft.wiki.gg) ==="
     echo ""
-    echo "Try searching: https://warcraft.wiki.gg/index.php?search=${QUERY}"
-    exit 0
-fi
 
-# Strip HTML tags, collapse whitespace, remove blank lines, show first 80 lines.
-# This gives a rough but useful text dump of the page content.
-echo "$RAW" \
-    | sed 's/<style[^>]*>.*<\/style>//gI' \
-    | sed 's/<script[^>]*>.*<\/script>//gI' \
-    | sed 's/<[^>]*>//g' \
-    | sed 's/&lt;/</g; s/&gt;/>/g; s/&amp;/\&/g; s/&nbsp;/ /g; s/&#[0-9]*;//g' \
-    | sed '/^[[:space:]]*$/d' \
-    | sed 's/^[[:space:]]*//' \
-    | head -80
+    local url="" code candidate
+    for candidate in "${candidates[@]}"; do
+        code=$(curl -sL -o /dev/null --max-time 10 -A "$USER_AGENT" \
+                    -w '%{http_code}' "${WIKI_BASE}/${candidate}" 2>/dev/null) || code="000"
+        if [ "$code" = "200" ]; then
+            url="${WIKI_BASE}/${candidate}"
+            break
+        fi
+    done
 
-echo ""
-echo "Full page: $URL"
+    if [ -z "$url" ]; then
+        echo "Page not found on warcraft.wiki.gg (tried '${QUERY}' and 'API_${QUERY}')."
+        echo ""
+        echo "Try searching: https://warcraft.wiki.gg/index.php?search=${QUERY}"
+        exit 0
+    fi
+
+    echo "URL: $url"
+    echo ""
+
+    local raw
+    raw=$(curl -sL --max-time 10 -A "$USER_AGENT" "$url" 2>/dev/null) || {
+        echo "Could not fetch page (network error)."
+        echo "Open: $url"
+        exit 0
+    }
+
+    # MediaWiki wraps the article in mw-parser-output and ends it at
+    # printfooter. Everything outside that is chrome and inline scripts, which
+    # survive tag stripping and would bury the signature.
+    echo "$raw" \
+        | sed -n '/mw-parser-output/,/printfooter/p' \
+        | strip_html \
+        | sed -e '/NewPP limit report/,$d' -e '/^<!--/d' \
+        | head -80
+
+    echo ""
+    echo "Full page: $url"
+}
+
+lookup_wiki

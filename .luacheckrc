@@ -50,6 +50,7 @@ globals = {
     -- -----------------------------------------------------------------------
     "MPT_Dashboard",
     "MPT_MinimapButton",
+    "MPT_MinimapTeleportFlyout",
     "MPT_Settings",
     "MPT_Sidebar",
     "MPT_Tracker",
@@ -91,6 +92,8 @@ globals = {
     "C_Traits",
     "C_DateAndTime",
     "C_GuildInfo",
+    "C_QuestLog",
+    "C_UnitAuras",
     "Enum",
 
     -- -----------------------------------------------------------------------
@@ -103,6 +106,8 @@ globals = {
     -- WoW modern Settings API
     -- -----------------------------------------------------------------------
     "Settings",
+    -- Supplies the Label enum the delay slider's value formatter is keyed on.
+    "MinimalSliderWithSteppersMixin",
 
     -- -----------------------------------------------------------------------
     -- WoW modern scroll framework (MinimalScrollBar wiring)
@@ -110,9 +115,15 @@ globals = {
     "ScrollUtil",
 
     -- -----------------------------------------------------------------------
+    -- WoW nine-slice border framework
+    -- -----------------------------------------------------------------------
+    "NineSliceUtil",
+
+    -- -----------------------------------------------------------------------
     -- WoW combat / input state
     -- -----------------------------------------------------------------------
     "InCombatLockdown",
+    "RegisterStateDriver",
     "GetCursorPosition",
     "IsShiftKeyDown",
 
