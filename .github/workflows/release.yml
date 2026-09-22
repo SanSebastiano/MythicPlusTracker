@@ -45,6 +45,22 @@ jobs:
           echo "$NOTES" >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
 
+      - name: Verify .toc version matches CHANGELOG.md
+        env:
+          VERSION: ${{ steps.changelog.outputs.version }}
+        run: |
+          # Nothing else compares these two: Tools/toc-validator.sh only checks that the
+          # files referenced by the .toc exist. A mismatch ships a package that reports a
+          # different version in-game than the release it came from.
+          # tr -d '\r' because the .toc is the very file that once carried CRLF locally.
+          TOC_VERSION=$(grep -m1 '^## Version:' MythicPlusTracker.toc | sed 's/^## Version:[[:space:]]*//' | tr -d '\r')
+          if [ "$TOC_VERSION" != "$VERSION" ]; then
+            echo "ERROR: version mismatch — MythicPlusTracker.toc says '$TOC_VERSION', CHANGELOG.md says '$VERSION'."
+            echo "Bump the .toc before merging into main."
+            exit 1
+          fi
+          echo "Version $VERSION confirmed in both files."
+
       - name: Check if tag already exists
         id: tag_check
         env:
@@ -57,6 +73,29 @@ jobs:
           else
             echo "skip=false" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Build installable addon package
+        id: package
+        if: steps.tag_check.outputs.skip == 'false'
+        env:
+          VERSION: ${{ steps.changelog.outputs.version }}
+        run: |
+          # --prefix is the whole point: GitHub's own source archive unpacks to
+          # MythicPlusTracker-<version>/, and WoW only loads an addon whose folder name
+          # matches the .toc. git archive also honours the export-ignore rules from
+          # .gitattributes, so there is no second file list to keep in sync here.
+          ZIP="MythicPlusTracker-$VERSION.zip"
+          git archive --format=zip --prefix=MythicPlusTracker/ -o "$ZIP" HEAD
+
+          # Guard against an export-ignore rule that excludes too much — without the .toc
+          # at that exact path the archive is not an addon at all.
+          if ! unzip -l "$ZIP" | grep -qF 'MythicPlusTracker/MythicPlusTracker.toc'; then
+            echo "ERROR: $ZIP has no MythicPlusTracker/MythicPlusTracker.toc — check the export-ignore rules in .gitattributes."
+            exit 1
+          fi
+
+          unzip -l "$ZIP"
+          echo "zip=$ZIP" >> "$GITHUB_OUTPUT"
 
       - name: Create tag
         if: steps.tag_check.outputs.skip == 'false'
@@ -75,13 +114,28 @@ jobs:
           TAG: ${{ steps.changelog.outputs.tag }}
           PRERELEASE: ${{ steps.changelog.outputs.prerelease }}
           NOTES: ${{ steps.changelog.outputs.notes }}
+          ZIP: ${{ steps.package.outputs.zip }}
         run: |
           PRERELEASE_FLAG=""
           if [ "$PRERELEASE" = "true" ]; then
             PRERELEASE_FLAG="--prerelease"
           fi
+
+          # GitHub always attaches its own "Source code" archives and there is no way to
+          # hide them, so the notes have to point at the installable download. Written to
+          # a file rather than passed via --notes: the body is multi-line markdown.
+          {
+            echo "**Download \`$ZIP\`** and extract it into your \`Interface/AddOns\` folder."
+            echo "The \"Source code\" archives below are not directly installable — they unpack to a version-suffixed folder name that WoW does not load."
+            echo
+            echo "---"
+            echo
+            echo "$NOTES"
+          } > release-notes.md
+
           gh release create "$TAG" \
             --title "$TAG" \
-            --notes "$NOTES" \
+            --notes-file release-notes.md \
             $PRERELEASE_FLAG \
-            --repo "${{ github.repository }}"
+            --repo "${{ github.repository }}" \
+            "$ZIP"
