@@ -157,9 +157,11 @@ function MPT_Sidebar:loadKeystoneStatistics(sidebar, cursor)
     elseif mode == MODES.GUILD then
         headerText, emptyText = addon.locale["KEYSTONES_MODE_GUILD"], addon.locale["KEYSTONES_GUILD_EMPTY"]
         addon.GuildKeystoneService:requestKeystones()
+        addon.ExternalKeystoneService:requestKeystones("GUILD")
     else
         headerText, emptyText = addon.locale["SIDEBAR_GROUP_HEADER"], nil
         addon.GroupKeystoneService:requestKeystones()
+        addon.ExternalKeystoneService:requestKeystones("PARTY")
     end
 
     renderStatsSection(sidebar, cursor, headerText,

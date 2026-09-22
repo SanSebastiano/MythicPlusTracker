@@ -69,26 +69,71 @@ function addon.KeystoneEntryService:setActiveMode(mode)
 end
 
 ---Resolves the keystone known for one group unit, plus whether that member is
----known to run MythicPlusTracker at all. The local player is read straight
----from the API — own data is always known, no addon message needed.
+---known to run a keystone-sharing addon at all. The local player is read
+---straight from the API — own data is always known, no addon message needed.
+---
+---MythicPlusTracker's own sync always wins. LibKeystone only fills members this
+---addon hasn't heard from, so a member running both addons keeps the native
+---entry and stays unmarked in the table.
+---
+---externalSourceTimestamp carries both facts the table needs about an external
+---value: that it is one at all, and when it arrived. A single field instead of a
+---boolean plus a timestamp that could drift apart — GetServerTime() is never 0,
+---so "set" and "external" mean the same thing.
 ---@param unitToken string
 ---@param fullPlayerName string|nil
----@return number|nil mapID
----@return number|nil level
----@return boolean hasAddon
----@return number|nil score
+---@return table keystone { mapID, level, hasAddon, score, externalSourceTimestamp }
 local function resolveKeystoneForUnit(unitToken, fullPlayerName)
     if unitToken == "player" then
-        return C_MythicPlus.GetOwnedKeystoneChallengeMapID(), C_MythicPlus.GetOwnedKeystoneLevel(), true,
-            C_ChallengeMode.GetOverallDungeonScore()
+        return {
+            mapID    = C_MythicPlus.GetOwnedKeystoneChallengeMapID(),
+            level    = C_MythicPlus.GetOwnedKeystoneLevel(),
+            hasAddon = true,
+            score    = C_ChallengeMode.GetOverallDungeonScore(),
+        }
     end
 
-    local receivedKeystone = fullPlayerName and addon.GroupKeystoneService:getKeystone(fullPlayerName)
-    if not receivedKeystone then
-        return nil, nil, false, nil
+    if not fullPlayerName then
+        return { hasAddon = false }
     end
 
-    return receivedKeystone.mapID, receivedKeystone.level, receivedKeystone.hasAddon == true, receivedKeystone.score
+    local receivedKeystone = addon.GroupKeystoneService:getKeystone(fullPlayerName)
+    if receivedKeystone then
+        return {
+            mapID    = receivedKeystone.mapID,
+            level    = receivedKeystone.level,
+            hasAddon = receivedKeystone.hasAddon == true,
+            score    = receivedKeystone.score,
+        }
+    end
+
+    local externalKeystone = addon.ExternalKeystoneService:getKeystone(fullPlayerName)
+    if externalKeystone then
+        return {
+            mapID                   = externalKeystone.mapID,
+            level                   = externalKeystone.level,
+            hasAddon                = true,
+            score                   = externalKeystone.score,
+            externalSourceTimestamp = externalKeystone.timestamp,
+        }
+    end
+
+    return { hasAddon = false }
+end
+
+---Orders guild rows the way that view presents them by default: highest
+---keystone first, no-key and unknown members last, ties by name.
+---@param entries table
+---@return table entries
+local function sortByKeystoneLevelThenName(entries)
+    table.sort(entries, function(a, b)
+        if (a.level or 0) ~= (b.level or 0) then
+            return (a.level or 0) > (b.level or 0)
+        end
+        return (a.name or "") < (b.name or "")
+    end)
+
+    return entries
 end
 
 ---Normalized entry list for the live group roster, in the same shape the Alts
@@ -104,22 +149,49 @@ function addon.KeystoneEntryService:getGroupEntries()
         if UnitExists(unitToken) then
             local fullPlayerName = addon.GroupKeystoneService:getFullPlayerName(unitToken)
             local _, englishClass = UnitClass(unitToken)
-            local mapID, level, hasAddon, score = resolveKeystoneForUnit(unitToken, fullPlayerName)
+            local keystone = resolveKeystoneForUnit(unitToken, fullPlayerName)
 
             table.insert(entries, {
-                unitToken   = unitToken,
-                name        = UnitName(unitToken) or fullPlayerName or "?",
-                class       = englishClass,
-                mapID       = mapID,
-                level       = level,
-                hasAddon    = hasAddon,
-                score       = score,
-                dungeonName = mapID and (C_ChallengeMode.GetMapUIInfo(mapID)),
+                unitToken               = unitToken,
+                name                    = UnitName(unitToken) or fullPlayerName or "?",
+                class                   = englishClass,
+                mapID                   = keystone.mapID,
+                level                   = keystone.level,
+                hasAddon                = keystone.hasAddon,
+                score                   = keystone.score,
+                externalSourceTimestamp = keystone.externalSourceTimestamp,
+                dungeonName             = keystone.mapID and (C_ChallengeMode.GetMapUIInfo(keystone.mapID)),
             })
         end
     end
 
     return entries
+end
+
+---Guild entries with LibKeystone data layered over the members
+---MythicPlusTracker itself hasn't heard from, on the same "native data wins"
+---rule as the group view.
+---
+---Sorting happens here rather than in GuildKeystoneService:getEntries because
+---the external data changes the very keystone levels the order is based on.
+---@return table entries
+function addon.KeystoneEntryService:getGuildEntries()
+    local entries = addon.GuildKeystoneService:getEntries()
+
+    for _, entry in ipairs(entries) do
+        if not entry.hasAddon then
+            local externalKeystone = addon.ExternalKeystoneService:getKeystone(entry.name .. "-" .. entry.realm)
+            if externalKeystone then
+                entry.mapID                   = externalKeystone.mapID
+                entry.level                   = externalKeystone.level
+                entry.score                   = externalKeystone.score
+                entry.hasAddon                = true
+                entry.externalSourceTimestamp = externalKeystone.timestamp
+            end
+        end
+    end
+
+    return sortByKeystoneLevelThenName(entries)
 end
 
 ---Entries for whichever mode the Keystones tab currently shows. Callers that
@@ -132,7 +204,7 @@ function addon.KeystoneEntryService:getEntriesForActiveMode()
     if mode == MODES.ALTS then
         return addon.AltKeystoneService:getEntries()
     elseif mode == MODES.GUILD then
-        return addon.GuildKeystoneService:getEntries()
+        return self:getGuildEntries()
     end
 
     return self:getGroupEntries()

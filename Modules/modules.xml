@@ -6,12 +6,14 @@
 
     <Script file='Tracker\DungeonTeleportCatalog.lua'/>
     <Script file='Tracker\DungeonTeleportWidgets.lua'/>
+    <Script file='Tracker\DungeonJournalWidgets.lua'/>
 
     <Script file='Tracker\Services\AltKeystoneService.lua'/>
     <Script file='Tracker\Services\RunHistoryService.lua'/>
     <Script file='Tracker\Services\RunsFilterService.lua'/>
     <Script file='Tracker\Services\GroupKeystoneService.lua'/>
     <Script file='Tracker\Services\GuildKeystoneService.lua'/>
+    <Script file='Tracker\Services\ExternalKeystoneService.lua'/>
     <Script file='Tracker\Services\KeystoneEntryService.lua'/>
 
     <Script file='Tracker\Dashboard\Dashboard.lua'/>

@@ -109,19 +109,17 @@ local function levelBracketLabel(bracket)
     return "+" .. bracket.min .. "+"
 end
 
+---The plain title/body tooltip this view uses on its narrow columns. The
+---overlay mechanics come from addon.createTableCellHoverArea; only the
+---content and its colours are this page's own.
 local function addCellTooltip(parent, x, y, w, h, title, body)
-    local frame = CreateFrame("Frame", nil, parent)
-    frame:SetSize(w, h)
-    frame:SetPoint("TOPLEFT", parent, "TOPLEFT", x, y)
-    frame:EnableMouse(true)
-    frame:SetScript("OnEnter", function(self)
+    addon.createTableCellHoverArea(parent, x, y, w, h, function(self)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
         GameTooltip:ClearLines()
         GameTooltip:AddLine(title, 1, 1, 1)
         if body then GameTooltip:AddLine(body, 0.8, 0.8, 0.8) end
         GameTooltip:Show()
     end)
-    frame:SetScript("OnLeave", function() GameTooltip:Hide() end)
 end
 
 local function createHeader(parent, colX, nameW)
@@ -178,7 +176,8 @@ local function createRow(parent, run, colX, nameW, rowY, isLast, scoreDeltas)
         icon:SetTexture(texture)
     end
 
-    addon.createTableCell(parent, colX["name"], rowY, nameW, ROW_H, name, "GameFontHighlight", "LEFT")
+    local nameCell = addon.createTableCell(parent, colX["name"], rowY, nameW, ROW_H, name, "GameFontHighlight", "LEFT")
+    addon.attachDungeonJournalLink(parent, nameCell, mapID, name, colX["name"], rowY, nameW, ROW_H)
 
     addon.createTableCell(parent, colX["level"], rowY, COL_W.level, ROW_H,
         formatLevel(run.level), "GameFontHighlight", "RIGHT")

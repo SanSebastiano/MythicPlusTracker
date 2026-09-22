@@ -60,6 +60,14 @@ function MPT_Tracker:getFrame()
     return create()
 end
 
+---Closes the tracker window. The counterpart to show(), for the places that
+---hand the player off to a Blizzard UI which would otherwise open behind it.
+function MPT_Tracker:hide()
+    if frame then
+        frame:Hide()
+    end
+end
+
 function MPT_Tracker:show()
     if InCombatLockdown() then
         local now = GetTime()

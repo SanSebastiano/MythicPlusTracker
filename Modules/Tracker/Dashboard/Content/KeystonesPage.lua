@@ -29,6 +29,17 @@ local MODE_DROPDOWN_MARGIN = 6
 local lastRefreshTime = 0
 local lastGuildRefreshTime = 0
 
+-- Appended to the keystone level and the score of a row whose data came from
+-- LibKeystone rather than from MythicPlusTracker's own sync, and explained by
+-- an extra line on the refresh button's tooltip. Not appended to the player
+-- name: name and class come from the roster, never from the external source.
+local EXTERNAL_SOURCE_MARKER = "*"
+
+-- Set while the table renders, read later when the refresh-button tooltip is
+-- hovered, so the marker's explanation only appears when a marker is actually
+-- on screen.
+local viewHasExternalSourceEntries = false
+
 local MODES = addon.KeystoneEntryService.MODES
 
 -- Dropdown labels. The mode values themselves live on KeystoneEntryService,
@@ -212,6 +223,9 @@ local function createRefreshButton(dropdown, onClick, getLastRefreshedAt)
         GameTooltip:SetText(addon.locale["KEYSTONES_REFRESH_TITLE"], ARTIFACT_R, ARTIFACT_G, ARTIFACT_B, 1)
         addPoorLabelLine(string.format(addon.locale["KEYSTONES_LAST_UPDATED"],
             addon.formatRelativeTime(getLastRefreshedAt())))
+        if viewHasExternalSourceEntries then
+            addPoorLabelLine(addon.locale["KEYSTONES_EXTERNAL_SOURCE"])
+        end
         GameTooltip:Show()
     end)
     button:SetScript("OnLeave", function()
@@ -310,6 +324,20 @@ local function resolveDungeonName(entry)
     return entry.mapID and (C_ChallengeMode.GetMapUIInfo(entry.mapID))
 end
 
+---Whether any row in the list was filled from LibKeystone, which decides if
+---the refresh tooltip explains the "*" marker.
+---@param entries table
+---@return boolean
+local function containsExternalSourceEntry(entries)
+    for _, entry in ipairs(entries) do
+        if entry.externalSourceTimestamp then
+            return true
+        end
+    end
+
+    return false
+end
+
 ---Sorts a row-entry array in place by the active header column, if any.
 ---Shared by Group, Alts, and Guild modes since all feed the same table layout
 ---(both entry shapes expose .name/.mapID/.level/.score). No-op when no
@@ -365,6 +393,45 @@ local function createHeader(parent, colX, nameW, dungeonW, onSort)
     addon.createRowDivider(parent, -HEADER_H, 0.5)
 end
 
+---Opens the same menu a right-click on a Blizzard group frame shows for that
+---player — whisper, set focus, raid target icon, and whatever else other addons
+---have added to it.
+---
+---Rows are built once per render and the token is captured then, so it can be
+---stale by the time it is clicked: the group may have changed. Re-checking the
+---unit against the name the row was drawn with keeps the menu from acting on
+---whoever moved into that slot in the meantime.
+---@param unitToken string
+---@param renderedName string|nil the name this row was drawn with
+local function openPlayerMenu(unitToken, renderedName)
+    if not UnitExists(unitToken) or UnitName(unitToken) ~= renderedName then
+        return
+    end
+
+    local menuType
+    if UnitIsUnit(unitToken, "player") then
+        menuType = "SELF"
+    elseif UnitInRaid(unitToken) then
+        menuType = "RAID_PLAYER"
+    elseif UnitInParty(unitToken) then
+        menuType = "PARTY"
+    else
+        return
+    end
+
+    -- FrameXML, not a documented API. Guarded so a future Blizzard rename
+    -- degrades to "the name just isn't clickable" instead of an error.
+    if not UnitPopup_OpenMenu then
+        addon.debugMessage("KeystonesPage: UnitPopup_OpenMenu unavailable, player menu disabled")
+        return
+    end
+
+    local succeeded, menuError = pcall(UnitPopup_OpenMenu, menuType, { unit = unitToken })
+    if not succeeded then
+        addon.debugMessage("KeystonesPage: opening the player menu failed: " .. tostring(menuError))
+    end
+end
+
 ---Shared by both the Group row (live unit) and the Alts row (saved entry).
 ---@param parent Frame
 ---@param colX table
@@ -372,7 +439,10 @@ end
 ---@param rowY number
 ---@param name string|nil
 ---@param englishClass string|nil
-local function createNameAndClassCell(parent, colX, nameW, rowY, name, englishClass)
+---@param unitToken string|nil Group mode only; makes the name open the player
+---menu. Alts and Guild rows have no live unit to point a menu at, so their
+---names stay inert.
+local function createNameAndClassCell(parent, colX, nameW, rowY, name, englishClass, unitToken)
     local nameText = parent:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     nameText:SetSize(nameW, ROW_H)
     nameText:SetPoint("TOPLEFT", parent, "TOPLEFT", colX["name"], rowY)
@@ -392,6 +462,73 @@ local function createNameAndClassCell(parent, colX, nameW, rowY, name, englishCl
         classIcon:SetPoint("TOPLEFT", parent, "TOPLEFT",
             colX["classIcon"], rowY - (ROW_H - COL_W.classIcon) / 2)
     end
+
+    if not unitToken then
+        return
+    end
+
+    local nameR, nameG, nameB, nameA = nameText:GetTextColor()
+
+    addon.createClickArea(parent, colX["name"], rowY, addon.textHotspotWidth(nameText, nameW), ROW_H,
+        function()
+            openPlayerMenu(unitToken, name)
+        end,
+        function(self)
+            nameText:SetTextColor(1, 1, 1, 1)
+
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            GameTooltip:SetText(name or "?", nameR, nameG, nameB, 1)
+            addPoorLabelLine(addon.locale["KEYSTONES_TOOLTIP_PLAYER_MENU"])
+            GameTooltip:Show()
+        end,
+        function()
+            nameText:SetTextColor(nameR, nameG, nameB, nameA)
+            GameTooltip:Hide()
+        end)
+end
+
+---The marker suffix for a value that came from LibKeystone. Muted and placed
+---outside the value's own color code, so it reads as an annotation instead of
+---being taken for part of the number (or shifting its rarity color).
+---Placeholders like "no key" and "–" deliberately get no marker — only real
+---values are annotated.
+---@param externalSourceTimestamp number|nil set only for LibKeystone data
+---@return string suffix empty for MythicPlusTracker's own data
+local function externalSourceSuffix(externalSourceTimestamp)
+    if not externalSourceTimestamp then
+        return ""
+    end
+
+    return addon.colors.POOR .. EXTERNAL_SOURCE_MARKER .. addon.colors.RESET
+end
+
+---Attaches the "where did this number come from" tooltip to one cell holding a
+---LibKeystone-sourced value. Only called for cells that actually carry the
+---marker, so placeholders stay inert.
+---
+---The timestamp is captured here but formatted inside OnEnter: a tooltip opened
+---minutes after the render must still read correctly, same reason the refresh
+---button re-reads its own timestamp on every hover.
+---@param parent Frame
+---@param x number the cell's column offset
+---@param rowY number the row's offset
+---@param w number the cell's column width
+---@param externalSourceTimestamp number
+local function addExternalSourceTooltip(parent, x, rowY, w, externalSourceTimestamp)
+    addon.createTableCellHoverArea(parent, x, rowY, w, ROW_H, function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        GameTooltip:SetText(addon.locale["KEYSTONES_TOOLTIP_EXTERNAL_TITLE"],
+            ARTIFACT_R, ARTIFACT_G, ARTIFACT_B, 1)
+        -- addTooltipLabelLine colours only up to the first colon and falls back to
+        -- colouring the whole line when there is none. Both lines below rely on
+        -- that: the sync line is colon-free on purpose so it reads as one muted
+        -- sentence, while "Received:" keeps its value in white. Translations must
+        -- preserve that difference.
+        addPoorLabelLine(addon.locale["KEYSTONES_TOOLTIP_EXTERNAL_SYNC"])
+        addPoorLabelLine(string.format(addon.locale["KEYSTONES_TOOLTIP_EXTERNAL_RECEIVED"],
+            addon.formatRelativeTime(externalSourceTimestamp)))
+        GameTooltip:Show()
+    end)
 end
 
 ---Alts rows always "have the addon" (it's the local account's own saved
@@ -403,10 +540,13 @@ end
 ---@param mapID number|nil
 ---@param level number|nil
 ---@param noKeyText string
+---@param externalSourceTimestamp number|nil marks the level with EXTERNAL_SOURCE_MARKER
+---and gives it the source tooltip; the noKeyText fallback gets neither
 ---@param allowTeleport boolean|nil when true (Group mode only — see MPT_Dashboard:loadKeystones),
 ---the icon becomes clickable to teleport via the local player's own known
 ---"Path of ..." spell for this dungeon, same as the Overview tab's icon
-local function createDungeonAndLevelCell(parent, colX, dungeonW, rowY, mapID, level, noKeyText, allowTeleport)
+local function createDungeonAndLevelCell(parent, colX, dungeonW, rowY, mapID, level, noKeyText,
+        externalSourceTimestamp, allowTeleport)
     if mapID and level then
         local dungeonName, _, _, texture = C_ChallengeMode.GetMapUIInfo(mapID)
         dungeonName = dungeonName or ("Map " .. tostring(mapID))
@@ -424,20 +564,33 @@ local function createDungeonAndLevelCell(parent, colX, dungeonW, rowY, mapID, le
             end
         end
 
+        local dungeonTextX = colX["dungeon"] + DUNGEON_ICON_SIZE + COL_GAP
+        local dungeonTextW = dungeonW - DUNGEON_ICON_SIZE - COL_GAP
+
         local dungeonText = parent:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-        dungeonText:SetSize(dungeonW - DUNGEON_ICON_SIZE - COL_GAP, ROW_H)
-        dungeonText:SetPoint("TOPLEFT", parent, "TOPLEFT",
-            colX["dungeon"] + DUNGEON_ICON_SIZE + COL_GAP, rowY)
+        dungeonText:SetSize(dungeonTextW, ROW_H)
+        dungeonText:SetPoint("TOPLEFT", parent, "TOPLEFT", dungeonTextX, rowY)
         dungeonText:SetJustifyH("LEFT")
         dungeonText:SetJustifyV("MIDDLE")
-        dungeonText:SetText(addon.colors.ARTIFACT .. dungeonName .. addon.colors.RESET)
+        -- Coloured through SetTextColor instead of an inline |cff escape: the
+        -- journal link's hover highlight can only override the former.
+        dungeonText:SetText(dungeonName)
+        dungeonText:SetTextColor(ARTIFACT_R, ARTIFACT_G, ARTIFACT_B, 1)
+
+        addon.attachDungeonJournalLink(parent, dungeonText, mapID, dungeonName,
+            dungeonTextX, rowY, dungeonTextW, ROW_H)
 
         local levelText = parent:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
         levelText:SetSize(COL_W.level, ROW_H)
         levelText:SetPoint("TOPLEFT", parent, "TOPLEFT", colX["level"], rowY)
         levelText:SetJustifyH("RIGHT")
         levelText:SetJustifyV("MIDDLE")
-        levelText:SetText(addon.colorKeystoneLevel(level) .. level .. addon.colors.RESET)
+        levelText:SetText(addon.colorKeystoneLevel(level) .. level .. addon.colors.RESET
+            .. externalSourceSuffix(externalSourceTimestamp))
+
+        if externalSourceTimestamp then
+            addExternalSourceTooltip(parent, colX["level"], rowY, COL_W.level, externalSourceTimestamp)
+        end
     else
         local fallbackText = parent:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
         fallbackText:SetSize(dungeonW + COL_GAP + COL_W.level, ROW_H)
@@ -456,14 +609,21 @@ end
 ---@param colX table
 ---@param rowY number
 ---@param score number|nil
-local function createScoreCell(parent, colX, rowY, score)
+---@param externalSourceTimestamp number|nil marks the score with EXTERNAL_SOURCE_MARKER
+---and gives it the source tooltip; the "–" fallback gets neither
+local function createScoreCell(parent, colX, rowY, score, externalSourceTimestamp)
     local scoreText = parent:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     scoreText:SetSize(COL_W.score, ROW_H)
     scoreText:SetPoint("TOPLEFT", parent, "TOPLEFT", colX["score"], rowY)
     scoreText:SetJustifyH("RIGHT")
     scoreText:SetJustifyV("MIDDLE")
     if score and score > 0 then
-        scoreText:SetText(addon.colors.ARTIFACT .. score .. addon.colors.RESET)
+        scoreText:SetText(addon.colors.ARTIFACT .. score .. addon.colors.RESET
+            .. externalSourceSuffix(externalSourceTimestamp))
+
+        if externalSourceTimestamp then
+            addExternalSourceTooltip(parent, colX["score"], rowY, COL_W.score, externalSourceTimestamp)
+        end
     else
         scoreText:SetText(addon.colors.POOR .. "–" .. addon.colors.RESET)
     end
@@ -498,7 +658,7 @@ local function createRow(parent, entry, colX, nameW, dungeonW, rowY, isLast)
         colX["portrait"], rowY - (ROW_H - PORTRAIT_SIZE) / 2)
     SetPortraitTexture(portrait, unitToken)
 
-    createNameAndClassCell(parent, colX, nameW, rowY, entry.name, entry.class)
+    createNameAndClassCell(parent, colX, nameW, rowY, entry.name, entry.class, unitToken)
 
     local role = getEffectiveRole(unitToken)
     local roleAtlas = role and ROLE_ATLAS_BY_ROLE[role]
@@ -511,12 +671,13 @@ local function createRow(parent, entry, colX, nameW, dungeonW, rowY, isLast)
     end
 
     if entry.hasAddon then
-        createDungeonAndLevelCell(parent, colX, dungeonW, rowY, entry.mapID, entry.level, addon.locale["KEYSTONES_NO_KEY"], true)
+        createDungeonAndLevelCell(parent, colX, dungeonW, rowY, entry.mapID, entry.level,
+            addon.locale["KEYSTONES_NO_KEY"], entry.externalSourceTimestamp, true)
     else
         -- No response received at all: member likely does not run MythicPlusTracker.
         createNoAddonCell(parent, colX, dungeonW, rowY, addon.locale["KEYSTONES_NO_ADDON"])
     end
-    createScoreCell(parent, colX, rowY, entry.score)
+    createScoreCell(parent, colX, rowY, entry.score, entry.externalSourceTimestamp)
 
     if not isLast then
         addon.createRowDivider(parent, rowY - ROW_H, 0.3)
@@ -525,17 +686,18 @@ end
 
 ---Renders one saved Alts/Twinks or Guild row. There's no live unit token
 ---here, so no portrait or role icon. altEntry.hasAddon == false renders
----"Kein Addon" instead of a keystone.
+---"Kein Addon" instead of a keystone; altEntry.externalSourceTimestamp marks the values.
 ---@param parent Frame
----@param altEntry table entry from addon.AltKeystoneService:getEntries() or addon.GuildKeystoneService:getEntries()
+---@param altEntry table entry from addon.AltKeystoneService:getEntries() or addon.KeystoneEntryService:getGuildEntries()
 local function createAltRow(parent, altEntry, colX, nameW, dungeonW, rowY, isLast)
     createNameAndClassCell(parent, colX, nameW, rowY, altEntry.name, altEntry.class)
     if altEntry.hasAddon == false then
         createNoAddonCell(parent, colX, dungeonW, rowY, addon.locale["KEYSTONES_NO_ADDON"])
     else
-        createDungeonAndLevelCell(parent, colX, dungeonW, rowY, altEntry.mapID, altEntry.level, addon.locale["KEYSTONES_NO_KEY"])
+        createDungeonAndLevelCell(parent, colX, dungeonW, rowY, altEntry.mapID, altEntry.level,
+            addon.locale["KEYSTONES_NO_KEY"], altEntry.externalSourceTimestamp)
     end
-    createScoreCell(parent, colX, rowY, altEntry.score)
+    createScoreCell(parent, colX, rowY, altEntry.score, altEntry.externalSourceTimestamp)
 
     if not isLast then
         addon.createRowDivider(parent, rowY - ROW_H, 0.3)
@@ -583,6 +745,10 @@ end
 
 function MPT_Dashboard:loadKeystones(frame)
     local mode = addon.KeystoneEntryService:getActiveMode()
+
+    -- Cleared up front so the Alts view, which never carries external data,
+    -- can't inherit the flag from a previously rendered Group or Guild view.
+    viewHasExternalSourceEntries = false
 
     local dropdown = createModeDropdown(frame)
 
@@ -633,8 +799,10 @@ function MPT_Dashboard:loadKeystones(frame)
         if addon.GroupKeystoneService then
             addon.GroupKeystoneService:requestKeystones()
         end
+        addon.ExternalKeystoneService:requestKeystones("PARTY")
 
         local entries = sortEntries(addon.KeystoneEntryService:getGroupEntries())
+        viewHasExternalSourceEntries = containsExternalSourceEntry(entries)
         scrollChild:SetSize(scrollChildW, #entries * ROW_H)
 
         for rowIndex, entry in ipairs(entries) do
@@ -664,10 +832,12 @@ function MPT_Dashboard:loadKeystones(frame)
         if addon.GuildKeystoneService then
             addon.GuildKeystoneService:requestKeystones()
         end
+        addon.ExternalKeystoneService:requestKeystones("GUILD")
 
         -- Reuses createAltRow: guild entries have the same shape (no live
         -- unit token, so no portrait/role column) as Alts entries.
-        local guildEntries = sortEntries(addon.GuildKeystoneService:getEntries())
+        local guildEntries = sortEntries(addon.KeystoneEntryService:getGuildEntries())
+        viewHasExternalSourceEntries = containsExternalSourceEntry(guildEntries)
         scrollChild:SetSize(scrollChildW, math.max(#guildEntries, 1) * ROW_H)
 
         if #guildEntries == 0 then

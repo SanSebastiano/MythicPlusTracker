@@ -13,6 +13,34 @@ function addon.createTableCell(parent, x, y, w, h, text, font, justifyH, wordWra
     return fs
 end
 
+---Creates an invisible, mouse-enabled frame over a table cell so it can show a
+---tooltip. A FontString can't receive mouse events on its own, so every table
+---view that wants a per-cell tooltip needs this same overlay — hence it lives
+---here rather than being re-implemented per page.
+---
+---Only the mechanics are shared: the caller supplies the OnEnter handler and
+---therefore owns the tooltip's content and styling, which differs per view.
+---OnLeave always hides the tooltip.
+---@param parent Frame the row/scroll child the cell was laid out in
+---@param x number top-left X offset within parent, i.e. the cell's column offset
+---@param y number top-left Y offset within parent, i.e. the row's offset
+---@param w number cell width
+---@param h number cell height
+---@param onEnter function receives the hover frame, expected to show GameTooltip
+---@return Frame
+function addon.createTableCellHoverArea(parent, x, y, w, h, onEnter)
+    local hoverArea = CreateFrame("Frame", nil, parent)
+    hoverArea:SetSize(w, h)
+    hoverArea:SetPoint("TOPLEFT", parent, "TOPLEFT", x, y)
+    hoverArea:EnableMouse(true)
+    hoverArea:SetScript("OnEnter", onEnter)
+    hoverArea:SetScript("OnLeave", function()
+        GameTooltip:Hide()
+    end)
+
+    return hoverArea
+end
+
 ---Creates one clickable column header for a sortable Dashboard table: the
 ---button, its label, the hover highlight, and the wiring that flips the sort
 ---state and re-renders. The label text itself is written by

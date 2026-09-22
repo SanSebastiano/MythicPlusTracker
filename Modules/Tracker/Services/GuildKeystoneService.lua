@@ -159,8 +159,11 @@ function addon.GuildKeystoneService:getLastRefreshedAt()
     return lastRefreshedAt
 end
 
----Returns every currently online guild member, sorted by keystone level
----(highest first, no-key/no-addon entries last) and then by name.
+---Returns every currently online guild member, in roster order.
+---
+---Deliberately unsorted: KeystoneEntryService:getGuildEntries layers
+---LibKeystone data on top, which changes the keystone levels the display order
+---is based on, and sorts the merged list there. That is the only caller.
 ---
 ---Name/class/online-status come from a live roster scan
 ---(GetNumGuildMembers/GetGuildRosterInfo). Keystone/score come from
@@ -210,13 +213,6 @@ function addon.GuildKeystoneService:getEntries()
             end
         end
     end
-
-    table.sort(entries, function(a, b)
-        if (a.level or 0) ~= (b.level or 0) then
-            return (a.level or 0) > (b.level or 0)
-        end
-        return (a.name or "") < (b.name or "")
-    end)
 
     return entries
 end

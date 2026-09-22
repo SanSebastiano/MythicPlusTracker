@@ -86,6 +86,12 @@ function MPT_Sidebar:loadRunStatistics(sidebar, cursor)
         nameLabel:SetJustifyV("MIDDLE")
         nameLabel:SetText(name)
 
+        -- The label is anchored on both sides, so the click area's width has to
+        -- be derived from the same two offsets rather than read off the label.
+        local nameLabelX = CONTENT_X + INSET + ICON_SIZE + 5
+        addon.attachDungeonJournalLink(sidebar, nameLabel, mapID, name,
+            nameLabelX, bestRunY, (CONTENT_X + CONTENT_W - INSET - 40) - nameLabelX, ICON_SIZE)
+
         local levelLabel = sidebar:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
         levelLabel:SetPoint("TOPRIGHT", sidebar, "TOPLEFT", CONTENT_X + CONTENT_W - INSET, bestRunY)
         levelLabel:SetSize(38, ICON_SIZE)

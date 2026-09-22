@@ -64,6 +64,7 @@ local locale = {
     ["DUNGEON_TOOLTIP_TIME_LIMIT"] = "Limite de temps",
     ["DUNGEON_TELEPORT_TOOLTIP"] = "Cliquez pour vous téléporter",
     ["DUNGEON_TELEPORT_NOT_OWNED"] = "Aucun jouet de téléportation connu ou possédé pour ce donjon",
+    ["DUNGEON_JOURNAL_TOOLTIP"] = "Cliquez pour ouvrir le Guide d’aventure",
     -- Shared by the Overview and Runs tabs' filter rows
     ["FILTER_CURRENT_WEEK_ONLY"] = "Semaine en cours uniquement",
     -- Overview summary boxes
@@ -119,6 +120,11 @@ local locale = {
     ["KEYSTONES_GUILD_EMPTY"] = "Aucun membre de guilde connu pour le moment.",
     ["KEYSTONES_LAST_UPDATED"] = "Dernière mise à jour : %s",
     ["KEYSTONES_ALTS_NEXT_UPDATE"] = "Prochaine mise à jour lors de la fin d'un donjon, de la connexion/changement de zone, ou d'un échange de clé",
+    ["KEYSTONES_EXTERNAL_SOURCE"] = "* Données provenant d'un autre addon (LibKeystone)",
+    ["KEYSTONES_TOOLTIP_EXTERNAL_TITLE"] = "Source externe",
+    ["KEYSTONES_TOOLTIP_EXTERNAL_SYNC"] = "Sync via LibKeystone",
+    ["KEYSTONES_TOOLTIP_EXTERNAL_RECEIVED"] = "Reçu : %s",
+    ["KEYSTONES_TOOLTIP_PLAYER_MENU"] = "Cliquez pour les options du joueur",
     ["TIME_UNKNOWN"]     = "inconnu",
     ["TIME_JUST_NOW"]    = "à l'instant",
     ["FORMAT_SECONDS"] = "%s s",

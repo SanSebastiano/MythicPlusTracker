@@ -2,6 +2,16 @@
 
 All notable changes to MythicPlusTracker are documented here.
 
+## [1.6.0] - 2026-09-22
+
+### Added
+- **Keystones of group and guild members who don't run MythicPlusTracker.** Rows now also fill from LibKeystone, which DBM and similar addons already ship. Such values carry a `*`; hovering one shows where it came from and when it arrived.
+- **Click a group member's name for the usual player menu.** The same one a right-click in the group frame opens — whisper, set focus, raid target icon. Guild and Twinks rows have no live unit behind them and stay unclickable.
+- **Click a dungeon name to open the Adventure Guide there.** Works in the Keystones, Overview and Runs tabs and on the sidebar's best run, opens on Mythic difficulty and closes the tracker behind it. The icon keeps teleporting you.
+
+### Fixed
+- **The quick teleport strip came up as a thin line after logging in while set to Vertical.** Its orientation was read before WoW had restored the saved settings, so only the wrong axis got sized — switching the setting and back was the only repair.
+
 ## [1.5.0] - 2026-09-11
 
 ### Added

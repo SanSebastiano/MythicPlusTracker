@@ -688,8 +688,28 @@ local function createFlyout(parent)
     return newFlyout
 end
 
-local function onEvent(_, event)
-    if event == "PLAYER_REGEN_DISABLED" then
+---Re-pins both axes from the persisted orientation. load() runs at file scope,
+---before WoW has restored the SavedVariables, so getOrientation() can only
+---answer with the default there: a saved "vertical" would leave the short axis
+---pinned on the wrong side, and the strip would unroll as a one-pixel line.
+local function applySavedOrientation()
+    if not flyout then
+        return
+    end
+
+    applyThickness()
+    setLength(COLLAPSED_LENGTH)
+end
+
+local function onEvent(_, event, loadedAddonName)
+    if event == "ADDON_LOADED" then
+        if loadedAddonName == addonName then
+            applySavedOrientation()
+        end
+    elseif event == "PLAYER_LOGIN" then
+        applySavedOrientation()
+        requestRefresh()
+    elseif event == "PLAYER_REGEN_DISABLED" then
         onCombatStart()
     elseif event == "PLAYER_REGEN_ENABLED" then
         onCombatEnd()
@@ -712,7 +732,8 @@ function MPT_MinimapTeleportFlyout:load()
 
     -- createFlyout can't size the axes itself: they depend on the orientation,
     -- and these helpers work on the module-level `flyout` that is only assigned
-    -- on the line above.
+    -- on the line above. Running at file scope, this can only use the default
+    -- orientation; ADDON_LOADED re-applies the persisted one once it is there.
     applyThickness()
     setLength(COLLAPSED_LENGTH)
 
@@ -729,6 +750,7 @@ function MPT_MinimapTeleportFlyout:load()
     minimapButton:HookScript("OnDragStop", onButtonDragStop)
 
     local eventFrame = CreateFrame("Frame")
+    eventFrame:RegisterEvent("ADDON_LOADED")
     eventFrame:RegisterEvent("PLAYER_LOGIN")
     eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     eventFrame:RegisterEvent("SPELLS_CHANGED")

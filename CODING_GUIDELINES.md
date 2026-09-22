@@ -119,7 +119,9 @@
 
 ### 2.3 Minimal Implementation Surface
 
-2.3.1: This addon intentionally has zero third-party dependencies (no Ace3, no LibStub). A new dependency MUST NOT be introduced without an explicit, reviewed reason.
+2.3.1: This addon intentionally bundles no third-party code (no Ace3, no LibStub, no embedded libraries). A bundled dependency MUST NOT be introduced without an explicit, reviewed reason.
+
+2.3.1a: Optional runtime interop with a library another installed addon already provides is permitted, and is the only sanctioned form of library use. It MUST be resolved defensively at runtime (never assumed present at file load), MUST be confined to a single service file, MUST be declared via `## OptionalDeps`, and MUST leave every feature fully working when the library is absent. The one current instance is `Modules/Tracker/Services/ExternalKeystoneService.lua` (LibKeystone), which fills Keystones-tab rows for players running a different keystone-sharing addon. Native data always takes precedence over it.
 
 2.3.2: Native Lua 5.1 and the Blizzard WoW API MUST be used before custom abstractions are introduced.
 

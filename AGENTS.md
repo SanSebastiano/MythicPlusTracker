@@ -4,7 +4,9 @@ This is the single source of truth for any AI coding agent working in this repos
 
 ## What This Is
 
-A World of Warcraft retail addon (Interface **120100**, patch 12.1.0) that tracks Mythic+ dungeon runs, group/guild keystones, and Weekly Vault progress. Pure Lua 5.1, no external libraries (no Ace3, no LibStub), no build step — loaded directly by the WoW client from source.
+A World of Warcraft retail addon (Interface **120100**, patch 12.1.0) that tracks Mythic+ dungeon runs, group/guild keystones, and Weekly Vault progress. Pure Lua 5.1, no build step — loaded directly by the WoW client from source.
+
+No third-party code is bundled (no Ace3, no LibStub, no embedded libraries). The one exception to "no libraries at all" is **optional runtime interop**: `Modules/Tracker/Services/ExternalKeystoneService.lua` reads LibKeystone via `LibStub:GetLibrary(name, true)` when another installed addon happens to provide it (DBM ships a copy), declared as `## OptionalDeps: LibKeystone` in the `.toc`. Nothing is shipped, nothing is required, and the addon behaves exactly as before when it isn't there.
 
 ## Loading Order (Critical)
 

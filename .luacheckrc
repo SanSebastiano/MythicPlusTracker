@@ -46,6 +46,12 @@ ignore = {
 
 globals = {
     -- -----------------------------------------------------------------------
+    -- LibStub, when some other addon provides it. Never shipped by this addon;
+    -- see Modules/Tracker/Services/ExternalKeystoneService.lua.
+    -- -----------------------------------------------------------------------
+    "LibStub",
+
+    -- -----------------------------------------------------------------------
     -- Addon-specific module globals (MPT_* pattern)
     -- -----------------------------------------------------------------------
     "MPT_Dashboard",
@@ -182,6 +188,22 @@ globals = {
     "SetPortraitTexture",
     "GetSpecialization",
     "GetSpecializationRole",
+    "UnitIsUnit",
+    "UnitInParty",
+    "UnitInRaid",
+
+    -- -----------------------------------------------------------------------
+    -- Blizzard UI entry points this addon links into: the unit right-click
+    -- menu (FrameXML, guarded at every call site) and the load-on-demand
+    -- Adventure Guide.
+    -- -----------------------------------------------------------------------
+    "UnitPopup_OpenMenu",
+    "C_EncounterJournal",
+    "EncounterJournal_OpenJournal",
+    "EJ_GetDifficulty",
+    "EJ_SetDifficulty",
+    "EJ_IsValidInstanceDifficulty",
+    "DifficultyUtil",
 
     -- -----------------------------------------------------------------------
     -- WoW item / currency functions

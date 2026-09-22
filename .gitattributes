@@ -21,3 +21,12 @@
 
 # Never normalize binary assets, even if git's heuristic ever misjudges one.
 *.png binary
+
+# Same for JPEGs — git's heuristic already classifies them as binary, this only
+# makes it explicit next to *.png so no future normalization rule catches them.
+*.jpg binary
+
+# The README screenshots belong on GitHub, not in anyone's AddOns folder. The
+# generated source archives honour export-ignore, so the release download stays
+# lean instead of shipping ~1.8 MB of images users never load.
+docs/** export-ignore

@@ -61,6 +61,7 @@ local locale = {
     ["DUNGEON_TOOLTIP_TIME_LIMIT"] = "Zeitlimit",
     ["DUNGEON_TELEPORT_TOOLTIP"] = "Klicken zum Teleportieren",
     ["DUNGEON_TELEPORT_NOT_OWNED"] = "Kein Teleport-Spielzeug für diesen Dungeon bekannt oder besessen",
+    ["DUNGEON_JOURNAL_TOOLTIP"] = "Klicken öffnet das Abenteuerhandbuch",
     -- Shared by the Overview and Runs tabs' filter rows
     ["FILTER_CURRENT_WEEK_ONLY"] = "Nur aktuelle Woche",
     -- Overview summary boxes
@@ -119,6 +120,11 @@ local locale = {
     ["KEYSTONES_GUILD_EMPTY"] = "Noch keine Gildenmitglieder bekannt.",
     ["KEYSTONES_LAST_UPDATED"] = "Zuletzt aktualisiert: %s",
     ["KEYSTONES_ALTS_NEXT_UPDATE"] = "Nächstes Update bei: Dungeon-Abschluss, Login/Zonenwechsel oder Schlüsselstein-Tausch",
+    ["KEYSTONES_EXTERNAL_SOURCE"] = "* Daten aus einem anderen Addon (LibKeystone)",
+    ["KEYSTONES_TOOLTIP_EXTERNAL_TITLE"] = "Externe Quelle",
+    ["KEYSTONES_TOOLTIP_EXTERNAL_SYNC"] = "Sync über LibKeystone",
+    ["KEYSTONES_TOOLTIP_EXTERNAL_RECEIVED"] = "Empfangen: %s",
+    ["KEYSTONES_TOOLTIP_PLAYER_MENU"] = "Klicken für Spieleroptionen",
     ["TIME_UNKNOWN"]     = "unbekannt",
     ["TIME_JUST_NOW"]    = "gerade eben",
     ["FORMAT_SECONDS"] = "%s Sek.",
