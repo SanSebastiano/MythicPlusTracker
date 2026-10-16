@@ -31,30 +31,30 @@
 # lean instead of shipping ~1.8 MB of images users never load.
 docs/** export-ignore
 
-# Repo-Infrastruktur, die im Addon-Ordner der Nutzer nichts verloren hat. Das
-# Release hängt keine eigenen Assets an (.github/workflows/release.yml ruft nur
-# `gh release create` auf), also ist das generierte Source-ZIP das, was Nutzer
-# tatsächlich installieren — und dort sind CI-Konfiguration, Agent-Settings und
-# die Validator-Skripte reiner Ballast.
+# Repo infrastructure that has no business in anyone's AddOns folder. The release
+# workflow builds the installable zip with `git archive`
+# (.github/workflows/release.yml), so these rules decide what users actually
+# unpack — and there, CI configuration, agent settings and the validator scripts
+# are pure ballast.
 #
-# Die CI selbst ist davon nicht betroffen: Workflows laufen auf dem Checkout,
-# nicht auf dem Archiv. Tools/*.sh und .luacheckrc stehen lua-validation.yml
-# weiterhin zur Verfügung, Contributors klonen ohnehin das Repo.
+# CI itself is unaffected: workflows run on the checkout, not on the archive, so
+# Tools/*.sh and .luacheckrc stay available to lua-validation.yml. Contributors
+# clone the repo anyway.
 #
-# .claude/ braucht diese Regel zwingend: .claude/settings.json ist getrackt
-# (vor dem .gitignore-Eintrag committed), und .gitignore greift bei getrackten
-# Dateien nicht mehr — export-ignore ist der einzige Hebel fürs Archiv.
+# .claude/ needs this rule specifically: .claude/settings.json is tracked — it
+# was committed before the .gitignore entry — and .gitignore no longer applies to
+# tracked files, so export-ignore is the only lever left for the archive.
 #
-# README, LICENSE, CHANGELOG und die Entwickler-Doku bleiben bewusst drin: wer
-# das ZIP öffnet, soll lesen können, worum es geht und wie beigetragen wird.
-# Diese Datei selbst und .gitignore dagegen nicht — reine Git-Metadaten, die im
-# AddOns-Ordner niemandem etwas sagen.
+# README, LICENSE, CHANGELOG and the developer docs stay in deliberately: whoever
+# opens the zip should be able to read what this is and how to contribute. This
+# file and .gitignore do not — pure git metadata that says nothing to anyone in
+# an AddOns folder.
 
-# Verzeichnisform statt X/**: mit dem Glob entfernt git archive zwar alle
-# Dateien, legt für diese drei Pfade aber trotzdem einen leeren
-# Verzeichniseintrag an — X/** matcht den Verzeichnispfad selbst nicht. Dass
-# die docs/**-Regel oben sauber durchkommt, liegt daran, dass docs/ nur das
-# Unterverzeichnis screenshots/ enthält; verlassen sollte man sich darauf nicht.
+# Directory form rather than X/**: with the glob, git archive drops every file
+# but still writes an empty directory entry for these three paths, because the
+# directory path itself does not match X/**. The docs/** rule above only gets
+# away with it because docs/ holds nothing but the screenshots/ subdirectory —
+# not something to rely on.
 
 .github/ export-ignore
 .claude/ export-ignore
