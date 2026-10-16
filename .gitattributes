@@ -30,3 +30,35 @@
 # generated source archives honour export-ignore, so the release download stays
 # lean instead of shipping ~1.8 MB of images users never load.
 docs/** export-ignore
+
+# Repo infrastructure that has no business in anyone's AddOns folder. The release
+# workflow builds the installable zip with `git archive`
+# (.github/workflows/release.yml), so these rules decide what users actually
+# unpack — and there, CI configuration, agent settings and the validator scripts
+# are pure ballast.
+#
+# CI itself is unaffected: workflows run on the checkout, not on the archive, so
+# Tools/*.sh and .luacheckrc stay available to lua-validation.yml. Contributors
+# clone the repo anyway.
+#
+# .claude/ needs this rule specifically: .claude/settings.json is tracked — it
+# was committed before the .gitignore entry — and .gitignore no longer applies to
+# tracked files, so export-ignore is the only lever left for the archive.
+#
+# README, LICENSE, CHANGELOG and the developer docs stay in deliberately: whoever
+# opens the zip should be able to read what this is and how to contribute. This
+# file and .gitignore do not — pure git metadata that says nothing to anyone in
+# an AddOns folder.
+
+# Directory form rather than X/**: with the glob, git archive drops every file
+# but still writes an empty directory entry for these three paths, because the
+# directory path itself does not match X/**. The docs/** rule above only gets
+# away with it because docs/ holds nothing but the screenshots/ subdirectory —
+# not something to rely on.
+
+.github/ export-ignore
+.claude/ export-ignore
+Tools/ export-ignore
+.luacheckrc export-ignore
+.gitattributes export-ignore
+.gitignore export-ignore
